@@ -46,15 +46,34 @@ const lxgwWenKaiTC = LXGW_WenKai_TC({
   display: "swap",
 });
 
+const SITE_URL = "https://josh-lifeforge.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "人生鍛造所 — Josh Tsang",
   description:
     "用對話建系統。把 AI 鍛造成你的第二曲線。Josh — 高中數學老師 × AI 創作者。工作坊、1 對 1 諮詢、演講邀約。",
   openGraph: {
     title: "人生鍛造所 — Josh Tsang",
     description: "用對話建系統。把 AI 鍛造成你的第二曲線。",
+    url: SITE_URL,
     type: "website",
     locale: "zh_TW",
+    siteName: "人生鍛造所",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1080,
+        height: 1080,
+        alt: "人生鍛造所 Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "人生鍛造所 — Josh Tsang",
+    description: "用對話建系統。把 AI 鍛造成你的第二曲線。",
+    images: ["/logo.png"],
   },
 };
 

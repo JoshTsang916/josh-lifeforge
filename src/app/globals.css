@@ -63,7 +63,7 @@
     background: var(--color-accent-soft);
     color: var(--color-ink);
   }
-  /* Display headings — Huninn 粉圓 */
+  /* Display headings — current pair: Noto Serif TC (思源宋體) */
   .font-display {
     font-family: var(--font-display);
     letter-spacing: 0.02em; /* 中文字距偏寬 */

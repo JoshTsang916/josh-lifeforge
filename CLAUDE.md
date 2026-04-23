@@ -9,7 +9,7 @@ Audience: students + prospective clients. Goal: clarify who Josh is and convert 
 ## Tech stack
 - **Next.js 16** (App Router) + **React 19** + **TypeScript 5**
 - **Tailwind CSS v4** (via `@theme` block in `globals.css`, no `tailwind.config.*`)
-- **Fonts**: Newsreader (display, serif) + Outfit (sans, body) — both via `next/font/google`
+- **Fonts** (locked v0.5): Noto Serif TC (display, 思源宋) + LXGW WenKai TC (body, 霞鶩文楷) + Outfit (Latin UI labels) — all via `next/font/google`
 - **Deployment**: Vercel (preview = branch URL, production = main)
 - **Database**: Supabase (shared with `ccdailytalk` — same `srpqvtkliesdfnqirdpt` instance)
   - Will read `contents` table (published articles/videos) for **Writings** and **Recent Work** sections

@@ -131,5 +131,3 @@ function EmptyState() {
     </div>
   );
 }
-
-export const revalidate = 3600;
