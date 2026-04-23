@@ -1,9 +1,11 @@
+import Image from "next/image";
+
 export function About() {
   return (
     <section id="about" className="section bg-[color:var(--color-bg-muted)]">
       <div className="container-narrow">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
-          {/* Left rail — number + label */}
+          {/* Left rail — number + label + photo */}
           <div className="lg:col-span-3">
             <div className="flex items-center gap-3 mb-6">
               <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
@@ -12,9 +14,18 @@ export function About() {
               <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
             </div>
             <h2 className="eyebrow">About</h2>
-            <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
+            <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)] mb-8">
               關於人生鍛造所
             </p>
+            <div className="relative aspect-[3/4] overflow-hidden rounded-sm max-w-xs">
+              <Image
+                src="/photos/talk-ai-forum-solo.jpg"
+                alt="Josh 在為未來而引導學會 AI 分享會講「80 字的魔法」"
+                fill
+                sizes="(max-width: 1024px) 80vw, 25vw"
+                className="object-cover"
+              />
+            </div>
           </div>
 
           {/* Right — main copy */}
