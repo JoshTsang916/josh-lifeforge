@@ -31,9 +31,14 @@
   --color-fitness: #CB8B4A;       /* 健身蜂蜜黃 */
   --color-spark: #D4956A;         /* 火花 焦糖橘 */
 
-  /* === Typography === */
+  /* === Typography (v0.5 — editorial + handwritten) ===
+     Display = Noto Serif TC (思源宋體) — editorial weight, thinker voice
+     Body = LXGW WenKai TC (霞鶩文楷) — handwritten warmth, like a personal letter
+     UI labels (eyebrows, buttons) = Outfit (Latin only)
+     Pair logic: serious masthead + intimate body copy — "thinker writing to you". */
   --font-display: var(--font-noto-serif-tc), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-outfit), -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --font-sans: var(--font-lxgw-wenkai-tc), "Noto Sans TC", -apple-system, sans-serif;
+  --font-ui: var(--font-outfit), -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* === Radii — small for editorial restraint === */
   --radius-sm: 2px;
@@ -58,10 +63,14 @@
     background: var(--color-accent-soft);
     color: var(--color-ink);
   }
-  /* Display headings */
+  /* Display headings — Huninn 粉圓 */
   .font-display {
     font-family: var(--font-display);
-    letter-spacing: 0.02em; /* 中文字距偏寬，符合品牌規範 */
+    letter-spacing: 0.02em; /* 中文字距偏寬 */
+  }
+  /* UI labels & buttons — Outfit (Latin) */
+  .font-ui {
+    font-family: var(--font-ui);
   }
 }
 
@@ -76,22 +85,22 @@
     margin-inline: auto;
   }
 
-  /* Eyebrow — small label above titles */
+  /* Eyebrow — small label above titles, uses Latin UI font */
   .eyebrow {
-    font-family: var(--font-sans);
+    font-family: var(--font-ui);
     font-size: 0.75rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--color-fg-subtle);
   }
 
-  /* Buttons */
+  /* Buttons — UI font for Latin/CJK mix readability */
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.875rem 1.5rem;
-    font-family: var(--font-sans);
+    font-family: var(--font-ui), var(--font-sans);
     font-weight: 500;
     font-size: 0.95rem;
     border-radius: var(--radius-sm);

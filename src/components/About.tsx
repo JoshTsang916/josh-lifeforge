@@ -20,15 +20,15 @@ export function About() {
           {/* Right — main copy */}
           <div className="lg:col-span-9 max-w-2xl">
             <p className="font-display text-3xl md:text-4xl leading-[1.3] text-[color:var(--color-ink)] mb-10">
-              <em className="italic font-normal text-[color:var(--color-accent)]">
+              <span className="text-[color:var(--color-accent)]">
                 我相信
-              </em>
+              </span>
               ，下一個十年的職涯，
               不是會不會用 AI 的問題，
               是能不能{" "}
-              <em className="italic font-normal text-[color:var(--color-accent)]">
+              <span className="text-[color:var(--color-accent)]">
                 跟 AI 對話建出系統
-              </em>{" "}
+              </span>{" "}
               的問題。
             </p>
 
@@ -49,7 +49,7 @@ export function About() {
                 這個「講清楚」的能力，就是我教的東西。
               </p>
               <p className="text-[color:var(--color-fg)]">
-                <span className="font-display italic">人生鍛造所</span>
+                <span className="font-display text-[color:var(--color-accent)]">人生鍛造所</span>
                 {" "}是我整理這套方法、累積案例、跟你一起打磨工作流的地方。
               </p>
             </div>
@@ -59,9 +59,9 @@ export function About() {
               <div className="eyebrow mb-4">My framework</div>
               <p className="font-display text-2xl leading-tight text-[color:var(--color-ink)]">
                 Context is King → 上下文工具箱 →{" "}
-                <em className="italic font-normal text-[color:var(--color-accent)]">
+                <span className="text-[color:var(--color-accent)]">
                   FORGE 五步法
-                </em>
+                </span>
               </p>
               <p className="mt-4 font-sans text-sm text-[color:var(--color-fg-muted)]">
                 從脈絡建立、工具選用，到實際把 AI 接進你的日常。

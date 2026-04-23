@@ -3,7 +3,7 @@ import Image from "next/image";
 export function Nav() {
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-[color:var(--color-bg)]/80 border-b border-[color:var(--color-line)]">
-      <div className="container-narrow flex items-center justify-between py-3 px-[clamp(1.25rem,4vw,3rem)]">
+      <div className="container-narrow flex items-center justify-between py-2 px-[clamp(1.25rem,4vw,3rem)]">
         <a
           href="#hero"
           className="flex items-center gap-3 group"
@@ -12,16 +12,16 @@ export function Nav() {
           <Image
             src="/logo.png"
             alt="人生鍛造所"
-            width={40}
-            height={40}
+            width={64}
+            height={64}
             priority
-            className="transition-transform duration-300 group-hover:rotate-[2deg]"
+            className="transition-transform duration-300 group-hover:rotate-[3deg]"
           />
           <div className="hidden sm:flex flex-col leading-tight">
-            <span className="font-display text-base font-medium text-[color:var(--color-ink)] tracking-wider">
+            <span className="font-display text-lg font-normal text-[color:var(--color-ink)] tracking-wider">
               人生鍛造所
             </span>
-            <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[color:var(--color-fg-subtle)]">
+            <span className="font-ui text-[10px] tracking-[0.22em] uppercase text-[color:var(--color-fg-subtle)] mt-1">
               The Life Forge
             </span>
           </div>

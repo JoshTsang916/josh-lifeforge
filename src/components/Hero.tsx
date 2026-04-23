@@ -12,16 +12,16 @@ export function Hero() {
           <span className="eyebrow">est. 2024</span>
         </div>
 
-        {/* Headline — bold display × accent italic */}
+        {/* Headline — accent color emphasis (no italic; CJK fake-italic looks wrong) */}
         <h1 className="font-display text-[clamp(3rem,9vw,7.5rem)] leading-[1.02] tracking-[-0.02em] text-[color:var(--color-ink)] mb-8 max-w-5xl">
           用對話建系統，<br />
           把 AI 鍛造成{" "}
-          <em
-            className="font-display italic font-normal"
+          <span
+            className="font-display"
             style={{ color: "var(--color-accent)" }}
           >
             你的第二曲線
-          </em>
+          </span>
         </h1>
 
         {/* Sub */}
