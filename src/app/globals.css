@@ -1,31 +1,41 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Design system: Warm brown editorial
-   - Colors derived in oklch (perceptually uniform)
-   - Newsreader for display (serif), Outfit for body (sans)
-   - Editorial cadence: small radii, thin rules, generous whitespace
+   Brand: 人生鍛造所 (Lifeforge Studio)
+   Source of truth: ccdailytalk/.claude/skills/video-renderer/
+                    references/brand-visual-guide.md
+   Style: 溫暖的極簡主義 — sun-faded warm palette, low saturation,
+   editorial cadence, generous whitespace.
    ============================================================ */
 
 @theme {
-  /* Colors */
-  --color-bg: oklch(0.98 0.012 80);
-  --color-bg-muted: oklch(0.95 0.012 75);
-  --color-fg: oklch(0.20 0.025 55);
-  --color-fg-muted: oklch(0.42 0.020 60);
-  --color-fg-subtle: oklch(0.55 0.015 65);
-  --color-line: oklch(0.90 0.012 75);
-  --color-line-strong: oklch(0.82 0.015 70);
-  --color-accent: oklch(0.42 0.090 55);
-  --color-accent-hover: oklch(0.36 0.090 55);
-  --color-highlight: oklch(0.88 0.110 85);
-  --color-ink: oklch(0.14 0.020 55);
+  /* === Brand colors (SSoT) === */
+  --color-bg: #FFF8F0;            /* 米白暖底 */
+  --color-bg-muted: #F8EDDF;      /* 米白稍深 */
+  --color-bg-deep: #F2E5D0;       /* 米白更深，分區用 */
+  --color-fg: #5C4033;            /* 深咖啡（主文字）*/
+  --color-fg-muted: #8B7355;      /* 淺咖啡（副文字）*/
+  --color-fg-subtle: #B0967D;     /* 更淺咖啡（標籤、編號）*/
+  --color-line: #EADCC8;          /* 米色細線 */
+  --color-line-strong: #D4C0A1;   /* 米色重線 */
+  --color-ink: #3D2A20;           /* 最深咖啡（用於 Hero 大字 / 對比強的標題）*/
 
-  /* Typography */
-  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  /* === Accent (主色：磚紅) === */
+  --color-accent: #C8553D;        /* 磚紅 — Logo / 標題 / 重點強調 */
+  --color-accent-hover: #A8432E;  /* 磚紅深 */
+  --color-accent-soft: #E8B5A8;   /* 磚紅淺底 */
+
+  /* === Brand secondary tints (for category accents if needed) === */
+  --color-ai: #5B8DB8;            /* AI 沉穩藍 */
+  --color-reading: #8B9E6B;       /* 閱讀抹茶綠 */
+  --color-fitness: #CB8B4A;       /* 健身蜂蜜黃 */
+  --color-spark: #D4956A;         /* 火花 焦糖橘 */
+
+  /* === Typography === */
+  --font-display: var(--font-noto-serif-tc), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-outfit), -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
 
-  /* Radii — kept small for editorial restraint */
+  /* === Radii — small for editorial restraint === */
   --radius-sm: 2px;
   --radius-md: 6px;
   --radius-lg: 10px;
@@ -43,26 +53,20 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     text-wrap: pretty;
-    font-feature-settings: "ss01", "cv11";
   }
   ::selection {
-    background: var(--color-highlight);
+    background: var(--color-accent-soft);
     color: var(--color-ink);
   }
-  /* Editorial display headings */
+  /* Display headings */
   .font-display {
     font-family: var(--font-display);
-    font-feature-settings: "liga", "dlig", "ss01";
-  }
-  /* Hairline rules used between sections */
-  .rule {
-    height: 1px;
-    background: var(--color-line);
+    letter-spacing: 0.02em; /* 中文字距偏寬，符合品牌規範 */
   }
 }
 
 @layer components {
-  /* Section frame — consistent paddings & max-width */
+  /* Section frame */
   .section {
     padding-inline: clamp(1.25rem, 4vw, 3rem);
     padding-block: clamp(4rem, 10vw, 8rem);
@@ -93,14 +97,15 @@
     border-radius: var(--radius-sm);
     transition: transform 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
                 background-color 200ms ease,
-                color 200ms ease;
+                color 200ms ease,
+                border-color 200ms ease;
   }
   .btn-primary {
-    background: var(--color-ink);
+    background: var(--color-accent);
     color: var(--color-bg);
   }
   .btn-primary:hover {
-    background: var(--color-accent);
+    background: var(--color-accent-hover);
   }
   .btn-ghost {
     color: var(--color-ink);
@@ -109,14 +114,15 @@
   }
   .btn-ghost:hover {
     background: var(--color-bg-muted);
-    border-color: var(--color-ink);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   /* Underline-on-hover link (editorial style) */
   .link-underline {
     position: relative;
     display: inline-block;
-    color: var(--color-ink);
+    color: inherit;
     transition: color 200ms ease;
   }
   .link-underline::after {
@@ -130,6 +136,9 @@
     transform-origin: left;
     transform: scaleX(0);
     transition: transform 320ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .link-underline:hover {
+    color: var(--color-accent);
   }
   .link-underline:hover::after {
     transform: scaleX(1);

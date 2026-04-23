@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Newsreader, Outfit } from "next/font/google";
+import { Noto_Serif_TC, Outfit } from "next/font/google";
 import "./globals.css";
 
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+const notoSerifTC = Noto_Serif_TC({
+  variable: "--font-noto-serif-tc",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -37,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-TW"
-      className={`${newsreader.variable} ${outfit.variable}`}
+      className={`${notoSerifTC.variable} ${outfit.variable}`}
     >
       <body>{children}</body>
     </html>
