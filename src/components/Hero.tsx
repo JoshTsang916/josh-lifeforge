@@ -17,17 +17,16 @@ export function Hero() {
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           {/* Left — copy */}
           <div className="lg:col-span-7 order-2 lg:order-1">
-            <h1 className="font-display text-[clamp(2.75rem,7vw,6rem)] leading-[1.05] tracking-[-0.02em] text-[color:var(--color-ink)] mb-8">
-              用對話建系統，<br />
-              把 AI 鍛造成{" "}
-              <span style={{ color: "var(--color-accent)" }}>
-                你的第二曲線
-              </span>
+            <h1 className="font-display text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[1.2] tracking-[-0.02em] text-[color:var(--color-ink)] mb-8 whitespace-nowrap">
+              <span style={{ color: "var(--color-accent)" }}>AI</span> 給你槓桿
+              <br />
+              <span style={{ color: "var(--color-accent)" }}>閱讀</span> 給你底氣
+              <br />
+              <span style={{ color: "var(--color-accent)" }}>一人公司</span>給你自由
             </h1>
 
             <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
-              我是 Josh — 原本的高中數學老師，現在的 AI 創作者。
-              幫想突破天花板的人，用對話把 AI 鍛造成屬於自己的內容工作流。
+              在被加速的時代，走一條不急的路
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -59,7 +58,7 @@ export function Hero() {
         <div className="mt-20 flex items-center gap-4 text-xs font-sans text-[color:var(--color-fg-subtle)]">
           <span className="font-mono tabular-nums">01</span>
           <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
-          <span>Currently writing on AI × Education</span>
+          <span>Josh - Sharing what I learn along the way</span>
         </div>
       </div>
     </section>
