@@ -4,11 +4,9 @@ import { About } from "@/components/About";
 import { Services } from "@/components/Services";
 import { Testimonials } from "@/components/Testimonials";
 import { RecentWork } from "@/components/RecentWork";
-import { Writings } from "@/components/Writings";
+import { Daily } from "@/components/Daily";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
-
-export const revalidate = 3600; // ISR：Writings 區塊每小時從 Supabase ig_posts 重抓
 
 export default function Home() {
   return (
@@ -20,7 +18,7 @@ export default function Home() {
         <Services />
         <Testimonials />
         <RecentWork />
-        <Writings />
+        <Daily />
         <Contact />
       </main>
       <Footer />

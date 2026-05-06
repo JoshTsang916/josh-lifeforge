@@ -1,16 +1,15 @@
 import Image from "next/image";
 
 type IgVideo = {
-  day: string;          // 日更 Day 編號
-  title: string;        // 站內顯示用標題
-  lede: string;         // 50–100 字導讀
-  date: string;         // YYYY.MM.DD
-  thumbnail: string;    // 本地縮圖路徑
-  permalink: string;    // IG Reel 永久連結
+  day: string;
+  title: string;
+  lede: string;
+  date: string;
+  thumbnail: string;
+  permalink: string;
 };
 
 // 精選日更短影片（手選自 Supabase ig_posts 中 likes 較高、主題分散的幾則）
-// 之後可改寫為從 ig_posts 動態抓最新 N 則 + 同步縮圖到本地
 const videos: IgVideo[] = [
   {
     day: "Day 33",
@@ -50,9 +49,9 @@ const videos: IgVideo[] = [
   },
 ];
 
-export function Writings() {
+export function Daily() {
   return (
-    <section id="writings" className="section">
+    <section id="daily" className="section">
       <div className="container-narrow">
         {/* Section header */}
         <div className="grid lg:grid-cols-12 gap-12 mb-20">
@@ -63,18 +62,18 @@ export function Writings() {
               </span>
               <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
             </div>
-            <h2 className="eyebrow">Writings</h2>
+            <h2 className="eyebrow">Daily</h2>
             <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
-              寫下來的思考
+              日更短影片
             </p>
           </div>
           <div className="lg:col-span-9 max-w-2xl">
             <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              我想清楚了，才會寫下來、錄下來。
+              每天一支，把當天學到的、想清楚的，立刻交出去。
             </p>
             <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-              關於 AI、閱讀、自我鍛造的日更短影片。
-              不追熱點，只寫我真的有把握、願意為之負責的內容。
+              一個老師在 AI 與閱讀的交界處，把學習過程公開化。
+              下面挑了幾則代表性的，完整每日更新在 Instagram。
             </p>
             <a
               href="https://www.instagram.com/josh_lifeforge/"
@@ -82,7 +81,7 @@ export function Writings() {
               rel="noopener noreferrer"
               className="link-underline mt-6 inline-block font-sans text-sm font-medium"
             >
-              在 IG 看每日更新 →
+              看完整日更 →
             </a>
           </div>
         </div>
