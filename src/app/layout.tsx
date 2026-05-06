@@ -6,6 +6,7 @@ import {
   Huninn,
   LXGW_WenKai_TC,
 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // === Main brand pair (v0.3) ===
@@ -46,7 +47,7 @@ const lxgwWenKaiTC = LXGW_WenKai_TC({
   display: "swap",
 });
 
-const SITE_URL = "https://josh-lifeforge.vercel.app";
+const SITE_URL = "https://josh0916.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -62,10 +63,10 @@ export const metadata: Metadata = {
     siteName: "人生鍛造所",
     images: [
       {
-        url: "/logo.png",
-        width: 1080,
-        height: 1080,
-        alt: "人生鍛造所 Logo",
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Josh 帶領 n8n Automation Workshop 結業現場",
       },
     ],
   },
@@ -73,7 +74,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "人生鍛造所 — Josh Tsang",
     description: "用對話建系統。把 AI 鍛造成你的第二曲線。",
-    images: ["/logo.png"],
+    images: ["/og-image.jpg"],
   },
 };
 
@@ -93,7 +94,10 @@ export default function RootLayout({
         lxgwWenKaiTC.variable,
       ].join(" ")}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
