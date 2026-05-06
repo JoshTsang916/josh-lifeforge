@@ -49,14 +49,20 @@ const lxgwWenKaiTC = LXGW_WenKai_TC({
 
 const SITE_URL = "https://josh0916.com";
 
+// Tagline used as og:title / twitter title — manifesto 風格，呼應 hero 三元素
+const TAGLINE = "閱讀 × AI × 時間 ＝ 鍛造人生";
+
+// Description 同步用於 SEO / og / twitter — 把 hero 三元素 + 「駕馭 AI」融進去
+const DESCRIPTION =
+  "AI 給你槓桿，閱讀給你底氣，時間給你自由。Josh 教你駕馭 AI、讀更深、活得不急。工作坊 / 1:1 諮詢 / 演講邀約。";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "人生鍛造所 — Josh Tsang",
-  description:
-    "用對話建系統。把 AI 鍛造成你的第二曲線。Josh — 高中數學老師 × AI 創作者。工作坊、1 對 1 諮詢、演講邀約。",
+  description: DESCRIPTION,
   openGraph: {
-    title: "人生鍛造所 — Josh Tsang",
-    description: "用對話建系統。把 AI 鍛造成你的第二曲線。",
+    title: TAGLINE,
+    description: DESCRIPTION,
     url: SITE_URL,
     type: "website",
     locale: "zh_TW",
@@ -72,8 +78,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "人生鍛造所 — Josh Tsang",
-    description: "用對話建系統。把 AI 鍛造成你的第二曲線。",
+    title: TAGLINE,
+    description: DESCRIPTION,
     images: ["/og-image.jpg"],
   },
 };
