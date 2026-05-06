@@ -72,8 +72,7 @@ export function Daily() {
               每天一支短影片，不為什麼，只為經歷與累積。
             </p>
             <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-              一個老師在 AI 與閱讀的交界處，把學習過程公開化。
-              下面挑了幾則代表性的，完整每日更新在 Instagram。
+              在 AI 與閱讀的交界處，一天一錘，鑄下屬於自己的紋路。
             </p>
             <a
               href="https://www.instagram.com/josh_lifeforge/"
