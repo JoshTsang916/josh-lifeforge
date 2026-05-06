@@ -11,9 +11,10 @@ Audience: students + prospective clients. Goal: clarify who Josh is and convert 
 - **Tailwind CSS v4** (via `@theme` block in `globals.css`, no `tailwind.config.*`)
 - **Fonts** (locked v0.5): Noto Serif TC (display, 思源宋) + LXGW WenKai TC (body, 霞鶩文楷) + Outfit (Latin UI labels) — all via `next/font/google`
 - **Deployment**: Vercel (preview = branch URL, production = main)
-- **Database**: Supabase (shared with `ccdailytalk` — same `srpqvtkliesdfnqirdpt` instance)
-  - Will read `contents` table (published articles/videos) for **Writings** and **Recent Work** sections
-  - Read-only via anon key
+- **Database**: 目前網站本身不連線上資料庫——所有區塊內容均 hardcoded 在各 component 中
+  - Testimonials / Recent Work / Writings 的素材都是「人工挑選 → hardcode」
+  - Writings 的 IG 影片素材來源是 Supabase `ig_posts`（shared instance `srpqvtkliesdfnqirdpt`），但網站不直接連——更新流程：開發時用 Supabase MCP 撈最新 reels → 下載縮圖到 `public/photos/writings/` → 改 `Writings.tsx` 的 `videos` 陣列
+  - 之後若要動態抓最新 N 則影片，需重新加回 `@supabase/supabase-js` 依賴並建立 server-side fetch
 
 ## Design system (Warm brown editorial)
 
@@ -43,19 +44,23 @@ This project uses the **web-design-engineer** skill globally installed at `~/.cl
 ```
 src/
 ├── app/
-│   ├── layout.tsx        # Newsreader + Outfit fonts, metadata
-│   ├── page.tsx          # Composes all sections
-│   └── globals.css       # @theme tokens + .section/.btn/.link-underline classes
+│   ├── layout.tsx          # Noto Serif TC + LXGW WenKai TC + Outfit fonts, metadata
+│   ├── page.tsx            # Composes all sections in 01–07 order
+│   └── globals.css         # @theme tokens + .section/.btn/.link-underline classes
 └── components/
-    ├── Nav.tsx           # Sticky top nav with anchor links
-    ├── Hero.tsx          # Section 01 — headline + CTAs
-    ├── About.tsx         # Section 02 — story + FORGE callout
-    ├── Services.tsx      # Section 03 — workshops / 1:1 / speaking
-    ├── Work.tsx          # [TODO] Section 04 — Supabase contents auto-sync
-    ├── Writings.tsx      # [TODO] Section 05 — articles from contents
-    ├── Contact.tsx       # [TODO] Section 06 — form or Calendly
-    └── Footer.tsx        # Connect + reach out + copyright
+    ├── Nav.tsx             # Sticky top nav，desktop 橫式選單 + mobile 漢堡 trigger
+    ├── MobileMenu.tsx      # client component，用 React Portal 渲染到 body 避開 Nav backdrop-blur 造成的 stacking 限制
+    ├── Hero.tsx            # Section 01 — headline + CTAs
+    ├── About.tsx           # Section 02 — Josh 的故事
+    ├── Services.tsx        # Section 03 — workshops / 1:1 / speaking
+    ├── Testimonials.tsx    # Section 04 — 學員見證（hardcoded：Du、大大）
+    ├── RecentWork.tsx      # Section 05 — 近期作品（hardcoded：n8n / 80字魔法 / 騎象人）
+    ├── Writings.tsx        # Section 06 — 日更短影片（hardcoded 4 則 IG reels + 縮圖）
+    ├── Contact.tsx         # Section 07 — Email + Calendly
+    └── Footer.tsx          # Connect (Threads/IG/YouTube) + reach out + copyright
 ```
+
+**Section 編號規則**：每個 section 左欄顯示兩位數編號（01–07）。新增 section 時整體重編，編號必須連續、不得跳號或重複。
 
 ## Editorial tone
 - Headlines: serif italic accents on key concept words (e.g. "*第二曲線*", "*跟 AI 對話建出系統*")
@@ -63,12 +68,13 @@ src/
 - Hairline rules between sections instead of heavy dividers
 - Generous whitespace — content density is low on purpose
 
-## Content placeholders (need Josh input)
-- `[email placeholder — need real address]` in Footer
-- Social links in Footer (Threads / IG / YouTube) — currently `href="#"`
-- About copy is a draft — Josh should rewrite in his voice
-- Service descriptions are drafts — Josh should validate the framing
-- No real workshop / talk titles yet (Recent Work section pending)
+## Content status (2026-05-06)
+- **Email** / **Calendly** / **Threads / IG / YouTube** 全部接真實連結，已無 placeholder
+- **About copy**：Josh 親寫版本（commit 24a624f / 6814cb2 之後）
+- **Testimonials**：兩條真實學員見證（Du / 大大），出自 `2026n8nWorkshop` repo——若要新增引用前請與 Josh 核對真偽（同 repo 內曾有 AI 生假見證 Betty）
+- **Recent Work**：三場真實活動，照片在 `public/photos/`
+- **Writings**：4 則手選日更短影片（Day 33/31/25/24），縮圖在 `public/photos/writings/`，連回 IG Reel
+- **Service descriptions** 仍是草稿——之後 Josh 會回頭重寫
 
 ## Workflow with Josh
 - Josh communicates in 繁體中文, doesn't write code

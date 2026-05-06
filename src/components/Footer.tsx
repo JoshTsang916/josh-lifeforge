@@ -14,10 +14,36 @@ export function Footer() {
           <div>
             <p className="eyebrow mb-3">Connect</p>
             <ul className="space-y-2 font-sans text-sm">
-              {/* TODO[josh]: replace # with real social URLs */}
-              <li><a href="#" className="link-underline">Threads</a></li>
-              <li><a href="#" className="link-underline">Instagram</a></li>
-              <li><a href="#" className="link-underline">YouTube</a></li>
+              <li>
+                <a
+                  href="https://www.threads.com/@josh_lifeforge"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline"
+                >
+                  Threads
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.instagram.com/josh_lifeforge/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline"
+                >
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.youtube.com/@JoshTheLifeForge"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline"
+                >
+                  YouTube
+                </a>
+              </li>
             </ul>
           </div>
           <div>

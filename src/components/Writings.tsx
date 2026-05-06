@@ -1,39 +1,56 @@
-import { getSupabase, type ContentRow } from "@/lib/supabase";
+import Image from "next/image";
 
-function excerpt(body: string | null, len = 120): string {
-  if (!body) return "";
-  const clean = body.replace(/\s+/g, " ").trim();
-  return clean.length > len ? clean.slice(0, len) + "…" : clean;
-}
+type IgVideo = {
+  day: string;          // 日更 Day 編號
+  title: string;        // 站內顯示用標題
+  lede: string;         // 50–100 字導讀
+  date: string;         // YYYY.MM.DD
+  thumbnail: string;    // 本地縮圖路徑
+  permalink: string;    // IG Reel 永久連結
+};
 
-function formatDate(iso: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}.${m}.${day}`;
-}
+// 精選日更短影片（手選自 Supabase ig_posts 中 likes 較高、主題分散的幾則）
+// 之後可改寫為從 ig_posts 動態抓最新 N 則 + 同步縮圖到本地
+const videos: IgVideo[] = [
+  {
+    day: "Day 33",
+    title: "寫給人生的提示詞",
+    lede:
+      "大家很會寫給 AI 的提示詞，那寫給自己人生的呢？閱讀是樸素的解藥——每一頁、每一行咀嚼過的文字，都是你寫給未來自己的提示詞。",
+    date: "2026.05.03",
+    thumbnail: "/photos/writings/day33.jpg",
+    permalink: "https://www.instagram.com/reel/DX4IsVaJqV7/",
+  },
+  {
+    day: "Day 31",
+    title: "我以前肯定不會錄這個影片",
+    lede:
+      "分享是初衷，但以前大腦會用盡全力阻擋我。現在它還在阻擋，只是我變強了。如果你也站在「要不要做」的邊緣，歡迎留言或私訊。",
+    date: "2026.05.01",
+    thumbnail: "/photos/writings/day31.jpg",
+    permalink: "https://www.instagram.com/reel/DXzGaTZJles/",
+  },
+  {
+    day: "Day 25",
+    title: "CLI——AI 的母語",
+    lede:
+      "CLI 從工程師專屬詞彙，變成 AI 的共同語言。Claude Code 能幫你剪片、整理檔案、開瀏覽器，因為它住進你的電腦，用 CLI 一行行下指令幫你做事。",
+    date: "2026.04.25",
+    thumbnail: "/photos/writings/day25.jpg",
+    permalink: "https://www.instagram.com/reel/DXjCzLRCZaV/",
+  },
+  {
+    day: "Day 24",
+    title: "幫 AI 裝備一支遙控器",
+    lede:
+      "MCP 就是給 AI 的遙控器——它本身不做事，只是橋樑，讓 AI 直接抓你的資料、操控你的工具。新手與高手的差距，可能就在這支遙控器。",
+    date: "2026.04.24",
+    thumbnail: "/photos/writings/day24.jpg",
+    permalink: "https://www.instagram.com/reel/DXgr7wmiVTj/",
+  },
+];
 
-async function fetchArticles(): Promise<ContentRow[]> {
-  const supabase = getSupabase();
-  if (!supabase) return [];
-  const { data, error } = await supabase
-    .from("contents")
-    .select("id, title, body, tags, published_at")
-    .eq("type", "article")
-    .eq("status", "published")
-    .order("published_at", { ascending: false, nullsFirst: false });
-  if (error) {
-    console.error("[Writings] fetch failed:", error.message);
-    return [];
-  }
-  return (data ?? []) as ContentRow[];
-}
-
-export async function Writings() {
-  const articles = await fetchArticles();
-
+export function Writings() {
   return (
     <section id="writings" className="section">
       <div className="container-narrow">
@@ -42,7 +59,7 @@ export async function Writings() {
           <div className="lg:col-span-3">
             <div className="flex items-center gap-3 mb-6">
               <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                05
+                06
               </span>
               <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
             </div>
@@ -53,81 +70,77 @@ export async function Writings() {
           </div>
           <div className="lg:col-span-9 max-w-2xl">
             <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              我想清楚了，才會寫下來。
+              我想清楚了，才會寫下來、錄下來。
             </p>
             <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-              關於 AI、教育、自我鍛造的文章。不追熱點，
-              只寫我真的有把握、願意為之負責的內容。
+              關於 AI、閱讀、自我鍛造的日更短影片。
+              不追熱點，只寫我真的有把握、願意為之負責的內容。
             </p>
+            <a
+              href="https://www.instagram.com/josh_lifeforge/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline mt-6 inline-block font-sans text-sm font-medium"
+            >
+              在 IG 看每日更新 →
+            </a>
           </div>
         </div>
 
-        {/* Article list */}
-        {articles.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <div className="border-t border-[color:var(--color-line-strong)]">
-            {articles.map((article, idx) => (
-              <article
-                key={article.id}
-                className="grid lg:grid-cols-12 gap-6 py-10 border-b border-[color:var(--color-line-strong)] group"
-              >
-                <div className="lg:col-span-2 flex flex-col gap-1">
-                  <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <time className="font-ui text-xs tracking-wide text-[color:var(--color-fg-subtle)]">
-                    {formatDate(article.published_at)}
-                  </time>
+        {/* Video list — editorial stack */}
+        <div className="border-t border-[color:var(--color-line-strong)]">
+          {videos.map((v) => (
+            <article
+              key={v.day}
+              className="grid lg:grid-cols-12 gap-8 py-12 border-b border-[color:var(--color-line-strong)] group"
+            >
+              <div className="lg:col-span-2">
+                <div className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
+                  {v.day}
                 </div>
+                <time className="font-ui text-[11px] tracking-[0.18em] uppercase text-[color:var(--color-fg-subtle)]">
+                  {v.date}
+                </time>
+              </div>
 
-                <div className="lg:col-span-10">
-                  <h3 className="font-display text-2xl md:text-3xl leading-tight text-[color:var(--color-ink)] mb-3 group-hover:text-[color:var(--color-accent)] transition-colors duration-300">
-                    {article.title}
-                  </h3>
-                  <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)] mb-4">
-                    {excerpt(article.body, 140)}
-                  </p>
-                  {article.tags && article.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {article.tags
-                        .filter(
-                          (t) =>
-                            !t.startsWith("workflow_dir:") &&
-                            !t.startsWith("platform:") &&
-                            !t.startsWith("supersedes:") &&
-                            !t.startsWith("forge:"),
-                        )
-                        .slice(0, 4)
-                        .map((tag) => (
-                          <span
-                            key={tag}
-                            className="font-ui text-[11px] tracking-wide text-[color:var(--color-fg-subtle)] px-2 py-0.5 border border-[color:var(--color-line)]"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                    </div>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+              <div className="lg:col-span-4">
+                <a
+                  href={v.permalink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`在 Instagram 看「${v.title}」`}
+                  className="block relative aspect-[3/4] overflow-hidden rounded-sm bg-[color:var(--color-bg-deep)]"
+                >
+                  <Image
+                    src={v.thumbnail}
+                    alt={`${v.day} — ${v.title}`}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 30vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                </a>
+              </div>
+
+              <div className="lg:col-span-6 flex flex-col">
+                <h3 className="font-display text-2xl md:text-3xl leading-tight text-[color:var(--color-ink)] mb-4 group-hover:text-[color:var(--color-accent)] transition-colors duration-300">
+                  {v.title}
+                </h3>
+                <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)] mb-6">
+                  {v.lede}
+                </p>
+                <a
+                  href={v.permalink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline font-sans text-sm font-medium mt-auto self-start"
+                >
+                  在 Instagram 看完整 →
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="border-t border-b border-[color:var(--color-line-strong)] py-20 text-center">
-      <p className="font-display text-2xl text-[color:var(--color-ink)] mb-3">
-        文章累積中
-      </p>
-      <p className="font-sans text-sm text-[color:var(--color-fg-muted)] max-w-md mx-auto">
-        [Supabase 連線未設定或暫無已發布文章]
-      </p>
-    </div>
   );
 }
