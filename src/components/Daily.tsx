@@ -69,7 +69,7 @@ export function Daily() {
           </div>
           <div className="lg:col-span-9 max-w-2xl">
             <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              每天一支，把當天學到的、想清楚的，立刻交出去。
+              每天一支短影片，不為什麼，只為經歷與累積。
             </p>
             <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
               一個老師在 AI 與閱讀的交界處，把學習過程公開化。
