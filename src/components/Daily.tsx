@@ -10,12 +10,13 @@ type IgVideo = {
 };
 
 // 精選日更短影片（手選自 Supabase ig_posts 中 likes 較高、主題分散的幾則）
+// lede 直接取自 IG caption 開頭段落，不潤稿；只去掉換行排成連續段落
 const videos: IgVideo[] = [
   {
     day: "Day 33",
     title: "寫給人生的提示詞",
     lede:
-      "大家很會寫給 AI 的提示詞，那寫給自己人生的呢？閱讀是樸素的解藥——每一頁、每一行咀嚼過的文字，都是你寫給未來自己的提示詞。",
+      "現在大家很會寫給 AI 的提示詞，那我們是不是也應該好好的，撰寫給自己人生的提示詞？",
     date: "2026.05.03",
     thumbnail: "/photos/writings/day33.jpg",
     permalink: "https://www.instagram.com/reel/DX4IsVaJqV7/",
@@ -24,25 +25,25 @@ const videos: IgVideo[] = [
     day: "Day 31",
     title: "我以前肯定不會錄這個影片",
     lede:
-      "分享是初衷，但以前大腦會用盡全力阻擋我。現在它還在阻擋，只是我變強了。如果你也站在「要不要做」的邊緣，歡迎留言或私訊。",
+      "我想分享，我想幫人解決問題，這個初衷在哪裡都不會變，但以前我不會真的問。我的大腦會用盡全力阻擋我。現在其實也是，只是我變強了😎",
     date: "2026.05.01",
     thumbnail: "/photos/writings/day31.jpg",
     permalink: "https://www.instagram.com/reel/DXzGaTZJles/",
   },
   {
     day: "Day 25",
-    title: "CLI——AI 的母語",
+    title: "AI 時代，你必須知道 CLI 是什麼",
     lede:
-      "CLI 從工程師專屬詞彙，變成 AI 的共同語言。Claude Code 能幫你剪片、整理檔案、開瀏覽器，因為它住進你的電腦，用 CLI 一行行下指令幫你做事。",
+      "幾十年前還是工程師專屬用詞，現在，它已經變成 AI 的母語了。",
     date: "2026.04.25",
     thumbnail: "/photos/writings/day25.jpg",
     permalink: "https://www.instagram.com/reel/DXjCzLRCZaV/",
   },
   {
     day: "Day 24",
-    title: "幫 AI 裝備一支遙控器",
+    title: "幫你的 AI 裝備「遙控器」",
     lede:
-      "MCP 就是給 AI 的遙控器——它本身不做事，只是橋樑，讓 AI 直接抓你的資料、操控你的工具。新手與高手的差距，可能就在這支遙控器。",
+      "AI 新手與高手，也許就差在這一件事。",
     date: "2026.04.24",
     thumbnail: "/photos/writings/day24.jpg",
     permalink: "https://www.instagram.com/reel/DXgr7wmiVTj/",
