@@ -79,20 +79,6 @@ export function About() {
                 我會把走過的路寫下來，希望對你有用。如果你也想走這條路，歡迎讀我寫的東西，或來聊聊 AI 怎麼在你身上落地。
               </p>
             </div>
-
-            {/* FORGE framework callout — TODO: Josh 親寫副標描述 */}
-            <div className="mt-16 p-8 border-t border-b border-[color:var(--color-line-strong)]">
-              <div className="eyebrow mb-4">AI 互動方法論</div>
-              <p className="font-display text-2xl leading-tight text-[color:var(--color-ink)]">
-                Context is King → 上下文工具箱 →{" "}
-                <span className="text-[color:var(--color-accent)]">
-                  FORGE 五步法
-                </span>
-              </p>
-              <p className="mt-4 font-sans text-sm text-[color:var(--color-fg-muted)] italic">
-                [副標待 Josh 親寫，原 AI 生版本已拋棄]
-              </p>
-            </div>
           </div>
         </div>
       </div>

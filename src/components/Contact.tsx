@@ -1,6 +1,5 @@
-// TODO[josh]: set real email + optional Calendly URL
 const EMAIL = "joshailearing0916@gmail.com";
-const CALENDLY_URL: string | null = null; // set to Calendly link when ready
+const CALENDLY_URL = "https://calendly.com/joshailearing0916";
 
 export function Contact() {
   return (
@@ -10,7 +9,7 @@ export function Contact() {
           <div className="lg:col-span-3">
             <div className="flex items-center gap-3 mb-6">
               <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                06
+                07
               </span>
               <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
             </div>
@@ -48,23 +47,17 @@ export function Contact() {
                 </p>
               </div>
 
-              {/* Calendly (conditional) */}
+              {/* Calendly */}
               <div className="p-6 border border-[color:var(--color-line-strong)]">
                 <div className="eyebrow mb-3">直接預約</div>
-                {CALENDLY_URL ? (
-                  <a
-                    href={CALENDLY_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-display text-xl text-[color:var(--color-ink)] hover:text-[color:var(--color-accent)] transition-colors"
-                  >
-                    打開行事曆 →
-                  </a>
-                ) : (
-                  <p className="font-display text-xl text-[color:var(--color-fg-subtle)]">
-                    [Calendly 連結即將啟用]
-                  </p>
-                )}
+                <a
+                  href={CALENDLY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-display text-xl text-[color:var(--color-ink)] hover:text-[color:var(--color-accent)] transition-colors"
+                >
+                  打開行事曆 →
+                </a>
                 <p className="mt-3 font-sans text-xs text-[color:var(--color-fg-subtle)]">
                   30 分鐘 · 視訊
                 </p>

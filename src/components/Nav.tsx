@@ -1,4 +1,14 @@
 import Image from "next/image";
+import { MobileMenu } from "./MobileMenu";
+
+const navLinks = [
+  { href: "#about", label: "關於" },
+  { href: "#services", label: "服務" },
+  { href: "#testimonials", label: "見證" },
+  { href: "#work", label: "作品" },
+  { href: "#daily", label: "日更" },
+  { href: "#contact", label: "聯絡" },
+];
 
 export function Nav() {
   return (
@@ -6,7 +16,7 @@ export function Nav() {
       <div className="container-narrow flex items-center justify-between py-2 px-[clamp(1.25rem,4vw,3rem)]">
         <a
           href="#hero"
-          className="flex items-center gap-3 group"
+          className="flex items-center gap-3 group relative z-50"
           aria-label="人生鍛造所 首頁"
         >
           <Image
@@ -27,17 +37,26 @@ export function Nav() {
           </div>
         </a>
 
+        {/* Desktop nav */}
         <ul className="hidden md:flex items-center gap-8 text-sm font-sans text-[color:var(--color-fg-muted)]">
-          <li><a href="#about" className="link-underline">關於</a></li>
-          <li><a href="#services" className="link-underline">服務</a></li>
-          <li><a href="#work" className="link-underline">作品</a></li>
-          <li><a href="#writings" className="link-underline">文章</a></li>
-          <li><a href="#contact" className="link-underline">聯絡</a></li>
+          {navLinks.map((l) => (
+            <li key={l.href}>
+              <a href={l.href} className="link-underline">
+                {l.label}
+              </a>
+            </li>
+          ))}
         </ul>
 
-        <a href="#contact" className="btn btn-primary !py-2 !px-4 text-sm">
-          預約諮詢
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href="#contact"
+            className="btn btn-primary !py-2 !px-4 text-sm hidden md:inline-flex"
+          >
+            預約諮詢
+          </a>
+          <MobileMenu links={navLinks} />
+        </div>
       </div>
     </nav>
   );
