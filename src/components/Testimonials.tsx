@@ -5,7 +5,8 @@ type Testimonial = {
   quote: string;
 };
 
-// 真實學員見證（出自 2026 n8n Automation Workshop）
+// 真實學員見證
+// 來源：2026 n8n Automation Workshop（Du、大大）+ 引導力學院 AI 分享會（Tammy、Kin）
 const testimonials: Testimonial[] = [
   {
     number: "01",
@@ -16,6 +17,20 @@ const testimonials: Testimonial[] = [
   },
   {
     number: "02",
+    name: "Tammy",
+    role: "引導師",
+    quote:
+      "謝謝 Josh 來學會分享，跟大家分享這陣子研究的心法和技法，以及踩過的坑，連休息時、中場時大家都捨不得離開座位～收穫超多😍",
+  },
+  {
+    number: "03",
+    name: "Kin",
+    role: "企業顧問",
+    quote:
+      "感謝 Josh 老師🙏 從單純的對話、記憶移轉，再到完整的 Skill 架構，收穫滿滿🥰",
+  },
+  {
+    number: "04",
     name: "大大",
     role: "創業顧問",
     quote:
@@ -41,16 +56,15 @@ export function Testimonials() {
             </div>
             <h2 className="eyebrow">Testimonials</h2>
             <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
-              學員怎麼說
+              課後留下來的話
             </p>
           </div>
           <div className="lg:col-span-9 max-w-2xl">
             <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              不是行銷文案，是上完課後留下來的真實心得。
+              上過 n8n 工作坊、或來引導力學院分享會之後寫來的訊息。
             </p>
             <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-              出自 2026 n8n Automation Workshop。
-              工作坊不在規模，而在離開教室時你能不能繼續用。
+              幾乎一字不改放在這裡。
             </p>
           </div>
         </div>
