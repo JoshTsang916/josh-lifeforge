@@ -5,6 +5,9 @@ type Service = {
   description: string;
   forWho: string;
   cta: string;
+  proof?: {
+    cases: string[];
+  };
 };
 
 const services: Service[] = [
@@ -35,6 +38,21 @@ const services: Service[] = [
     forWho: "教育機構、產業活動、讀書會",
     cta: "邀約演講",
   },
+  {
+    number: "04",
+    title: "一起把它蓋出來",
+    subtitle: "Build With Me",
+    description:
+      "你的流程卡住、團隊還在用 Excel、想把資料串起來——我跟你一起，從場景拆到資料模型再到上線，用 AI + Supabase + Next.js 蓋一套真的能跑的系統。不是丟需求等成品，是我陪你走完一輪，順手把這套思路留下，下次你能自己接手下一個流程。",
+    forWho: "想把日常重複工作交給系統處理的中小企業、傳產老闆、專業事務所",
+    cta: "聊聊你的場景",
+    proof: {
+      cases: [
+        "某會計事務所｜員工行程登記：員工 LINE 傳一句「下午外出收件」，AI 解析自動寫進行事曆，主管週曆一覽全所行程",
+        "某食品代理商｜業務獎金結算：跟通路規則綁定的應收／沖銷／退貨流程，雙月結算自動產 Excel 薪資條",
+      ],
+    },
+  },
 ];
 
 export function Services() {
@@ -57,8 +75,9 @@ export function Services() {
           </div>
           <div className="lg:col-span-9 max-w-2xl">
             <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              三種協作形式，
-              對應三種你可能正在面對的處境。
+              四種協作形式，
+              從教學到實作，
+              對應你正在面對的不同處境。
             </p>
             <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
               如果你還在猶豫哪一種適合你，
@@ -88,6 +107,21 @@ export function Services() {
                 <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)] mb-4">
                   {service.description}
                 </p>
+                {service.proof && (
+                  <div className="mt-6 mb-6 pt-6 border-t border-[color:var(--color-line)] space-y-3">
+                    {service.proof.cases.map((c, i) => (
+                      <p
+                        key={i}
+                        className="font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)] flex gap-3"
+                      >
+                        <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)] pt-0.5 shrink-0">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span>{c}</span>
+                      </p>
+                    ))}
+                  </div>
+                )}
                 <p className="font-sans text-sm text-[color:var(--color-fg-subtle)]">
                   <span className="text-[color:var(--color-fg)]">適合 </span>
                   {service.forWho}
