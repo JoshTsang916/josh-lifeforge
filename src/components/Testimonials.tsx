@@ -61,7 +61,7 @@ export function Testimonials() {
           </div>
           <div className="lg:col-span-9 max-w-2xl">
             <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              上過 n8n 工作坊、或來引導力學院分享會之後寫來的訊息。
+              n8n 工作坊與 AI 自動化分享會的學員見證。
             </p>
             <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
               幾乎一字不改放在這裡。
@@ -84,14 +84,7 @@ export function Testimonials() {
               </div>
 
               <div className="lg:col-span-10 max-w-3xl">
-                {/* 大引號裝飾 */}
-                <span
-                  className="font-display text-6xl leading-none text-[color:var(--color-accent)] block mb-2"
-                  aria-hidden="true"
-                >
-                  &ldquo;
-                </span>
-                <blockquote className="font-display text-xl md:text-2xl leading-[1.6] text-[color:var(--color-ink)] italic">
+                <blockquote className="font-display text-xl md:text-2xl leading-[1.6] text-[color:var(--color-ink)]">
                   {t.quote}
                 </blockquote>
                 <div className="mt-6 flex items-center gap-3">
