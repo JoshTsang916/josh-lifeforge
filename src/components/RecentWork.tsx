@@ -21,7 +21,7 @@ const works: Work[] = [
   },
   {
     id: "talk-ai-forum",
-    title: "80 字的魔法",
+    title: "AI 自動化，進入了文件驅動的時代",
     subtitle: "為未來而引導學會 × AI 分享會",
     description:
       "談上下文脈絡怎麼決定你跟 AI 對話的品質。不是 prompt 技巧，是更上游的「脈絡建立」——這是我看到大部分人卡住的地方。",
@@ -30,7 +30,7 @@ const works: Work[] = [
   },
   {
     id: "talk-neuroplasticity",
-    title: "騎象人學會了與大象共處",
+    title: "神經可塑性說書專場",
     subtitle: "HPX × Wee 讀書會 — 神經可塑性",
     description:
       "用 50 分鐘講 The Brain That Changes Itself 這本書，配上我自己 7 次公開演講緊張程度的真實變化軌跡，說明大腦是怎麼被重塑的。",

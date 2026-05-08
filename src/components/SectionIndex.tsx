@@ -27,7 +27,7 @@ const entries: IndexEntry[] = [
   {
     number: "05",
     label: "Recent Work",
-    hook: "n8n workshop、80 字的魔法、騎象人學會了與大象共處",
+    hook: "n8n workshop、AI 自動化，進入了文件驅動的時代、神經可塑性說書專場",
     href: "#work",
   },
   {
