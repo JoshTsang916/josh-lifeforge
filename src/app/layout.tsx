@@ -7,6 +7,7 @@ import {
   LXGW_WenKai_TC,
 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { VercelToolbar } from "@vercel/toolbar/next";
 import "./globals.css";
 
 // === Main brand pair (v0.3) ===
@@ -103,6 +104,7 @@ export default function RootLayout({
       <body>
         {children}
         <Analytics />
+        {process.env.VERCEL_ENV === "preview" && <VercelToolbar />}
       </body>
     </html>
   );
