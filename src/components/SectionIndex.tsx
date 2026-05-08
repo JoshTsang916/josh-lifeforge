@@ -21,7 +21,7 @@ const entries: IndexEntry[] = [
   {
     number: "04",
     label: "Testimonials",
-    hook: "兩位真實學員留下的話",
+    hook: "四位真實學員留下的話",
     href: "#testimonials",
   },
   {
