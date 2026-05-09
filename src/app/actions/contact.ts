@@ -63,7 +63,7 @@ export async function submitContact(
   try {
     const { error } = await resend.emails.send({
       from: "人生鍛造所 <onboarding@resend.dev>",
-      to: "joshailearing0916@gmail.com",
+      to: "bonkerser@gmail.com",
       replyTo: email,
       subject: `[人生鍛造所] ${SERVICE_LABEL[service]} — 來自 ${email}`,
       text: [
