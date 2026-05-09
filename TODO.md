@@ -1,6 +1,6 @@
 # josh-lifeforge — 待調整清單
 
-> 最近更新：2026-05-08
+> 最近更新：2026-05-09
 > 按優先度分組；按「先決策、再實作、最後加錦上添花」排序。
 > 維護慣例：完成一項就從 🔴/🟡/🟢 移到「已完成」並標日期；想到新的就加到對應分類。
 
@@ -29,36 +29,6 @@ Services 04 Build With Me 目前用「某會計事務所」「某食品代理商
 CLAUDE.md「Design notes」記錄這個拍板：先匿名上線，等授權升級。
 
 來源：2026-05-08 加 04 Build With Me 時的 trade-off
-
-### 3. Contact section 加結構化諮詢表單（C 方案已拍板）
-目前 Contact section 是 mailto，訪客要自己開 email app 從零寫信，門檻高。改成結構化表單降低「不知怎麼開口」障礙。
-
-**方案 C（已拍板）**：表單為主視覺、mailto 縮成小字「或者直接寫信給我」、Calendly 維持「預約 1:1 通話」按鈕。
-
-**表單 fields（3 個，已拍板）**：
-1. 想討論的服務（radio 4 選 1）：工作坊 / 1 對 1 諮詢 / 演講邀約 / 客製化開發
-2. 你的 Email（必填）
-3. 想聊的內容（free text，placeholder：「告訴我你目前的場景、卡在哪、想要什麼結果」）
-
-**技術 stack**：
-- **Resend + Next.js Server Action**（Vercel 推薦）
-- 表單 submit → Server Action → Resend API → 寄到 `joshailearning0916@gmail.com`（已拍板）
-- Resend 免費 tier 100 封/天足夠
-- 防 spam：honeypot field（隱藏 input，bot 會填人類不會）+ rate limit
-
-**待下次開工拍板**：
-- [ ] submit 成功後 UX：thank you message / redirect / 純 success state
-- [ ] 防 spam 要不要加 reCAPTCHA（建議先靠 honeypot 看夠不夠）
-- [ ] 表單視覺風格：editorial 風（跟 BRAND 對齊）vs SaaS 風（提高轉化但跟調性可能衝）
-- [ ] mailto 小字位置：表單下方還是側邊
-- [ ] 服務 radio 順序對齊既有 01-04（工作坊 / 1 對 1 / 演講 / 客製化）
-
-**前置安裝**（下次開工要做）：
-- `npm install resend`
-- 註冊 Resend account 拿 API key
-- Vercel env var 加 `RESEND_API_KEY`（production + preview 都設）
-
-來源：2026-05-08 session wrap-up Josh 提想法 → 評估三方案 → 拍板 C / 3 fields / joshailearning0916@gmail.com
 
 ---
 
@@ -144,6 +114,27 @@ CLAUDE.md「Related repos」段把 ccdailytalk / remotion 寫成 `D:/...` Window
 低優先——不影響開發。
 
 來源：2026-05-08 加 toolbar 時掃 CLAUDE.md 發現
+
+---
+
+## ✅ 今天完成（2026-05-09）
+
+Contact section 從 mailto 升級成結構化諮詢表單（原 🔴 #3 完成）。Branch `feat/contact-form` 6 個 commit 走完，PR #11 squash merge 進 main，production deploy 上線（curl 驗 placeholder「張小姐」live）。
+
+1. **`81015bc`** feat(contact): structured inquiry form with Resend + honeypot —— Server Action + ContactForm（client）+ Contact 整合，3 fields + honeypot + zod validate + Resend send，editorial 米色框 + 磚紅 accent，4 service radio 對齊 Services 01-04 順序
+2. **`983b39a`** docs(todo): record 5/8 contact form spec carry-over
+3. **`a5a867f`** fix(contact): use Resend verified email as form recipient —— Resend free tier sandbox 限制 to 必須是 account verified email；Josh 用 bonkerser 註冊 → to 改 bonkerser；**公開 mailto 仍是 joshailearing0916（公開門面 vs 內部信箱分離）**
+4. **`7ebc96d`** feat(contact): add required name field —— Josh feedback「訪客忘了寫名字回信會尷尬」→ 必填「你怎麼稱呼」欄位 + email subject 帶稱呼
+5. **`4fe0f4e`** + **`0685b96`** style(contact): name placeholder 兩輪微調 —— 「Josh、小華、都可以」→「Tom、張先生、小楊...都行」（網站主人名字當範例會 confused）→「Tom、張小姐、小楊...都行」（性別範例 balance）
+
+**驗證 trail**：本地 `npm run dev` Playwright e2e 一次 → push preview 線上 e2e 一次 → Josh production 親手驗 → squash merge → production curl 驗 「張小姐」 live
+
+**前置（Josh 親做）**：Resend 註冊（bonkerser）+ Vercel env var `RESEND_API_KEY` 設 Production + Preview（Sensitive var 規則 Development 自動跳過，本地用 `.env.local`）
+
+**附帶處理**：
+- 散落 46 張截圖（27 in `~/project/` + 19 in `~/`）清光
+- Playwright MCP `--output-dir` 設 `~/.cache/claude-shots/` dotdir，user-scope `~/.claude.json` 記入；下次 session 啟動才生效
+- Memory 新增 `tools_playwright_screenshots.md`（cookbook + wrap-up 清理慣例）
 
 ---
 
