@@ -107,7 +107,7 @@ export function ContactForm() {
           required
           maxLength={50}
           autoComplete="name"
-          placeholder="Tom、張先生、小楊...都行"
+          placeholder="Tom、張小姐、小楊...都行"
           className="w-full font-display text-lg bg-transparent border-0 border-b-[1.5px] border-[color:var(--color-line-strong)] py-2 text-[color:var(--color-ink)] placeholder:text-[color:var(--color-fg-subtle)] focus:border-[color:var(--color-accent)] focus:outline-none transition-colors"
         />
         {state.fieldErrors?.name && (
