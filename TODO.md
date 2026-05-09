@@ -30,6 +30,36 @@ CLAUDE.md「Design notes」記錄這個拍板：先匿名上線，等授權升�
 
 來源：2026-05-08 加 04 Build With Me 時的 trade-off
 
+### 3. Contact section 加結構化諮詢表單（C 方案已拍板）
+目前 Contact section 是 mailto，訪客要自己開 email app 從零寫信，門檻高。改成結構化表單降低「不知怎麼開口」障礙。
+
+**方案 C（已拍板）**：表單為主視覺、mailto 縮成小字「或者直接寫信給我」、Calendly 維持「預約 1:1 通話」按鈕。
+
+**表單 fields（3 個，已拍板）**：
+1. 想討論的服務（radio 4 選 1）：工作坊 / 1 對 1 諮詢 / 演講邀約 / 客製化開發
+2. 你的 Email（必填）
+3. 想聊的內容（free text，placeholder：「告訴我你目前的場景、卡在哪、想要什麼結果」）
+
+**技術 stack**：
+- **Resend + Next.js Server Action**（Vercel 推薦）
+- 表單 submit → Server Action → Resend API → 寄到 `joshailearning0916@gmail.com`（已拍板）
+- Resend 免費 tier 100 封/天足夠
+- 防 spam：honeypot field（隱藏 input，bot 會填人類不會）+ rate limit
+
+**待下次開工拍板**：
+- [ ] submit 成功後 UX：thank you message / redirect / 純 success state
+- [ ] 防 spam 要不要加 reCAPTCHA（建議先靠 honeypot 看夠不夠）
+- [ ] 表單視覺風格：editorial 風（跟 BRAND 對齊）vs SaaS 風（提高轉化但跟調性可能衝）
+- [ ] mailto 小字位置：表單下方還是側邊
+- [ ] 服務 radio 順序對齊既有 01-04（工作坊 / 1 對 1 / 演講 / 客製化）
+
+**前置安裝**（下次開工要做）：
+- `npm install resend`
+- 註冊 Resend account 拿 API key
+- Vercel env var 加 `RESEND_API_KEY`（production + preview 都設）
+
+來源：2026-05-08 session wrap-up Josh 提想法 → 評估三方案 → 拍板 C / 3 fields / joshailearning0916@gmail.com
+
 ---
 
 ## 🟡 建議改 / 待決策（可以排期，不急上線）
