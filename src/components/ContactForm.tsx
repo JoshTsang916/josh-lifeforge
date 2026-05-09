@@ -95,6 +95,28 @@ export function ContactForm() {
         )}
       </fieldset>
 
+      {/* 你怎麼稱呼 */}
+      <div>
+        <label htmlFor="contact-name" className="eyebrow mb-3 block">
+          你怎麼稱呼
+        </label>
+        <input
+          id="contact-name"
+          type="text"
+          name="name"
+          required
+          maxLength={50}
+          autoComplete="name"
+          placeholder="Josh、小華、都可以"
+          className="w-full font-display text-lg bg-transparent border-0 border-b-[1.5px] border-[color:var(--color-line-strong)] py-2 text-[color:var(--color-ink)] placeholder:text-[color:var(--color-fg-subtle)] focus:border-[color:var(--color-accent)] focus:outline-none transition-colors"
+        />
+        {state.fieldErrors?.name && (
+          <p className="font-sans text-sm text-[color:var(--color-accent)] mt-2">
+            {state.fieldErrors.name}
+          </p>
+        )}
+      </div>
+
       {/* Email */}
       <div>
         <label htmlFor="contact-email" className="eyebrow mb-3 block">
@@ -105,6 +127,7 @@ export function ContactForm() {
           type="email"
           name="email"
           required
+          autoComplete="email"
           placeholder="your@email.com"
           className="w-full font-display text-lg bg-transparent border-0 border-b-[1.5px] border-[color:var(--color-line-strong)] py-2 text-[color:var(--color-ink)] placeholder:text-[color:var(--color-fg-subtle)] focus:border-[color:var(--color-accent)] focus:outline-none transition-colors"
         />
