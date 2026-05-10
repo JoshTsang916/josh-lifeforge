@@ -11,11 +11,11 @@ Audience: students + prospective clients. Goal: clarify who Josh is and convert 
 - **Tailwind CSS v4** (via `@theme` block in `globals.css`, no `tailwind.config.*`)
 - **Fonts** (locked v0.5): Noto Serif TC (display, 思源宋) + LXGW WenKai TC (body, 霞鶩文楷) + Outfit (Latin UI labels) — all via `next/font/google`
 - **Deployment**: Vercel (preview = branch URL, production = main)
-- **Database**: 目前網站本身不連線上資料庫——所有區塊內容均 hardcoded 在各 component 中
-  - Testimonials / Recent Work / Daily 的素材都是「人工挑選 → hardcode」
+- **Database**: 網站目前 read-only Supabase 資料只用於 Writings；其他區塊內容仍 hardcoded 在 component 中
+  - Testimonials / Recent Work / Services / Hero / About 等區塊：人工挑選 → hardcode
   - Daily 的 IG 影片素材來源是 Supabase `ig_posts`（shared instance `srpqvtkliesdfnqirdpt`），但網站不直接連——更新流程：開發時用 Supabase MCP 撈最新 reels → 下載縮圖到 `public/photos/writings/`（路徑沿用舊名）→ 改 `Daily.tsx` 的 `videos` 陣列
   - 之後若要動態抓最新 N 則影片，需重新加回 `@supabase/supabase-js` 依賴並建立 server-side fetch
-  - 未來若新增 Writings（純文章）區塊，預計走 Obsidian → markdown + frontmatter → build-time sync 到網站，不走 CMS
+  - **Writings（規劃中，2026-05-10 拍板，待動工）**：Josh 寫 Obsidian `80-blogpost/<slug>.md` 初稿 → 跟 Claude 校稿 → Claude 用 Supabase MCP push 到 shared instance `srpqvtkliesdfnqirdpt` 的 `writings` table（schema：`slug / title / excerpt / body_md / cover_image_url / status / published_at / tags / reading_time`）→ 配圖 / 投影片截圖 / mp3 audio 走 Storage `writings-assets/<slug>/` bucket → 前端 Next.js `/writings/[slug]` ISR 60s revalidate 讀 + `react-markdown` + `remark-gfm` + `rehype-raw` 渲染（允許 `<audio>` / `<iframe>` 等 HTML）。**不走 build-time sync / 不走 markdown-in-repo / 不走 MDX**——Supabase runtime 對 non-coder 寫作流程摩擦最低 + Claude 介入 (校稿 / push) 用 MCP 直接操作。詳見 TODO.md 🔴 #1 4-phase plan。
 
 ## Design system (Warm brown editorial)
 
