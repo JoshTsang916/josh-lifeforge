@@ -8,17 +8,53 @@
 
 ## 🔴 要改但未改（影響體驗）
 
-### 1. Writings 文章無法點擊
-現在 Writings section 顯示 9 篇 published articles，但**標題只有 hover 變色，沒有連結**。訪客點了沒反應。
+### 1. Writings 升級成完整 content pipeline（5/10 拍板 4 phase）
 
-來源：智囊團審核 #1（high）
-**要 Josh 先決策的問題**：
-- (A) 連到外部平台（Threads / Vocus / Medium 等你實際發布的地方）？
-- (B) 建站內 `/writings/[slug]` 頁面，文章內容在自己網站上讀？
-- (C) 混合：一部分站內、一部分外部
+**重新 frame**（2026-05-10 session 討論結果）：原本只是「文章變可點擊」（A/B/C 選一），升級成「Josh 寫 Obsidian → Claude 校稿 → 直接 push Supabase → 前端 Next.js ISR 讀」的 content pipeline，未來接 Newsletter + 短影片轉文章。
 
-如果走 A：contents 表要補一個 `url` 或 `external_url` 欄位，Josh 把每篇文章的發布 URL 填進去，我讀來顯示。
-如果走 B：contents 表要補 `slug` 欄位，我建 `/writings/[slug]/page.tsx` SSR 讀 body 渲染。
+**5 個 sub-decisions（已拍）**
+1. Supabase reuse Daily 已用的 shared instance `srpqvtkliesdfnqirdpt`，加新 `writings` table（不另建 lifeforge 專屬）
+2. 第一篇主題：anchor 文（FORGE 五步法 / 為什麼開人生鍛造所），evergreen 不是 daily 流水
+3. Writings section 卡片加：日期 / reading time / cover image preview（現在只有標題）
+4. 順手建 `/writings` index page placeholder，未來累積 5+ 篇用得到
+5. Status 欄位預設 `draft`，Josh 拍板才改 `published`
+
+**Phase 1 — 站內讀（最小可行）**
+- Supabase 建 `writings` table：`id / slug / title / excerpt / body_md / cover_image_url / status / published_at / tags / reading_time`
+- Supabase Storage 開 `writings-assets/` bucket（public read）
+- Next.js 建 `/writings/[slug]/page.tsx`（ISR 60s revalidate）+ `/writings/page.tsx` index
+- 渲染：`react-markdown` + `remark-gfm` + `rehype-raw`（允許內嵌 HTML，譬如 NotebookLM iframe / `<audio>`）
+- Writings section 卡片標題可點擊 → `/writings/[slug]`，加日期 / reading time / cover preview
+- 第一篇純文字 anchor 文（不配圖不嵌投影片），驗 pipeline 通
+
+**Phase 2 — 配圖 + 投影片素材**
+- Obsidian paste 圖 → vault `attachments/` → Claude upload 到 Supabase Storage `writings-assets/<slug>/` + markdown body URL rewrite
+- NotebookLM 投影片：截圖路線（不依賴 iframe — 穩定性 + 手機友善）+ 文末附 share link
+- audio overview（NotebookLM podcast）：mp3 上 Storage + markdown `<audio>` HTML（rehype-raw 渲染）
+
+**Phase 3 — Claude 校稿 collaboration**
+- Josh Obsidian `80-blogpost/` 子資料夾寫初稿（PARA-ish 編號）
+- 跟 Claude 說「校稿這篇」→ 讀 markdown 改 typo / 排版 / tone 對齊 BRAND / opening hook 建議
+- Josh 拍板每條建議 → Claude 用 Supabase MCP push（含 markdown body + cover upload + Storage rewrite）
+
+**Phase 4 — Newsletter**
+- Stack: Resend Audiences（既有 Resend account / API key 直接接，不新註冊 Buttondown / ConvertKit）
+- 訂閱框上 Hero / Footer 拉前（zero 成本，先有訪客留 email）
+- 新文 publish trigger 寄信 list（手動或 webhook 自動）
+- 升級 TODO 🟡 #5 進這
+
+**Phase 5（未來）— 短影片 → 文章**
+- IG Reel transcript → AI 擴寫 → Josh 校稿 → publish
+- 借鏡 Windows 機 ccdailytalk 工作室既有 pipeline
+
+**SoT 修正**
+- CLAUDE.md 5/8 寫「Writings 預計走 Obsidian → markdown + frontmatter → build-time sync」過時，改 Supabase runtime data
+- 此 TODO 5/8 提的「contents 表加 slug / url 欄位」過時，改新建獨立 `writings` table
+- 同 PR 一併更新 CLAUDE.md「Database」段
+
+**Funnel framing**：日更短影片（top）→ 月文章（mid）→ 季 anchor 文 + Newsletter（bottom）→ 諮詢 / 報名 / 付費轉化。Phase 1 是 funnel 中段缺的 mid 層 step change，不是 small fix。
+
+來源：2026-05-10 session 討論（Josh 提 Supabase 路徑反推 → Claude 修正 4 phase plan + 5 sub-decisions 拍板）
 
 ### 2. 客戶授權後 doris/tibonus 露名 + 截圖
 Services 04 Build With Me 目前用「某會計事務所」「某食品代理商」匿名版。客戶授權拿到後可：
