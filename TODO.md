@@ -8,24 +8,27 @@
 
 ## 🔴 要改但未改（影響體驗）
 
-### 1. Writings 升級成完整 content pipeline（5/10 拍板 4 phase）
+### 1. Writings 升級成完整 content pipeline（5/10 拍板，Phase 1 ✅ 已上線 2026-05-12）
+
+> **Phase 1 ✅ 完成（2026-05-12，branch `feat/writings-section`）** —— 站內讀已可用：`/writings` 列表頁 + `/writings/[slug]` 文章頁、Supabase `writings` 表 + RLS + `writings-assets` bucket、`react-markdown` + `remark-gfm` + `rehype-raw` 渲染、`.article-prose` 排版、Nav/MobileMenu 加「文章」跨頁連結、第一篇「CLAUDE.md 起手模板」（slug `claude-md-starter`）上線。實作細節寫進 CLAUDE.md「Database」段。**Phase 2–5 待排期**（不再 🔴-urgent，funnel 中段那層已補上）。
 
 **重新 frame**（2026-05-10 session 討論結果）：原本只是「文章變可點擊」（A/B/C 選一），升級成「Josh 寫 Obsidian → Claude 校稿 → 直接 push Supabase → 前端 Next.js ISR 讀」的 content pipeline，未來接 Newsletter + 短影片轉文章。
 
-**5 個 sub-decisions（已拍）**
-1. Supabase reuse Daily 已用的 shared instance `srpqvtkliesdfnqirdpt`，加新 `writings` table（不另建 lifeforge 專屬）
-2. 第一篇主題：anchor 文（FORGE 五步法 / 為什麼開人生鍛造所），evergreen 不是 daily 流水
-3. Writings section 卡片加：日期 / reading time / cover image preview（現在只有標題）
-4. 順手建 `/writings` index page placeholder，未來累積 5+ 篇用得到
-5. Status 欄位預設 `draft`，Josh 拍板才改 `published`
+**sub-decisions**
+1. ✅ Supabase reuse Daily 已用的 shared instance `srpqvtkliesdfnqirdpt`，加新 `writings` table（不另建 lifeforge 專屬）
+2. ✅ 第一篇主題 = **「CLAUDE.md 起手模板」**（slug `claude-md-starter`）—— 工具型 / 可帶走 / 呼應 5/12 日更影片（Eugene Yan 第二原則 + Josh 自己的 CLAUDE.md 設置）。仍符合「evergreen anchor、不是 daily 流水」精神。（原寫的「FORGE 五步法 / 為什麼開人生鍛造所 anchor 文」作廢——FORGE 框架還在打磨，見 `~/project/memory/project_lifeforge_forge_hold.md`）
+3. ✅ 卡片加日期 / reading time / cover preview —— 這些卡片在 **`/writings` 列表頁**（不在首頁）。原寫「首頁 Writings section 卡片」改成列表頁卡片，因為 2026-05-12 拍板走純分頁（見 #6）
+4. ✅ `/writings` index page —— 已建（含空狀態 fallback），未來累積 5+ 篇直接用
+5. ⚠️ Status 欄位 default `draft` —— 表 default 是 `draft`，但**第一篇實際上線是 `published`**（原計畫「Josh 拍板才改 published」的問題：draft + RLS 擋 anon 讀 = Josh 在 preview URL 上看不到，無法線上驗收；改成「插 `published` + 不 merge 進 main 才是真正的上線 gate」。`status` 欄位對未來文章仍有用——寫一半的草稿放著不上線）
+6. ✅ **純分頁，首頁不動**（2026-05-12 拍板）：Writings = 獨立 `/writings` 分頁，首頁完全不碰（不新建 `Writings.tsx`、不改 `page.tsx` / `SectionIndex.tsx`、不重編 01–07）。只在 `Nav.tsx` + `MobileMenu.tsx` 加「文章」→ `/writings` 跨頁連結。取捨：首頁訪客曝光少一點；之後真需要再在 Footer 放一行「最新文章 →」（先不做）
 
-**Phase 1 — 站內讀（最小可行）**
-- Supabase 建 `writings` table：`id / slug / title / excerpt / body_md / cover_image_url / status / published_at / tags / reading_time`
-- Supabase Storage 開 `writings-assets/` bucket（public read）
-- Next.js 建 `/writings/[slug]/page.tsx`（ISR 60s revalidate）+ `/writings/page.tsx` index
-- 渲染：`react-markdown` + `remark-gfm` + `rehype-raw`（允許內嵌 HTML，譬如 NotebookLM iframe / `<audio>`）
-- Writings section 卡片標題可點擊 → `/writings/[slug]`，加日期 / reading time / cover preview
-- 第一篇純文字 anchor 文（不配圖不嵌投影片），驗 pipeline 通
+**Phase 1 — 站內讀（最小可行）✅ 全部完成（2026-05-12）**
+- ✅ Supabase 建 `writings` table（`id / slug / title / excerpt / body_md / cover_image_url / status / published_at / tags(text[]) / reading_time / created_at`）+ RLS（anon 只讀 `published`）+ `writings-assets` bucket（public read）—— 用 Supabase MCP `apply_migration` 跑
+- ✅ Next.js `/writings/page.tsx`（列表頁，含空狀態 fallback）+ `/writings/[slug]/page.tsx`（文章頁，`revalidate = 60` ISR + `generateStaticParams`）+ `src/lib/supabase.ts` + `src/lib/writings.ts`
+- ✅ 渲染 `react-markdown` + `remark-gfm` + `rehype-raw`（`body_md` 可信故允許內嵌 `<audio>` / `<iframe>`）+ `.article-prose` 排版（`globals.css`，暖棕 editorial；**改用自寫 prose CSS 不用 `@tailwindcss/typography`**——要 override 的太多）；`pre` 用 `pre-wrap` 讓 code block 在窄螢幕 wrap
+- ✅ 卡片在 `/writings` 列表頁（不在首頁，見 sub-decision 6），有日期 / reading time / cover preview（封面欄位可選，第一篇無封面）；`Nav.tsx` + `MobileMenu.tsx` 加「文章」跨頁連結
+- ✅ 第一篇純文字「CLAUDE.md 起手模板」（不配圖、不嵌投影片）—— pipeline 驗通（本地 dev + Playwright 截圖驗 + `next build` pass）。**狀態 `published`**（原計畫 `draft`，改的理由見 sub-decision 5）
+- ⏳ **preview 環境 env var 未設** → preview deploy 的 Writings 是空狀態（Josh 要在 Vercel dashboard 補 `SUPABASE_URL` / `SUPABASE_ANON_KEY` 給 Preview，見 🟢#10）
 
 **Phase 2 — 配圖 + 投影片素材**
 - Obsidian paste 圖 → vault `attachments/` → Claude upload 到 Supabase Storage `writings-assets/<slug>/` + markdown body URL rewrite
@@ -48,9 +51,8 @@
 - 借鏡 Windows 機 ccdailytalk 工作室既有 pipeline
 
 **SoT 修正**
-- CLAUDE.md 5/8 寫「Writings 預計走 Obsidian → markdown + frontmatter → build-time sync」過時，改 Supabase runtime data
-- 此 TODO 5/8 提的「contents 表加 slug / url 欄位」過時，改新建獨立 `writings` table
-- 同 PR 一併更新 CLAUDE.md「Database」段
+- ✅ CLAUDE.md「Database」段已改成 Supabase runtime data（Phase 1 上線時一併更新；舊的「build-time markdown sync」說法已刪）
+- ✅ 此 TODO 5/8 提的「contents 表加 slug / url 欄位」過時 → 已改新建獨立 `public.writings` 表（`contents` 表沒動）
 
 **Funnel framing**：日更短影片（top）→ 月文章（mid）→ 季 anchor 文 + Newsletter（bottom）→ 諮詢 / 報名 / 付費轉化。Phase 1 是 funnel 中段缺的 mid 層 step change，不是 small fix。
 
@@ -122,8 +124,12 @@ SEO 標準件。Next.js App Router 可用 `app/robots.ts` + `app/sitemap.ts` + `
 
 之後可做「活動詳情頁」(`/work/[slug]`)，點卡片進入看更多照片 + 詳細描述。
 
-### 10. Vercel Preview 環境變數
-目前只有 production 設了 SUPABASE_URL / SUPABASE_ANON_KEY。preview deploy 時 Writings 會 fallback 到 empty state。如果要讓 preview deploys 也能展示文章，手動在 Vercel dashboard 設 preview env vars。
+### 10. Vercel Preview 環境變數（Writings Phase 1 上線後變相關）
+目前只有 **Production** 設了 `SUPABASE_URL` / `SUPABASE_ANON_KEY`；**Preview 沒設** → 任何 preview deploy 的 `/writings` 列表頁是空狀態、`/writings/[slug]` 是 404（`src/lib/supabase.ts` env 未設回 null）。
+
+要在 preview URL 上 review 文章，Josh 需在 Vercel dashboard → Settings → Environment Variables 給 **Preview** 環境加這兩個（值同 production / 本地 `.env.local`：`SUPABASE_URL = https://srpqvtkliesdfnqirdpt.supabase.co`、`SUPABASE_ANON_KEY = <anon key>`）。anon key 是 public-by-design（RLS 才是保護層），不算敏感。
+
+替代方案：不設 preview env var，改靠本地 `npm run dev` 截圖 review，OK 後直接 squash merge 進 main（production 有設，merge 後就 live）。
 
 ### 11. Services section `<article>` 語意
 Claude 審核提到每個服務項目用 `<article>` 語意不精確（article = 可獨立分發的內容）。可以在下次重構時改成 `<li>` in `<ol>` 或 `<div>`。低優先。
@@ -147,6 +153,25 @@ CLAUDE.md「Related repos」段把 ccdailytalk / remotion 寫成 `D:/...` Window
 低優先——不影響開發。
 
 來源：2026-05-08 加 toolbar 時掃 CLAUDE.md 發現
+
+---
+
+## ✅ 今天完成（2026-05-12）
+
+**Writings Phase 1 上線**（原 🔴 #1 的 Phase 1）—— branch `feat/writings-section`。站內讀已可用。
+
+1. **Supabase**（shared instance `srpqvtkliesdfnqirdpt`，用 MCP `apply_migration` 跑）—— 建 `public.writings` 表（schema 見上）+ RLS（anon 只讀 `published`）+ `writings-assets` Storage bucket（public read，Phase 2 才用）；INSERT 第一篇文章
+2. **依賴 + lib** —— 加 `@supabase/supabase-js` / `react-markdown` / `remark-gfm` / `rehype-raw`；`src/lib/supabase.ts`（read-only client，env 未設回 null）+ `src/lib/writings.ts`（`getPublishedWritings` / `getWritingBySlug`）；`next.config.ts` 加 Supabase Storage `images.remotePatterns`
+3. **路由** —— `src/app/writings/page.tsx`（列表頁，編號/日期/reading time/excerpt/封面預覽 + 空狀態 fallback）+ `src/app/writings/[slug]/page.tsx`（文章頁，`revalidate = 60` ISR + `generateStaticParams` + `generateMetadata` OG + `notFound()`）；都不掛 `<Nav>`、用自己的極簡 header + `<Footer>`（同 `/fonts` pattern）
+4. **排版** —— `globals.css` 加 `.article-prose` class（暖棕 editorial：serif 標題 + hairline 分隔 + 磚紅連結 + 暗底 code block + `pre-wrap` 讓窄螢幕 wrap），刻意不用 `@tailwindcss/typography`
+5. **Nav** —— `Nav.tsx` + `MobileMenu.tsx` 加「文章」→ `/writings` 跨頁連結（`<Link>`；render 時 `/` 開頭用 next/link、`#` 開頭用一般 `<a>`）
+6. **第一篇** —— 「CLAUDE.md 起手模板」（slug `claude-md-starter`）：把 `~/project/claude-md-starter-template.md`（去識別化的 CLAUDE.md 模板）改寫成文章——加開頭故事段（兩三週長出來 + 跟 Eugene Yan 的 behavior 區塊撞了好幾條 + 為什麼出公開版）、調 tone、`status = 'published'`（原計畫 `draft`，改的理由見 #1 sub-decision 5）
+7. **驗證** —— 本地 `npm run dev` + Playwright 截圖驗（列表頁 + 文章頁，desktop + mobile，console clean，404 處理）+ `tsc --noEmit` pass + `next build` pass（`/writings/claude-md-starter` 顯示為 SSG + ISR 1m）
+8. **文件** —— 更新 CLAUDE.md「Database」段 + Project 段 + Content status 段；更新 TODO #1（標 Phase 1 ✅ + 修 sub-decisions 2/3/5 + 加 #6 純分頁）+ #10（preview env var 現在相關）；刪掉 `WRITINGS-PHASE1-HANDOFF.md` 交接檔
+
+**驗證 trail**：tsc + lint（lint 唯一 error 是 pre-existing 的 MobileMenu #12，非新增）→ `next build` pass → 本地 Playwright e2e → 智囊團多模型審核 →（待）Josh 線上驗 → squash merge → production deploy → curl 驗第一篇 live
+
+**已知遺留**：(a) preview env var 沒設（TODO 🟢#10）；(b) 404 用 Next 預設頁（沒做暖棕主題的 `not-found.tsx`，那是 TODO 🟢#8 範圍）；(c) 封面預覽 code path 沒視覺驗（第一篇沒封面）；(d) MobileMenu pre-existing lint error 沒修（TODO 🟢#12，不在這次範圍）；(e) `~/project/claude-md-starter-template.md` 草稿檔留著（Josh 的檔，之後可清）
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## Project
 Josh's personal brand website — **人生鍛造所 (Lifeforge Studio)**.
-Single-page site for workshops, 1:1 consulting, speaking, writings, and recent work.
+Single-page homepage (sections 01–07) + a `/writings` article section. For workshops, 1:1 consulting, speaking, writings, and recent work.
 
 Audience: students + prospective clients. Goal: clarify who Josh is and convert curious visitors into conversations.
 
@@ -11,11 +11,13 @@ Audience: students + prospective clients. Goal: clarify who Josh is and convert 
 - **Tailwind CSS v4** (via `@theme` block in `globals.css`, no `tailwind.config.*`)
 - **Fonts** (locked v0.5): Noto Serif TC (display, 思源宋) + LXGW WenKai TC (body, 霞鶩文楷) + Outfit (Latin UI labels) — all via `next/font/google`
 - **Deployment**: Vercel (preview = branch URL, production = main)
-- **Database**: 網站目前 read-only Supabase 資料只用於 Writings；其他區塊內容仍 hardcoded 在 component 中
-  - Testimonials / Recent Work / Services / Hero / About 等區塊：人工挑選 → hardcode
-  - Daily 的 IG 影片素材來源是 Supabase `ig_posts`（shared instance `srpqvtkliesdfnqirdpt`），但網站不直接連——更新流程：開發時用 Supabase MCP 撈最新 reels → 下載縮圖到 `public/photos/writings/`（路徑沿用舊名）→ 改 `Daily.tsx` 的 `videos` 陣列
-  - 之後若要動態抓最新 N 則影片，需重新加回 `@supabase/supabase-js` 依賴並建立 server-side fetch
-  - **Writings（規劃中，2026-05-10 拍板，待動工）**：Josh 寫 Obsidian `80-blogpost/<slug>.md` 初稿 → 跟 Claude 校稿 → Claude 用 Supabase MCP push 到 shared instance `srpqvtkliesdfnqirdpt` 的 `writings` table（schema：`slug / title / excerpt / body_md / cover_image_url / status / published_at / tags / reading_time`）→ 配圖 / 投影片截圖 / mp3 audio 走 Storage `writings-assets/<slug>/` bucket → 前端 Next.js `/writings/[slug]` ISR 60s revalidate 讀 + `react-markdown` + `remark-gfm` + `rehype-raw` 渲染（允許 `<audio>` / `<iframe>` 等 HTML）。**不走 build-time sync / 不走 markdown-in-repo / 不走 MDX**——Supabase runtime 對 non-coder 寫作流程摩擦最低 + Claude 介入 (校稿 / push) 用 MCP 直接操作。詳見 TODO.md 🔴 #1 4-phase plan。
+- **Database**: 只有 Writings 區塊讀 Supabase（read-only, server-side）；其餘區塊內容 hardcoded 在 component 中
+  - Testimonials / Recent Work / Services / Hero / About / Daily 等區塊：人工挑選 → hardcode（Daily 的 IG reels 縮圖開發時用 Supabase MCP 撈 `ig_posts` 後下載到 `public/photos/writings/`，網站不直接連）
+  - **Writings — Phase 1 已上線（2026-05-12）**：流程是 Josh 寫 Obsidian `80-blogpost/<slug>.md` → 跟 Claude 校稿 → Claude 用 Supabase MCP（`apply_migration` / `execute_sql`）把 markdown push 到 shared instance `srpqvtkliesdfnqirdpt` 的 `public.writings` 表 → 前端 ISR 讀。**不走 build-time sync / markdown-in-repo / MDX**（Supabase runtime 對 non-coder 摩擦最低 + Claude 校稿/push 直接用 MCP）
+    - `writings` schema：`id / slug(unique) / title / excerpt / body_md / cover_image_url / status('draft'|'published') / published_at / tags(text[]) / reading_time(int) / created_at`；RLS：anon 只能讀 `status='published'`（草稿對外不可見）。Storage bucket `writings-assets`（public read）Phase 2 才用（配圖 / 投影片截圖 / mp3）
+    - 前端：`src/lib/supabase.ts`（read-only client，env 未設回 null → 列表頁/文章頁優雅 fallback 空狀態 / notFound）、`src/lib/writings.ts`（`getPublishedWritings` / `getWritingBySlug`）、`src/app/writings/page.tsx` 列表頁 + `src/app/writings/[slug]/page.tsx` 文章頁（都 `revalidate = 60` ISR，`[slug]` 有 `generateStaticParams`），渲染 `react-markdown` + `remark-gfm` + `rehype-raw`（`body_md` 為可信內容 → 允許內嵌 `<audio>` / `<iframe>`），排版用 `globals.css` 的 `.article-prose` class（暖棕 editorial，刻意不用 `@tailwindcss/typography`）。`/writings` pages **不掛 `<Nav>`**（首頁錨點在那裡不存在）→ 自己的極簡 header（← 回首頁 / ← 回文章列表）+ 完整 `<Footer>`，同 `/fonts` pattern；`Nav.tsx` / `MobileMenu.tsx` 加了「文章」→ `/writings` 跨頁連結（`<Link>`，href 開頭 `/` vs `#` 區分 render）
+    - env var：`SUPABASE_URL` / `SUPABASE_ANON_KEY`（server-side，**無** `NEXT_PUBLIC_` 前綴）。production 已設；**preview 環境沒設 → preview deploy 的 Writings 會 fallback 到空狀態**（要展示需在 Vercel dashboard 補 preview env var，見 TODO 🟢#10）；本地用 `.env.local`。新依賴：`@supabase/supabase-js` / `react-markdown` / `remark-gfm` / `rehype-raw`；`next.config.ts` 加了 `images.remotePatterns` 指向 Supabase Storage（Phase 2 封面用）
+    - 後續 phase（Phase 2 配圖/投影片 / Phase 3 校稿協作 SOP / Phase 4 Newsletter / Phase 5 短影片轉文章）見 TODO.md 🔴 #1
 
 ## Design system (Warm brown editorial)
 
@@ -103,7 +105,7 @@ Vercel Preview Comments 是 Josh 跟 Claude 之間做 design review feedback 的
 - **Testimonials**：四條真實學員見證（Du / Tammy / Kin / 大大），出自 `2026n8nWorkshop` repo + 引導力學院 AI 分享會——若要新增引用前請與 Josh 核對真偽（同 repo 內曾有 AI 生假見證 Betty）
 - **Recent Work**：三場真實活動（n8n Automation Workshop / AI 自動化進入文件驅動的時代 / 神經可塑性說書專場），照片在 `public/photos/`
 - **Daily**：4 則手選日更短影片（Day 33/31/25/24），縮圖在 `public/photos/writings/`（路徑沿用舊名），連回 IG Reel
-- **Writings**（純文章區塊）：尚未建立。未來規劃從 Obsidian vault 的 `published/` 子目錄走 markdown + frontmatter，build 時 sync 到網站，不走線上 CMS
+- **Writings**：Phase 1 已上線（2026-05-12）—— `/writings` 列表頁 + `/writings/[slug]` 文章頁，內容存 Supabase `writings` 表（不走 build-time markdown sync）。第一篇「CLAUDE.md 起手模板」（slug `claude-md-starter`）。詳見上方 Tech stack「Database」段 + TODO 🔴#1
 - **Service descriptions**：04 Build With Me 寫定（含 doris/tibonus 匿名 proof cases），01-03（工作坊 / 1:1 / 演講）仍是 v0 草稿，等 BRAND 重新對齊後重寫（TODO 7b 殘餘）
 
 ## Workflow with Josh
