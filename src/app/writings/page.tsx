@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
-import { getPublishedWritings } from "@/lib/writings";
+import { formatDate, getPublishedWritings } from "@/lib/writings";
 
 // ISR — 每 60 秒重新抓一次 Supabase（在 Obsidian 校稿 → push 後最多 1 分鐘上線）
 export const revalidate = 60;
@@ -11,16 +11,6 @@ export const metadata: Metadata = {
   title: "文章 — 人生鍛造所",
   description: "Josh 寫 AI 協作、閱讀、與一人公司的長文紀錄。日更短影片之外，把想得比較深的東西寫長一點。",
 };
-
-// published_at（ISO 字串）→ 2026.05.12
-function formatDate(iso: string | null): string | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
-    d.getDate(),
-  ).padStart(2, "0")}`;
-}
 
 export default async function WritingsIndexPage() {
   const writings = await getPublishedWritings();

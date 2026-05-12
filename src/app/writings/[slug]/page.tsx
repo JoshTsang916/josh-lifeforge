@@ -4,11 +4,27 @@ import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { Footer } from "@/components/Footer";
-import { getPublishedWritings, getWritingBySlug } from "@/lib/writings";
+import { formatDate, getPublishedWritings, getWritingBySlug } from "@/lib/writings";
 
 // ISR — 每 60 秒重新抓一次（校稿 → push 後最多 1 分鐘上線）
 export const revalidate = 60;
+
+// HTML sanitize schema：defaultSchema（已擋 <script> / on* 事件 / javascript: URL）再加上
+// Phase 2 文章會用到的 <audio>（NotebookLM podcast）/ <iframe>（投影片 embed），各只開必要的 attr。
+// rehype-raw 把 markdown 裡的 HTML 字串解析成 HAST 後，這個 sanitize 才過濾掉危險的東西——
+// body_md 雖然只來自 Claude/Josh 經 RLS-protected MCP 寫入，多一層白名單仍是 defense-in-depth。
+const sanitizeSchema = {
+  ...defaultSchema,
+  tagNames: [...(defaultSchema.tagNames ?? []), "audio", "source", "iframe"],
+  attributes: {
+    ...defaultSchema.attributes,
+    audio: ["controls", "src", "preload", "loop"],
+    source: ["src", "type"],
+    iframe: ["src", "title", "width", "height", "allow", "allowFullScreen", "loading"],
+  },
+};
 
 // build 時把已發佈文章預先 render（Supabase 連不上時回空陣列 → 全部改 on-demand，
 // dynamicParams 預設 true 所以新文章不必重 build 也能讀到）
@@ -18,15 +34,6 @@ export async function generateStaticParams() {
 }
 
 type Props = { params: Promise<{ slug: string }> };
-
-function formatDate(iso: string | null): string | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
-    d.getDate(),
-  ).padStart(2, "0")}`;
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -114,12 +121,13 @@ export default async function WritingPage({ params }: Props) {
             )}
 
             {/* 內文 ——
-               body_md 只來自 Supabase（Josh / Claude 經 RLS-protected MCP 寫入，無公開寫入路徑），
-               屬可信內容，故用 rehype-raw 允許內嵌 HTML（Phase 2 的 <audio> / <iframe> 投影片要用）。 */}
+               body_md 只來自 Supabase（Josh / Claude 經 RLS-protected MCP 寫入，無公開寫入路徑）。
+               rehype-raw 允許內嵌 HTML（Phase 2 的 <audio> / <iframe> 投影片），rehype-sanitize
+               接在後面做白名單過濾（順序：raw 先解析 → sanitize 再過濾，不能顛倒）。 */}
             <div className="article-prose mt-12 md:mt-16">
               <Markdown
                 remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw]}
+                rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema]]}
                 components={{
                   // 外部連結（http/https）開新分頁，對齊全站慣例（Footer / Daily 等）
                   a: ({ href, children }) => {

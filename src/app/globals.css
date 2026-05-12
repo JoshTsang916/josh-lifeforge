@@ -161,8 +161,10 @@
      ============================================================ */
   .article-prose {
     color: var(--color-fg);
+    font-family: var(--font-sans);
     font-size: 1.0625rem;
     line-height: 1.85;
+    text-wrap: pretty;
   }
   /* 基礎垂直節奏：相鄰區塊之間留一行 */
   .article-prose > * + * {
@@ -327,9 +329,15 @@
 
   /* 內嵌媒體（Phase 2 的圖 / 投影片截圖 / audio / iframe） */
   .article-prose img,
-  .article-prose video,
-  .article-prose iframe {
+  .article-prose video {
     max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+  /* iframe 沒有 intrinsic ratio，給 16/9 預設避免被壓成 150px（個別 embed 需要時自行覆蓋） */
+  .article-prose iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
     height: auto;
     border-radius: var(--radius-md);
   }

@@ -1,3 +1,4 @@
+import "server-only";
 import { createClient } from "@supabase/supabase-js";
 
 // Writings 區塊用的 read-only Supabase client（shared instance JoshSTT）。
