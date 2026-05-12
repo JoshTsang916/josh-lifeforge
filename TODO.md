@@ -25,7 +25,7 @@
 **Phase 1 — 站內讀（最小可行）✅ 全部完成（2026-05-12）**
 - ✅ Supabase 建 `writings` table（`id / slug / title / excerpt / body_md / cover_image_url / status / published_at / tags(text[]) / reading_time / created_at`）+ RLS（anon 只讀 `published`）+ `writings-assets` bucket（public read）—— 用 Supabase MCP `apply_migration` 跑
 - ✅ Next.js `/writings/page.tsx`（列表頁，含空狀態 fallback）+ `/writings/[slug]/page.tsx`（文章頁，`revalidate = 60` ISR + `generateStaticParams`）+ `src/lib/supabase.ts` + `src/lib/writings.ts`
-- ✅ 渲染 `react-markdown` + `remark-gfm` + `rehype-raw`（`body_md` 可信故允許內嵌 `<audio>` / `<iframe>`）+ `.article-prose` 排版（`globals.css`，暖棕 editorial；**改用自寫 prose CSS 不用 `@tailwindcss/typography`**——要 override 的太多）；`pre` 用 `pre-wrap` 讓 code block 在窄螢幕 wrap
+- ✅ 渲染 `react-markdown` + `remark-gfm` + `rehype-raw` + `rehype-sanitize`（raw 解析 → sanitize 白名單過濾；允許 `<audio>` / `<source>` / `<iframe>` 給 Phase 2）+ `.article-prose` 排版（`globals.css`，暖棕 editorial；**改用自寫 prose CSS 不用 `@tailwindcss/typography`**——要 override 的太多）；`pre` 用 `pre-wrap` 讓 code block 在窄螢幕 wrap
 - ✅ 卡片在 `/writings` 列表頁（不在首頁，見 sub-decision 6），有日期 / reading time / cover preview（封面欄位可選，第一篇無封面）；`Nav.tsx` + `MobileMenu.tsx` 加「文章」跨頁連結
 - ✅ 第一篇純文字「CLAUDE.md 起手模板」（不配圖、不嵌投影片）—— pipeline 驗通（本地 dev + Playwright 截圖驗 + `next build` pass）。**狀態 `published`**（原計畫 `draft`，改的理由見 sub-decision 5）
 - ⏳ **preview 環境 env var 未設** → preview deploy 的 Writings 是空狀態（Josh 要在 Vercel dashboard 補 `SUPABASE_URL` / `SUPABASE_ANON_KEY` 給 Preview，見 🟢#10）
@@ -161,15 +161,16 @@ CLAUDE.md「Related repos」段把 ccdailytalk / remotion 寫成 `D:/...` Window
 **Writings Phase 1 上線**（原 🔴 #1 的 Phase 1）—— branch `feat/writings-section`。站內讀已可用。
 
 1. **Supabase**（shared instance `srpqvtkliesdfnqirdpt`，用 MCP `apply_migration` 跑）—— 建 `public.writings` 表（schema 見上）+ RLS（anon 只讀 `published`）+ `writings-assets` Storage bucket（public read，Phase 2 才用）；INSERT 第一篇文章
-2. **依賴 + lib** —— 加 `@supabase/supabase-js` / `react-markdown` / `remark-gfm` / `rehype-raw`；`src/lib/supabase.ts`（read-only client，env 未設回 null）+ `src/lib/writings.ts`（`getPublishedWritings` / `getWritingBySlug`）；`next.config.ts` 加 Supabase Storage `images.remotePatterns`
+2. **依賴 + lib** —— 加 `@supabase/supabase-js` / `react-markdown` / `remark-gfm` / `rehype-raw` / `rehype-sanitize` / `server-only`；`src/lib/supabase.ts`（read-only client，`server-only`，env 未設回 null）+ `src/lib/writings.ts`（`getPublishedWritings` / `getWritingBySlug`，React `cache()` 包；`formatDate` helper）；`next.config.ts` 加 Supabase Storage `images.remotePatterns`
 3. **路由** —— `src/app/writings/page.tsx`（列表頁，編號/日期/reading time/excerpt/封面預覽 + 空狀態 fallback）+ `src/app/writings/[slug]/page.tsx`（文章頁，`revalidate = 60` ISR + `generateStaticParams` + `generateMetadata` OG + `notFound()`）；都不掛 `<Nav>`、用自己的極簡 header + `<Footer>`（同 `/fonts` pattern）
 4. **排版** —— `globals.css` 加 `.article-prose` class（暖棕 editorial：serif 標題 + hairline 分隔 + 磚紅連結 + 暗底 code block + `pre-wrap` 讓窄螢幕 wrap），刻意不用 `@tailwindcss/typography`
 5. **Nav** —— `Nav.tsx` + `MobileMenu.tsx` 加「文章」→ `/writings` 跨頁連結（`<Link>`；render 時 `/` 開頭用 next/link、`#` 開頭用一般 `<a>`）
 6. **第一篇** —— 「CLAUDE.md 起手模板」（slug `claude-md-starter`）：把 `~/project/claude-md-starter-template.md`（去識別化的 CLAUDE.md 模板）改寫成文章——加開頭故事段（兩三週長出來 + 跟 Eugene Yan 的 behavior 區塊撞了好幾條 + 為什麼出公開版）、調 tone、`status = 'published'`（原計畫 `draft`，改的理由見 #1 sub-decision 5）
 7. **驗證** —— 本地 `npm run dev` + Playwright 截圖驗（列表頁 + 文章頁，desktop + mobile，console clean，404 處理）+ `tsc --noEmit` pass + `next build` pass（`/writings/claude-md-starter` 顯示為 SSG + ISR 1m）
-8. **文件** —— 更新 CLAUDE.md「Database」段 + Project 段 + Content status 段；更新 TODO #1（標 Phase 1 ✅ + 修 sub-decisions 2/3/5 + 加 #6 純分頁）+ #10（preview env var 現在相關）；刪掉 `WRITINGS-PHASE1-HANDOFF.md` 交接檔
+8. **智囊團審核 + 修** —— Claude + Codex + Gemini 三方審查後套用 fixes：`import "server-only"` 進 lib 兩檔、`getWritingBySlug`/`getPublishedWritings` 用 React `cache()` 去重 round-trip、`formatDate` 抽進 `writings.ts`（原本兩頁各 copy）、加 `rehype-sanitize`（在 `rehype-raw` 後白名單過濾）、`.article-prose` 補 `font-family` + `text-wrap: pretty` + iframe `aspect-ratio: 16/9`。**未採納**：Nav link helper 的 protocol-relative-URL 防護（`navLinks` 是 hardcoded 常數非使用者輸入）。三方一致「可直接上線」，RLS-disabled 舊表那條（`contents`/`ig_posts` 等 anon 全曝光）是 pre-existing 問題、需 Josh 決定存取策略後另開 session 補
+9. **文件** —— 更新 CLAUDE.md「Database」段 + Project 段 + Content status 段；更新 TODO #1（標 Phase 1 ✅ + 修 sub-decisions 2/3/5 + 加 #6 純分頁）+ #10（preview env var 現在相關）；刪掉 `WRITINGS-PHASE1-HANDOFF.md` 交接檔
 
-**驗證 trail**：tsc + lint（lint 唯一 error 是 pre-existing 的 MobileMenu #12，非新增）→ `next build` pass → 本地 Playwright e2e → 智囊團多模型審核 →（待）Josh 線上驗 → squash merge → production deploy → curl 驗第一篇 live
+**驗證 trail**：tsc + lint（lint 唯一 error 是 pre-existing 的 MobileMenu #12，非新增）→ `next build` pass（重跑過一次，第一次 Google Fonts fetch 偶發失敗、`rm -rf .next` 後重建 pass）→ 本地 Playwright e2e（desktop + mobile，含套完審核 fixes 後重驗）→ 智囊團多模型審核 + 修 →（待）Josh 線上驗 → squash merge → production deploy → curl 驗第一篇 live
 
 **已知遺留**：(a) preview env var 沒設（TODO 🟢#10）；(b) 404 用 Next 預設頁（沒做暖棕主題的 `not-found.tsx`，那是 TODO 🟢#8 範圍）；(c) 封面預覽 code path 沒視覺驗（第一篇沒封面）；(d) MobileMenu pre-existing lint error 沒修（TODO 🟢#12，不在這次範圍）；(e) `~/project/claude-md-starter-template.md` 草稿檔留著（Josh 的檔，之後可清）
 
