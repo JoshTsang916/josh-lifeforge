@@ -8,12 +8,8 @@ type NavLink = { href: string; label: string };
 
 export function MobileMenu({ links }: { links: NavLink[] }) {
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  // 確認 client 端 mount 完成才能用 Portal
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // 不需要 mounted flag —— Portal 只在 open 時 render，而 open 一定是 client 端按漢堡後才變 true，
+  // 那時 document.body 必然存在；SSR / 首次 hydration 時 open=false 不會碰到 createPortal。
 
   // 開啟時鎖住背景滾動
   useEffect(() => {
@@ -71,7 +67,7 @@ export function MobileMenu({ links }: { links: NavLink[] }) {
         </svg>
       </button>
 
-      {mounted && open &&
+      {open &&
         createPortal(
           <div
             id="mobile-menu"
