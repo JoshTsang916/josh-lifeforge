@@ -132,22 +132,10 @@ SEO 標準件。Next.js App Router 可用 `app/robots.ts` + `app/sitemap.ts` + `
 替代方案：不設 preview env var，改靠本地 `npm run dev` 截圖 review，OK 後直接 squash merge 進 main（production 有設，merge 後就 live）。
 
 ### 11. Services section `<article>` 語意
-Claude 審核提到每個服務項目用 `<article>` 語意不精確（article = 可獨立分發的內容）。可以在下次重構時改成 `<li>` in `<ol>` 或 `<div>`。低優先。
+審核提到每個服務項目用 `<article>` 語意不精確（article = 可獨立分發的內容）。可以在下次重構時改成 `<li>` in `<ol>` 或 `<div>`。低優先。
+（Writings `/writings/[slug]` 也曾有類似問題——`<article>` 包了頂部導覽列 + `<Footer/>`——已在 2026-05-12 重構掉，`<article>` 現在只包標題→內文→文末導覽，頂欄 + `<Footer/>` 移到外面。Services 這個還沒處理。）
 
-### 12. MobileMenu.tsx 既有 lint error
-`react-hooks/set-state-in-effect` 錯誤——`useEffect` 內直接 `setMounted(true)` 觸發 cascading renders。
-
-從 PR #1 (`472b4d8` / `68a6930`) 引入時就有，2026-05-08 跑 `npm run build` 才注意到。Vercel build 仍過所以非阻塞。
-
-修法（任選）：
-- 用 `useSyncExternalStore` 取代 mounted flag
-- 用 `useId()` + `useState(() => typeof document !== "undefined")` 條件初始化
-
-預估：10 分鐘。低優先——不影響功能。
-
-來源：2026-05-08 加 SectionIndex 後跑 build 抓到
-
-### 13. 動工機路徑寫死
+### 12. 動工機路徑寫死
 CLAUDE.md「Related repos」段把 ccdailytalk / remotion 寫成 `D:/...` Windows 路徑。M5 (Mac) 已是 lifeforge 動工機（多個 commit 證實）。已在 CLAUDE.md 加註，但長期看路徑寫死太脆，未來第三台或團隊接手要重整。
 
 低優先——不影響開發。
@@ -168,11 +156,13 @@ CLAUDE.md「Related repos」段把 ccdailytalk / remotion 寫成 `D:/...` Window
 6. **第一篇** —— 「CLAUDE.md 起手模板」（slug `claude-md-starter`）：把 `~/project/claude-md-starter-template.md`（去識別化的 CLAUDE.md 模板）改寫成文章——加開頭故事段（兩三週長出來 + 跟 Eugene Yan 的 behavior 區塊撞了好幾條 + 為什麼出公開版）、調 tone、`status = 'published'`（原計畫 `draft`，改的理由見 #1 sub-decision 5）
 7. **驗證** —— 本地 `npm run dev` + Playwright 截圖驗（列表頁 + 文章頁，desktop + mobile，console clean，404 處理）+ `tsc --noEmit` pass + `next build` pass（`/writings/claude-md-starter` 顯示為 SSG + ISR 1m）
 8. **智囊團審核 + 修** —— Claude + Codex + Gemini 三方審查後套用 fixes：`import "server-only"` 進 lib 兩檔、`getWritingBySlug`/`getPublishedWritings` 用 React `cache()` 去重 round-trip、`formatDate` 抽進 `writings.ts`（原本兩頁各 copy）、加 `rehype-sanitize`（在 `rehype-raw` 後白名單過濾）、`.article-prose` 補 `font-family` + `text-wrap: pretty` + iframe `aspect-ratio: 16/9`。**未採納**：Nav link helper 的 protocol-relative-URL 防護（`navLinks` 是 hardcoded 常數非使用者輸入）。三方一致「可直接上線」，RLS-disabled 舊表那條（`contents`/`ig_posts` 等 anon 全曝光）是 pre-existing 問題、需 Josh 決定存取策略後另開 session 補
-9. **文件** —— 更新 CLAUDE.md「Database」段 + Project 段 + Content status 段；更新 TODO #1（標 Phase 1 ✅ + 修 sub-decisions 2/3/5 + 加 #6 純分頁）+ #10（preview env var 現在相關）；刪掉 `WRITINGS-PHASE1-HANDOFF.md` 交接檔
+9. **第二輪審核（Josh 另一個 session）+ 修** —— 套用：`/writings/[slug]` 的 `<article>` 重構（把頂部導覽列 + `<Footer/>` 移出 `<article>`，`<article>` 只包標題→內文→文末導覽——TODO 🟢#11 同類問題，Services 那個還沒處理）、`getPublishedWritings` 的 `.order` 加 `nullsFirst: false`（防 published_at=null 排到最上面）、文章 OG image 沒專屬封面時 fallback 到 `/og-image.jpg`、**MobileMenu 拿掉多餘的 `mounted` flag**（Portal 只在 open 時 render、open 一定是 client 端按漢堡後才 true → `mounted` 是多餘的；順帶**修掉 TODO 🟢#12 的 `react-hooks/set-state-in-effect` lint error**）、`sanitizeSchema` 註解補上「Phase 2 真放 iframe 時除協定限制外還要做 domain allowlist」的提醒。**延後**：iframe domain allowlist（schema.protocols 做不到，Phase 2 真有 iframe 內容再在那層或 CSP 擋）
+10. **環境 / 部署** —— Vercel CLI `vercel link` 連專案；`SUPABASE_URL` / `SUPABASE_ANON_KEY` 加到 **Preview** 環境（scope 綁 `feat/writings-section`——CLI agent 模式做不到「all preview branches」，想一勞永逸要 dashboard 勾）；push `feat/writings-section` → preview deploy（build log 確認 `/writings/claude-md-starter` 有 pre-render = env vars 有吃到）→ 等 Josh 在 preview URL 線上驗
+11. **文件** —— 更新 CLAUDE.md「Database」段 + Project 段 + Content status 段；更新 TODO #1（標 Phase 1 ✅ + 修 sub-decisions 2/3/5 + 加 #6 純分頁）+ #10（preview env var 現在相關）+ #11（Writings `<article>` 已修，Services 待）+ 刪掉 #12 舊的 lint TODO（已修）；刪掉 `WRITINGS-PHASE1-HANDOFF.md` 交接檔
 
-**驗證 trail**：tsc + lint（lint 唯一 error 是 pre-existing 的 MobileMenu #12，非新增）→ `next build` pass（重跑過一次，第一次 Google Fonts fetch 偶發失敗、`rm -rf .next` 後重建 pass）→ 本地 Playwright e2e（desktop + mobile，含套完審核 fixes 後重驗）→ 智囊團多模型審核 + 修 →（待）Josh 線上驗 → squash merge → production deploy → curl 驗第一篇 live
+**驗證 trail**：tsc + lint（**全 pass**——MobileMenu #12 lint error 這次一併修掉）→ `next build` pass（中間重跑過一次，Google Fonts fetch 偶發失敗、`rm -rf .next` 後重建 pass）→ 本地 Playwright e2e（desktop + mobile，含兩輪審核 fixes 後各重驗一次）→ 智囊團多模型審核 + Josh 另一 session 審核 + 修 → push branch + preview deploy → **（待）Josh 在 preview URL 線上驗** → 開 PR / squash merge → production deploy → curl 驗第一篇 live
 
-**已知遺留**：(a) preview env var 沒設（TODO 🟢#10）；(b) 404 用 Next 預設頁（沒做暖棕主題的 `not-found.tsx`，那是 TODO 🟢#8 範圍）；(c) 封面預覽 code path 沒視覺驗（第一篇沒封面）；(d) MobileMenu pre-existing lint error 沒修（TODO 🟢#12，不在這次範圍）；(e) `~/project/claude-md-starter-template.md` 草稿檔留著（Josh 的檔，之後可清）
+**已知遺留**：(a) preview env var 已設但 scope 綁 `feat/writings-section`（想 all-preview-branches 要 dashboard）；(b) 404 用 Next 預設頁（沒做暖棕主題的 `not-found.tsx`，那是 TODO 🟢#8 範圍）；(c) 封面預覽 code path 沒視覺驗（第一篇沒封面）；(d) Services section 的 `<article>` 語意還沒修（TODO 🟢#11）；(e) `~/project/claude-md-starter-template.md` 草稿檔留著（Josh 的檔，之後可清）
 
 ---
 
