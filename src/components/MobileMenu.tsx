@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 
 type NavLink = { href: string; label: string };
 
@@ -81,22 +82,33 @@ export function MobileMenu({ links }: { links: NavLink[] }) {
           >
             <div className="container-narrow px-[clamp(1.25rem,4vw,3rem)] pt-28 pb-16">
               <ul className="flex flex-col">
-                {links.map((l, idx) => (
-                  <li key={l.href}>
-                    <a
-                      href={l.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-baseline gap-4 py-5 border-b border-[color:var(--color-line)] hover:text-[color:var(--color-accent)] transition-colors"
-                    >
+                {links.map((l, idx) => {
+                  const inner = (
+                    <>
                       <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                         {String(idx + 1).padStart(2, "0")}
                       </span>
                       <span className="font-display text-3xl text-[color:var(--color-ink)]">
                         {l.label}
                       </span>
-                    </a>
-                  </li>
-                ))}
+                    </>
+                  );
+                  const className =
+                    "flex items-baseline gap-4 py-5 border-b border-[color:var(--color-line)] hover:text-[color:var(--color-accent)] transition-colors";
+                  return (
+                    <li key={l.href}>
+                      {l.href.startsWith("/") ? (
+                        <Link href={l.href} onClick={() => setOpen(false)} className={className}>
+                          {inner}
+                        </Link>
+                      ) : (
+                        <a href={l.href} onClick={() => setOpen(false)} className={className}>
+                          {inner}
+                        </a>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
 
               <a
