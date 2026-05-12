@@ -122,13 +122,12 @@ export default async function WritingPage({ params }: Props) {
                 rehypePlugins={[rehypeRaw]}
                 components={{
                   // 外部連結（http/https）開新分頁，對齊全站慣例（Footer / Daily 等）
-                  a: ({ href, children, ...props }) => {
+                  a: ({ href, children }) => {
                     const external = !!href && /^https?:\/\//.test(href);
                     return (
                       <a
                         href={href}
                         {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                        {...props}
                       >
                         {children}
                       </a>
