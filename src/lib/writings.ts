@@ -26,7 +26,9 @@ export const getPublishedWritings = cache(async (): Promise<Writing[]> => {
     .from("writings")
     .select("*")
     .eq("status", "published")
-    .order("published_at", { ascending: false });
+    // nullsFirst: false —— Postgres DESC 預設 NULLs first，萬一有篇 published 但 published_at 還沒填
+    // 不會被推到列表最上面（schema 允許 null）
+    .order("published_at", { ascending: false, nullsFirst: false });
   if (error) {
     console.error("[writings] getPublishedWritings failed:", error.message);
     return [];

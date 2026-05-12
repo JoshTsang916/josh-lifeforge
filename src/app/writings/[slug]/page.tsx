@@ -11,10 +11,13 @@ import { formatDate, getPublishedWritings, getWritingBySlug } from "@/lib/writin
 // ISR — 每 60 秒重新抓一次（校稿 → push 後最多 1 分鐘上線）
 export const revalidate = 60;
 
-// HTML sanitize schema：defaultSchema（已擋 <script> / on* 事件 / javascript: URL）再加上
-// Phase 2 文章會用到的 <audio>（NotebookLM podcast）/ <iframe>（投影片 embed），各只開必要的 attr。
-// rehype-raw 把 markdown 裡的 HTML 字串解析成 HAST 後，這個 sanitize 才過濾掉危險的東西——
-// body_md 雖然只來自 Claude/Josh 經 RLS-protected MCP 寫入，多一層白名單仍是 defense-in-depth。
+// HTML sanitize schema：defaultSchema（已擋 <script> / on* 事件 / javascript: URL，且 `src` 屬性
+// 限 http/https —— iframe.src 也吃到這條）再加上 Phase 2 文章會用到的 <audio>（NotebookLM podcast）
+// / <iframe>（投影片 embed），各只開必要的 attr。rehype-raw 把 markdown 裡的 HTML 解析成 HAST 後，
+// 這個 sanitize 才過濾掉危險的東西—— body_md 雖然只來自 Claude/Josh 經 RLS-protected MCP 寫入，
+// 多一層白名單仍是 defense-in-depth。
+// Phase 2 真要放 iframe 時，除了協定限制（已有），最好再做 domain allowlist（schema.protocols 做不到，
+// 得在這層或 CSP 另外擋）—— 現在沒 iframe 內容、不急。
 const sanitizeSchema = {
   ...defaultSchema,
   tagNames: [...(defaultSchema.tagNames ?? []), "audio", "source", "iframe"],
@@ -41,7 +44,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!writing) return { title: "找不到文章 — 人生鍛造所" };
 
   const description = writing.excerpt ?? undefined;
-  const images = writing.cover_image_url ? [writing.cover_image_url] : undefined;
+  // 沒有專屬封面就退回站台 OG 圖（layout.tsx 的 /og-image.jpg）—— 分享出去不會是空白
+  const images = [writing.cover_image_url ?? "/og-image.jpg"];
   return {
     title: `${writing.title} — 人生鍛造所`,
     description,
@@ -49,13 +53,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: writing.title,
       description,
       type: "article",
-      ...(images ? { images } : {}),
+      images,
     },
     twitter: {
       card: "summary_large_image",
       title: writing.title,
       description,
-      ...(images ? { images } : {}),
+      images,
     },
   };
 }
@@ -68,8 +72,9 @@ export default async function WritingPage({ params }: Props) {
   const date = formatDate(writing.published_at);
 
   return (
-    <article>
-      {/* 頂部導覽列 —— 沿用 /fonts 的「非首頁路由」pattern：自己的極簡 header，不掛 Nav（首頁錨點在這裡不存在） */}
+    <>
+      {/* 頂部導覽列 —— 沿用 /fonts 的「非首頁路由」pattern：自己的極簡 header，不掛 Nav（首頁錨點在這裡不存在）。
+          不算文章內容，所以放在 <article> 外面。 */}
       <div className="section !py-8 border-b border-[color:var(--color-line)]">
         <div className="container-narrow">
           <Link
@@ -81,8 +86,8 @@ export default async function WritingPage({ params }: Props) {
         </div>
       </div>
 
-      {/* 文章主體 —— header / body / 文末導覽 共用一個 .section、置中閱讀欄寬度一致 */}
-      <div className="section">
+      {/* 文章本體 —— 標題 / 內文 / 文末導覽 共用一個 .section、置中閱讀欄寬度一致 */}
+      <article className="section">
         <div className="container-narrow">
           <div className="mx-auto max-w-2xl">
             {/* 標題區 */}
@@ -164,9 +169,9 @@ export default async function WritingPage({ params }: Props) {
             </div>
           </div>
         </div>
-      </div>
+      </article>
 
       <Footer />
-    </article>
+    </>
   );
 }
