@@ -79,13 +79,13 @@ CLAUDE.md「Design notes」記錄這個拍板：先匿名上線，等授權升�
 
 來源：2026-04-23 智囊團審核 #H → 2026-04-25 BRAND 重新定位 → 2026-05-08 04 加完後殘餘
 
-### 4. FORGE 框架展開說明
-FORGE 是你品牌核心 IP，目前只在 About 有一行 callout，太可惜。可以視覺化 5 個字母代表什麼。
+### 4. FORGE 框架展開說明 — ⏸ 暫緩（框架重打磨中）
 
-來源：智囊團審核 #J
-要 Josh 決定：
-- 要不要在網站公開解釋這套方法論？
-- 如果要，用 5 個字母的卡片列表，還是一段文字 + 流程圖？
+**狀態（2026-05-12）**：FORGE 五步法**暫不上線**。Josh 認為 F/O/R/G/E 為拼「人生鍛造所」太硬湊，框架本身在重新打磨中，打磨完才會重新放上網站。**此重打磨由 Win + M1 端處理，M5 這台不碰。** 在那之前 `About.tsx` 裡刻意沒有 FORGE callout——deliberate hold，不是疏漏，不要去補。
+
+~~FORGE 是你品牌核心 IP，目前只在 About 有一行 callout，太可惜。可以視覺化 5 個字母代表什麼。~~（待框架打磨完後再回來決定怎麼呈現）
+
+來源：智囊團審核 #J → 2026-05-12 Josh 確認 hold
 
 ### 5. Newsletter 訂閱框
 給「觀望型」訪客（還沒準備諮詢但想追蹤你）一個門檻低的入口。現在門檻太高（Gmail / Calendly 二選一）。
@@ -100,13 +100,10 @@ FORGE 是你品牌核心 IP，目前只在 About 有一行 callout，太可惜�
 
 Parked: 2026-04-23
 
-### 7. FORGE callout 副標重寫
-2026-04-25 BRAND 重新定位後，FORGE callout 文字目前是 placeholder「[副標待 Josh 親寫，原 AI 生版本已拋棄]」。
+### 7. FORGE callout 副標重寫 — ⏸ 暫緩（FORGE 框架重打磨中，見 #4）
+2026-04-25 BRAND 重新定位後 FORGE callout 文字本是 placeholder，但 2026-05-12 起 FORGE 五步法暫不上線（框架重打磨中、Win/M1 端處理，見 #4），所以副標重寫一併暫緩——等框架打磨完、確定要不要 / 怎麼把 FORGE 放回 About 再回來處理。
 
-位置：`src/components/About.tsx` FORGE callout 第 2 個 `<p>`
-要 Josh 寫的：FORGE 五步法的一句話副標描述（取代原 AI 生版本）
-來源：2026-04-25 morning-flow 五元素定錨討論
-參照：BRAND.md 「FORGE callout」段
+（原內容存查）位置：`src/components/About.tsx` FORGE callout 第 2 個 `<p>`；要 Josh 寫 FORGE 五步法的一句話副標；來源：2026-04-25 morning-flow 五元素定錨討論；參照：BRAND.md「FORGE callout」段
 
 ---
 
