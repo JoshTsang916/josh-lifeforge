@@ -69,34 +69,28 @@ export function Testimonials() {
           </div>
         </div>
 
-        {/* Testimonial list — editorial stack */}
-        <div className="border-t border-[color:var(--color-line-strong)]">
+        {/* Testimonial cards — 2x2 grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 lg:gap-x-12 gap-y-12 pt-12 border-t border-[color:var(--color-line-strong)]">
           {testimonials.map((t) => (
-            <article
-              key={t.number}
-              className="grid lg:grid-cols-12 gap-8 py-12 border-b border-[color:var(--color-line-strong)]"
-            >
-              <div className="lg:col-span-2">
-                <div className="font-mono text-sm tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
+            <article key={t.number} className="flex flex-col">
+              <div className="flex items-baseline gap-3 mb-4">
+                <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                   {t.number}
-                </div>
-                <div className="eyebrow">{t.role}</div>
+                </span>
+                <span className="eyebrow">{t.role}</span>
               </div>
-
-              <div className="lg:col-span-10 max-w-3xl">
-                <blockquote className="font-display text-xl md:text-2xl leading-[1.6] text-[color:var(--color-ink)]">
-                  {t.quote}
-                </blockquote>
-                <div className="mt-6 flex items-center gap-3">
-                  <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
-                  <cite className="font-sans not-italic text-sm text-[color:var(--color-fg)]">
-                    {t.name}
-                    <span className="text-[color:var(--color-fg-subtle)]">
-                      {" · "}
-                      {t.role}
-                    </span>
-                  </cite>
-                </div>
+              <blockquote className="font-display text-lg md:text-xl leading-[1.6] text-[color:var(--color-ink)] mb-6">
+                {t.quote}
+              </blockquote>
+              <div className="mt-auto flex items-center gap-3">
+                <span className="h-px w-6 bg-[color:var(--color-line-strong)]" />
+                <cite className="font-sans not-italic text-sm text-[color:var(--color-fg)]">
+                  {t.name}
+                  <span className="text-[color:var(--color-fg-subtle)]">
+                    {" · "}
+                    {t.role}
+                  </span>
+                </cite>
               </div>
             </article>
           ))}

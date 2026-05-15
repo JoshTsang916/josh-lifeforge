@@ -91,7 +91,7 @@ export function Services() {
           {services.map((service) => (
             <article
               key={service.number}
-              className="grid lg:grid-cols-12 gap-8 py-12 border-b border-[color:var(--color-line-strong)] group"
+              className="grid lg:grid-cols-12 gap-6 py-10 border-b border-[color:var(--color-line-strong)] group"
             >
               <div className="lg:col-span-2">
                 <div className="font-mono text-sm tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
@@ -101,18 +101,18 @@ export function Services() {
               </div>
 
               <div className="lg:col-span-7">
-                <h3 className="font-display text-3xl md:text-4xl leading-tight text-[color:var(--color-ink)] mb-4 group-hover:text-[color:var(--color-accent)] transition-colors duration-300">
+                <h3 className="font-display text-3xl md:text-4xl leading-tight text-[color:var(--color-ink)] mb-3 group-hover:text-[color:var(--color-accent)] transition-colors duration-300">
                   {service.title}
                 </h3>
-                <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)] mb-4">
+                <p className="font-sans text-base leading-[1.65] text-[color:var(--color-fg-muted)] mb-3">
                   {service.description}
                 </p>
                 {service.proof && (
-                  <div className="mt-6 mb-6 pt-6 border-t border-[color:var(--color-line)] space-y-3">
+                  <div className="mt-5 mb-5 pt-5 border-t border-[color:var(--color-line)] space-y-2">
                     {service.proof.cases.map((c, i) => (
                       <p
                         key={i}
-                        className="font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)] flex gap-3"
+                        className="font-sans text-sm leading-[1.65] text-[color:var(--color-fg-muted)] flex gap-3"
                       >
                         <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)] pt-0.5 shrink-0">
                           {String(i + 1).padStart(2, "0")}
