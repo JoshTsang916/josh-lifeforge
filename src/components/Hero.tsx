@@ -11,7 +11,7 @@ export function Hero() {
         <div className="flex items-center gap-3 mb-10">
           <span className="eyebrow">Lifeforge Studio</span>
           <span className="h-px w-12 bg-[color:var(--color-line-strong)]" />
-          <span className="eyebrow">est. 2024</span>
+          <span className="eyebrow">est. 2026</span>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">

@@ -50,7 +50,7 @@ export function Testimonials() {
           <div className="lg:col-span-3">
             <div className="flex items-center gap-3 mb-6">
               <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                04
+                05
               </span>
               <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
             </div>
