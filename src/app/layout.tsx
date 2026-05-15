@@ -34,7 +34,7 @@ const outfit = Outfit({
 });
 
 // === Reserved / playground alternates ===
-// notoSansTC: v0.3 舊主 body，保留作 fallback / 對照用，未接到 @theme
+// notoSansTC: v0.3 舊主 body，保留供 /fonts playground 對照用，未接到 @theme
 const notoSansTC = Noto_Sans_TC({
   variable: "--font-noto-sans-tc",
   subsets: ["latin"],
