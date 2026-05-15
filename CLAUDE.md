@@ -24,7 +24,7 @@ Defined in `src/app/globals.css` via `@theme` (Tailwind v4):
 - **Colors**: oklch-based, warm brown palette
   - `--color-bg` light cream / `--color-fg` ink brown / `--color-accent` chocolate
   - All UI colors must come from these tokens — no rogue hex values
-- **Typography**: `--font-display` (Newsreader, serif italic) for headlines, `--font-sans` (Outfit) for body
+- **Typography** (v0.5): `--font-display` (Noto Serif TC 思源宋) for headlines, `--font-sans` (LXGW WenKai TC 霞鶩文楷) for body, `--font-ui` (Outfit) for Latin UI labels & buttons
 - **Radii**: small (2/6/10px) — editorial restraint, not soft consumer
 - **Component classes**: `.section`, `.container-narrow`, `.eyebrow`, `.btn`, `.btn-primary`, `.btn-ghost`, `.link-underline`
 
