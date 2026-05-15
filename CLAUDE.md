@@ -52,17 +52,17 @@ src/
     ├── Nav.tsx             # Sticky top nav，desktop 橫式選單 + mobile 漢堡 trigger
     ├── MobileMenu.tsx      # client component，用 React Portal 渲染到 body 避開 Nav backdrop-blur 造成的 stacking 限制
     ├── Hero.tsx            # Section 01 — headline + CTAs
-    ├── SectionIndex.tsx    # navigation aid 在 Hero/About 之間（不算 01-07 內容 section）— editorial TOC 含 hook 描述
     ├── About.tsx           # Section 02 — Josh 的故事
     ├── Services.tsx        # Section 03 — workshops / 1:1 / speaking / Build With Me（04 客製化開發含 doris/tibonus proof cases）
-    ├── Testimonials.tsx    # Section 04 — 學員見證（hardcoded：Du / Tammy / Kin / 大大）
-    ├── RecentWork.tsx      # Section 05 — 近期作品（hardcoded：n8n / AI 自動化進入文件驅動的時代 / 神經可塑性說書專場）
-    ├── Daily.tsx           # Section 06 — 日更短影片（hardcoded 4 則 IG reels + 縮圖）
+    ├── RecentWork.tsx      # Section 04 — 近期作品（hardcoded：n8n / AI 自動化進入文件驅動的時代 / 神經可塑性說書專場）
+    ├── Testimonials.tsx    # Section 05 — 學員見證（hardcoded：Du / Tammy / Kin / 大大）
+    ├── Daily.tsx           # Section 06 — 日更短影片（環形 DayCounter 從 2026-04-01 算 day，每小時 ISR 刷新）
+    ├── DayCounter.tsx      # client component — SVG 環形 + IntersectionObserver + RAF count-up，1.8s easeOutCubic
     ├── Contact.tsx         # Section 07 — Email + Calendly
     └── Footer.tsx          # Connect (Threads/IG/YouTube) + reach out + copyright
 ```
 
-**Section 編號規則**：每個 content section 左欄顯示兩位數編號（01–07）。新增 content section 時整體重編，編號必須連續、不得跳號或重複。**SectionIndex.tsx 例外**——它是 navigation aid 不是 content section，不佔 01-07 編號（避免破壞既有規則時整體重編所有 section markers）。
+**Section 編號規則**：每個 content section 左欄顯示兩位數編號（01–07）。新增 content section 時整體重編，編號必須連續、不得跳號或重複。對調順序時左欄編號要同步換（譬如 2026-05-15 把 Testimonials 04 跟 RecentWork 05 對調，兩個 component 內的編號字串也都翻過來）。
 
 ## Editorial tone
 - Headlines: serif italic accents on key concept words (e.g. "*第二曲線*", "*跟 AI 對話建出系統*")
@@ -72,7 +72,8 @@ src/
 
 ## Design notes（過往決策）
 
-- **SectionIndex 不歸 01-07 編號** — 它是 Hero/About 之間的 navigation aid（editorial TOC + hook 描述），不是 content section。原因：避免每加一個 nav aid 就要重編所有 content section markers。
+- **SectionIndex（editorial TOC）2026-05-15 移除** — 原本在 Hero/About 之間，列 02-07 各 section 的編號 + label + hook 描述。移除原因：sticky Nav 已 cover navigation 需求，TOC 是 redundant + 拉長到 About 的 scroll 路徑。如要復原翻 git history 找 component + page.tsx render line（commit 之前是 `SectionIndex.tsx`）。
+- **Testimonials ↔ RecentWork 2026-05-15 對調為 04→RecentWork / 05→Testimonials** — 兩個 trust block 從「客觀（教過什麼）→ 主觀（學員怎麼說）」遞進，讓主觀背書更靠近 Contact。Nav.tsx navLinks 順序也對調，MobileMenu 編號是 `idx+1` 動態算自動跟著。
 - **Services 04「Build With Me」用 inline `proof.cases` 而不是另開 Portfolio section** — 因為 doris/tibonus 客戶授權還沒拿，先匿名（「某會計事務所」/「某食品代理商」）嵌在 service description 內。等授權拿到後可升級到獨立 Builds section + 截圖。
 - **Vercel Toolbar 用 `process.env.VERCEL_ENV === "preview"` gate 條件 inject** — 不在 production main branch 出現（避免真實訪客看到），也不在 dev 出現（Josh 不需要）。改 gate 把 `'development'` 加進去就會在 dev 出現。
 
@@ -85,7 +86,7 @@ Vercel Preview Comments 是 Josh 跟 Claude 之間做 design review feedback 的
 2. Josh 每條 comment 點右上角 GitHub icon → Convert to Issue → 自動產 GitHub Issue（label `vercel: <team>/<project>`）
 3. Claude 跑 `gh issue list --repo JoshTsang916/josh-lifeforge --state open --json number,title,body` 撈
 4. Issue body 結構：第一段 quote 是元素「原本字串」；joshtsang916 留言是「後來字串」
-5. Claude 找對應 code 位置改（同字串多處出現要全部改保 consistency，譬如 RecentWork title + SectionIndex hook 引用）
+5. Claude 找對應 code 位置改（同字串多處出現要全部改保 consistency，譬如同一 section title 可能同時出現在 component 內 + Nav.tsx label）
 6. Commit message 加 `Closes #N`，PR merge 進 main 時 GitHub 自動 close issues
 
 **前置設定**（已完成於 commit `88d98b6`，2026-05-08）：
