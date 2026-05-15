@@ -67,40 +67,34 @@ export function RecentWork() {
           </div>
         </div>
 
-        {/* Work cards — editorial stack */}
-        <div className="border-t border-[color:var(--color-line-strong)]">
+        {/* Work cards — 3-column grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12 pt-12 border-t border-[color:var(--color-line-strong)]">
           {works.map((work, idx) => (
-            <article
-              key={work.id}
-              className="grid lg:grid-cols-12 gap-8 py-12 border-b border-[color:var(--color-line-strong)]"
-            >
-              <div className="lg:col-span-2">
-                <div className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
+            <article key={work.id} className="flex flex-col">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-sm mb-6 bg-[color:var(--color-bg-deep)]">
+                <Image
+                  src={work.image}
+                  alt={work.imageAlt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 30vw"
+                  className="object-cover"
+                />
+              </div>
+
+              <div className="flex items-baseline gap-3 mb-3">
+                <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                   {String(idx + 1).padStart(2, "0")}
-                </div>
-                <div className="eyebrow">{work.subtitle}</div>
+                </span>
+                <span className="eyebrow">{work.subtitle}</span>
               </div>
 
-              <div className="lg:col-span-5">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
-                  <Image
-                    src={work.image}
-                    alt={work.imageAlt}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 40vw"
-                    className="object-cover"
-                  />
-                </div>
-              </div>
+              <h3 className="font-display text-xl md:text-2xl leading-tight text-[color:var(--color-ink)] mb-3">
+                {work.title}
+              </h3>
 
-              <div className="lg:col-span-5">
-                <h3 className="font-display text-2xl md:text-3xl leading-tight text-[color:var(--color-ink)] mb-4">
-                  {work.title}
-                </h3>
-                <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)]">
-                  {work.description}
-                </p>
-              </div>
+              <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)]">
+                {work.description}
+              </p>
             </article>
           ))}
         </div>
