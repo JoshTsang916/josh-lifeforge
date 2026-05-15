@@ -10,7 +10,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { VercelToolbar } from "@vercel/toolbar/next";
 import "./globals.css";
 
-// === Main brand pair (v0.3) ===
+// === Main brand pair (v0.5): Noto Serif TC (display, 思源宋) + LXGW WenKai TC (body, 霞鶩文楷) ===
 const notoSerifTC = Noto_Serif_TC({
   variable: "--font-noto-serif-tc",
   subsets: ["latin"],
@@ -18,10 +18,10 @@ const notoSerifTC = Noto_Serif_TC({
   display: "swap",
 });
 
-const notoSansTC = Noto_Sans_TC({
-  variable: "--font-noto-sans-tc",
+const lxgwWenKaiTC = LXGW_WenKai_TC({
+  variable: "--font-lxgw-wenkai-tc",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
+  weight: ["300", "400", "700"],
   display: "swap",
 });
 
@@ -33,18 +33,19 @@ const outfit = Outfit({
   display: "swap",
 });
 
-// === Playground / alternates ===
+// === Reserved / playground alternates ===
+// notoSansTC: v0.3 舊主 body，保留作 fallback / 對照用，未接到 @theme
+const notoSansTC = Noto_Sans_TC({
+  variable: "--font-noto-sans-tc",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  display: "swap",
+});
+
 const huninn = Huninn({
   variable: "--font-huninn",
   subsets: ["latin"],
   weight: ["400"],
-  display: "swap",
-});
-
-const lxgwWenKaiTC = LXGW_WenKai_TC({
-  variable: "--font-lxgw-wenkai-tc",
-  subsets: ["latin"],
-  weight: ["300", "400", "700"],
   display: "swap",
 });
 
@@ -95,10 +96,10 @@ export default function RootLayout({
       lang="zh-TW"
       className={[
         notoSerifTC.variable,
-        notoSansTC.variable,
-        outfit.variable,
-        huninn.variable,
         lxgwWenKaiTC.variable,
+        outfit.variable,
+        notoSansTC.variable,
+        huninn.variable,
       ].join(" ")}
     >
       <body>
