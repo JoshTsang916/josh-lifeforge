@@ -59,6 +59,20 @@
     text-rendering: optimizeLegibility;
     text-wrap: pretty;
   }
+  /* Reduced motion 用戶：所有 transition / animation 縮到接近 0，
+     讓 Reveal / DayCounter / HeroTitle / HairlineLine 等動畫直接落定。
+     全域處理可避免 component 內各自 JS 檢測 prefers-reduced-motion 觸發
+     React 19 的 react-hooks/set-state-in-effect lint rule。 */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
   ::selection {
     background: var(--color-accent-soft);
     color: var(--color-ink);

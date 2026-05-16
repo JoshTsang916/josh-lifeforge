@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { Reveal } from "./Reveal";
+import { HairlineLine } from "./HairlineLine";
 
 type Work = {
   id: string;
@@ -44,58 +46,62 @@ export function RecentWork() {
     <section id="work" className="section bg-[color:var(--color-bg-muted)]">
       <div className="container-narrow">
         {/* Section header */}
-        <div className="grid lg:grid-cols-12 gap-12 mb-20">
-          <div className="lg:col-span-3">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                04
-              </span>
-              <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
+        <Reveal>
+          <div className="grid lg:grid-cols-12 gap-12 mb-20">
+            <div className="lg:col-span-3">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
+                  04
+                </span>
+                <HairlineLine />
+              </div>
+              <h2 className="eyebrow">Recent Work</h2>
+              <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
+                近期作品
+              </p>
             </div>
-            <h2 className="eyebrow">Recent Work</h2>
-            <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
-              近期作品
-            </p>
+            <div className="lg:col-span-9 max-w-2xl">
+              <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
+                教過的場、講過的主題，留下一點痕跡。
+              </p>
+              <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
+                想在你的團隊、讀書會、學會內部辦一場？寫信跟我聊。
+              </p>
+            </div>
           </div>
-          <div className="lg:col-span-9 max-w-2xl">
-            <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              教過的場、講過的主題，留下一點痕跡。
-            </p>
-            <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-              想在你的團隊、讀書會、學會內部辦一場？寫信跟我聊。
-            </p>
-          </div>
-        </div>
+        </Reveal>
 
-        {/* Work cards — 3-column grid */}
+        {/* Work cards — 3-column grid, staggered reveal */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12 pt-12 border-t border-[color:var(--color-line-strong)]">
           {works.map((work, idx) => (
-            <article key={work.id} className="flex flex-col">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-sm mb-6 bg-[color:var(--color-bg-deep)]">
-                <Image
-                  src={work.image}
-                  alt={work.imageAlt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 30vw"
-                  className="object-cover"
-                />
-              </div>
+            <Reveal key={work.id} delay={idx * 100} className="h-full">
+              <article className="flex flex-col h-full">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-sm mb-6 bg-[color:var(--color-bg-deep)]">
+                  <Image
+                    src={work.image}
+                    alt={work.imageAlt}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 30vw"
+                    className="object-cover"
+                  />
+                </div>
 
-              <div className="flex items-baseline gap-3 mb-3">
-                <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
-                <span className="eyebrow">{work.subtitle}</span>
-              </div>
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <span className="eyebrow">{work.subtitle}</span>
+                </div>
 
-              <h3 className="font-display text-xl md:text-2xl leading-tight text-[color:var(--color-ink)] mb-3">
-                {work.title}
-              </h3>
+                <h3 className="font-display text-xl md:text-2xl leading-tight text-[color:var(--color-ink)] mb-3">
+                  {work.title}
+                </h3>
 
-              <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)]">
-                {work.description}
-              </p>
-            </article>
+                <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)]">
+                  {work.description}
+                </p>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>
