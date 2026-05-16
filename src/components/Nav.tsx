@@ -25,13 +25,13 @@ export function Nav() {
             width={96}
             height={96}
             priority
-            className="transition-transform duration-300 group-hover:rotate-[3deg]"
+            className="h-12 w-12 sm:h-24 sm:w-24 transition-transform duration-300 group-hover:rotate-[3deg]"
           />
-          <div className="hidden sm:flex flex-col leading-tight">
-            <span className="font-display text-lg font-normal text-[color:var(--color-ink)] tracking-wider">
+          <div className="flex flex-col leading-tight">
+            <span className="font-display text-base sm:text-lg font-normal text-[color:var(--color-ink)] tracking-wider">
               人生鍛造所
             </span>
-            <span className="font-ui text-[10px] tracking-[0.22em] uppercase text-[color:var(--color-fg-subtle)] mt-1">
+            <span className="hidden sm:block font-ui text-[10px] tracking-[0.22em] uppercase text-[color:var(--color-fg-subtle)] mt-1">
               The Life Forge
             </span>
           </div>
