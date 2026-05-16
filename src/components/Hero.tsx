@@ -7,7 +7,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="section min-h-[calc(100svh-4rem)] sm:min-h-[calc(100svh-7rem)] flex items-center"
+      className="section min-h-[calc(100vh-4rem)] min-h-[calc(100svh-4rem)] sm:min-h-[calc(100vh-7rem)] sm:min-h-[calc(100svh-7rem)] flex items-center"
     >
       <div className="container-narrow w-full">
         {/* Eyebrow */}

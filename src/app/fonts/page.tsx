@@ -73,7 +73,7 @@ const sampleTexts = {
   paragraph:
     "我是 Josh。原本是高中數學老師，2024 年離開教職，把全部精力投入「AI × 教育」的第二曲線。這幾年我發現，大部分人對 AI 的想像，還停留在「叫 ChatGPT 寫一段文字」。但真正的可能性，是跟 AI 對話，建出一整套屬於自己的工作流。",
   sectionHeading: "FORGE 五步法 — Context is King",
-  buttonLabel: "預約 1:1 諮詢",
+  buttonLabel: "預約 1 對 1 諮詢",
 };
 
 export default function FontsPlayground() {
