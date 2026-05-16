@@ -1,13 +1,11 @@
 import Image from "next/image";
-import { Reveal } from "./Reveal";
 import { HairlineLine } from "./HairlineLine";
 
 export function About() {
   return (
     <section id="about" className="section bg-[color:var(--color-bg-muted)]">
       <div className="container-narrow">
-        <Reveal>
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
             {/* Left rail — number + label + photo */}
             <div className="lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
@@ -84,7 +82,6 @@ export function About() {
               </div>
             </div>
           </div>
-        </Reveal>
       </div>
     </section>
   );

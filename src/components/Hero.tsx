@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { HeroTitle } from "./HeroTitle";
 import { HairlineLine } from "./HairlineLine";
+import { Reveal } from "./Reveal";
 
 export function Hero() {
   return (
@@ -21,18 +22,24 @@ export function Hero() {
           <div className="lg:col-span-7 order-2 lg:order-1">
             <HeroTitle />
 
-            <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
-              在被加速的時代，走一條不急的路
-            </p>
+            {/* delay 對齊 HeroTitle 三行 stagger（0/250/500ms + 800ms duration），
+                第三行 fade 進行中時 paragraph 接續，CTAs 收尾 */}
+            <Reveal delay={750}>
+              <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
+                在被加速的時代，走一條不急的路
+              </p>
+            </Reveal>
 
-            <div className="flex flex-wrap gap-4">
-              <a href="#contact" className="btn btn-primary">
-                預約 1:1 諮詢
-              </a>
-              <a href="#work" className="btn btn-ghost">
-                看作品
-              </a>
-            </div>
+            <Reveal delay={1000}>
+              <div className="flex flex-wrap gap-4">
+                <a href="#contact" className="btn btn-primary">
+                  預約 1:1 諮詢
+                </a>
+                <a href="#work" className="btn btn-ghost">
+                  看作品
+                </a>
+              </div>
+            </Reveal>
           </div>
 
           {/* Right — photo */}
@@ -54,7 +61,7 @@ export function Hero() {
         <div className="mt-20 flex items-center gap-4 text-xs font-sans text-[color:var(--color-fg-subtle)]">
           <span className="font-mono tabular-nums">01</span>
           <HairlineLine />
-          <span>Josh - Sharing what I learn along the way</span>
+          <span>Josh — Sharing what I learn along the way</span>
         </div>
       </div>
     </section>
