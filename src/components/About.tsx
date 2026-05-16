@@ -1,13 +1,16 @@
 import Image from "next/image";
 import { HairlineLine } from "./HairlineLine";
+import { Reveal } from "./Reveal";
 
 export function About() {
   return (
     <section id="about" className="section bg-[color:var(--color-bg-muted)]">
       <div className="container-narrow">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
-            {/* Left rail — number + label + photo */}
-            <div className="lg:col-span-3">
+        <div className="grid md:grid-cols-12 gap-12 lg:gap-20">
+            {/* Left rail — number + label + photo
+                只給 left rail 加 Reveal，跟 Services/RecentWork/Testimonials 視覺節奏一致；
+                右側長 narrative 不裹 Reveal，避免長文 fade-in 打斷閱讀 */}
+            <Reveal className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                   02
@@ -27,10 +30,10 @@ export function About() {
                   className="object-cover"
                 />
               </div>
-            </div>
+            </Reveal>
 
             {/* Right — main copy */}
-            <div className="lg:col-span-9 max-w-2xl">
+            <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
               <p className="eyebrow mb-4">我是 Josh</p>
               <p className="font-display text-3xl md:text-4xl leading-[1.3] text-[color:var(--color-ink)] mb-10">
                 我相信每個人都有自己{" "}

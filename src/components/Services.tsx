@@ -30,7 +30,7 @@ const services: Service[] = [
     description:
       "60 分鐘對話，針對你的內容工作流、學習方法、職涯轉型給出可執行建議。不是泛泛的勵志談話，是看著你的實際素材，跟你一起拆解、重組、找出下一步。",
     forWho: "個人創作者、教育工作者、轉型中的專業人士",
-    cta: "預約 1:1",
+    cta: "預約 1 對 1",
   },
   {
     number: "03",
@@ -64,8 +64,8 @@ export function Services() {
       <div className="container-narrow">
         {/* Section header */}
         <Reveal>
-          <div className="grid lg:grid-cols-12 gap-12 mb-20">
-            <div className="lg:col-span-3">
+          <div className="grid md:grid-cols-12 gap-12 mb-20">
+            <div className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                   03
@@ -77,7 +77,7 @@ export function Services() {
                 我提供什麼
               </p>
             </div>
-            <div className="lg:col-span-9 max-w-2xl">
+            <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
               <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
                 四種協作形式，
                 從教學到實作，

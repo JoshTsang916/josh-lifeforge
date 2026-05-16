@@ -10,8 +10,8 @@ export function Contact() {
     <section id="contact" className="section">
       <div className="container-narrow">
         <Reveal>
-          <div className="grid lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-3">
+          <div className="grid md:grid-cols-12 gap-12">
+            <div className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                   07
@@ -23,7 +23,7 @@ export function Contact() {
                 跟我聊聊
               </p>
             </div>
-            <div className="lg:col-span-9 max-w-2xl">
+            <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
               <p className="font-display text-3xl md:text-4xl leading-[1.3] text-[color:var(--color-ink)] mb-6">
                 想把 AI 放進你的工作流？
                 <br />
