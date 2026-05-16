@@ -21,7 +21,7 @@ export function HeroTitle() {
   }, []);
 
   return (
-    <h1 className="font-display text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[1.2] tracking-[-0.02em] text-[color:var(--color-ink)] mb-8 whitespace-nowrap">
+    <h1 className="font-display text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[1.2] tracking-[-0.02em] text-[color:var(--color-ink)] mb-8 text-balance">
       {LINES.map((line, i) => (
         <span
           key={i}

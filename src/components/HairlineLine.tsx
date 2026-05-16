@@ -33,6 +33,7 @@ export function HairlineLine({ width = "w-8", className = "" }: Props) {
   return (
     <span
       ref={ref}
+      aria-hidden="true"
       className={`h-px ${width} bg-[color:var(--color-line-strong)] inline-block origin-left ${className}`}
       style={{
         transform: revealed ? "scaleX(1)" : "scaleX(0)",

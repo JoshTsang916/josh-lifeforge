@@ -63,13 +63,17 @@ export function ContactForm() {
       </div>
 
       {/* 想討論的服務 */}
-      <fieldset>
+      <fieldset
+        aria-describedby={
+          state.fieldErrors?.service ? "service-error" : undefined
+        }
+      >
         <legend className="eyebrow mb-4">想討論的服務</legend>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {SERVICES.map((s) => (
             <label
               key={s.value}
-              className="group relative flex flex-col gap-1 p-4 border border-[color:var(--color-line-strong)] cursor-pointer transition-colors hover:border-[color:var(--color-accent)] has-[:checked]:border-[color:var(--color-accent)] has-[:checked]:bg-[color:var(--color-bg-muted)]"
+              className="group relative flex flex-col gap-1 p-4 border border-[color:var(--color-line-strong)] cursor-pointer transition-colors hover:border-[color:var(--color-accent)] has-[:checked]:border-[color:var(--color-accent)] has-[:checked]:bg-[color:var(--color-bg-muted)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[color:var(--color-accent)]"
             >
               <input
                 type="radio"
@@ -78,6 +82,9 @@ export function ContactForm() {
                 required
                 className="sr-only peer"
                 defaultChecked={s.value === "workshop"}
+                aria-describedby={
+                  state.fieldErrors?.service ? "service-error" : undefined
+                }
               />
               <span className="font-display text-base text-[color:var(--color-ink)] peer-checked:text-[color:var(--color-accent)]">
                 {s.title}
@@ -89,7 +96,10 @@ export function ContactForm() {
           ))}
         </div>
         {state.fieldErrors?.service && (
-          <p className="font-sans text-sm text-[color:var(--color-accent)] mt-3">
+          <p
+            id="service-error"
+            className="font-sans text-sm text-[color:var(--color-accent)] mt-3"
+          >
             {state.fieldErrors.service}
           </p>
         )}
@@ -108,10 +118,17 @@ export function ContactForm() {
           maxLength={50}
           autoComplete="name"
           placeholder="Tom、張小姐、小楊...都行"
+          aria-invalid={state.fieldErrors?.name ? true : undefined}
+          aria-describedby={
+            state.fieldErrors?.name ? "contact-name-error" : undefined
+          }
           className="w-full font-display text-lg bg-transparent border-0 border-b-[1.5px] border-[color:var(--color-line-strong)] py-2 text-[color:var(--color-ink)] placeholder:text-[color:var(--color-fg-subtle)] focus:border-[color:var(--color-accent)] focus:outline-none transition-colors"
         />
         {state.fieldErrors?.name && (
-          <p className="font-sans text-sm text-[color:var(--color-accent)] mt-2">
+          <p
+            id="contact-name-error"
+            className="font-sans text-sm text-[color:var(--color-accent)] mt-2"
+          >
             {state.fieldErrors.name}
           </p>
         )}
@@ -129,10 +146,17 @@ export function ContactForm() {
           required
           autoComplete="email"
           placeholder="your@email.com"
+          aria-invalid={state.fieldErrors?.email ? true : undefined}
+          aria-describedby={
+            state.fieldErrors?.email ? "contact-email-error" : undefined
+          }
           className="w-full font-display text-lg bg-transparent border-0 border-b-[1.5px] border-[color:var(--color-line-strong)] py-2 text-[color:var(--color-ink)] placeholder:text-[color:var(--color-fg-subtle)] focus:border-[color:var(--color-accent)] focus:outline-none transition-colors"
         />
         {state.fieldErrors?.email && (
-          <p className="font-sans text-sm text-[color:var(--color-accent)] mt-2">
+          <p
+            id="contact-email-error"
+            className="font-sans text-sm text-[color:var(--color-accent)] mt-2"
+          >
             {state.fieldErrors.email}
           </p>
         )}
@@ -149,10 +173,17 @@ export function ContactForm() {
           required
           rows={6}
           placeholder={"告訴我：\n・你目前在做什麼（工作 / 學習 / 創作）\n・卡在哪個環節\n・30 分鐘後想帶走什麼"}
+          aria-invalid={state.fieldErrors?.message ? true : undefined}
+          aria-describedby={
+            state.fieldErrors?.message ? "contact-message-error" : undefined
+          }
           className="w-full font-sans text-base leading-[1.7] bg-transparent border border-[color:var(--color-line-strong)] p-4 text-[color:var(--color-ink)] placeholder:text-[color:var(--color-fg-subtle)] focus:border-[color:var(--color-accent)] focus:outline-none transition-colors resize-y"
         />
         {state.fieldErrors?.message && (
-          <p className="font-sans text-sm text-[color:var(--color-accent)] mt-2">
+          <p
+            id="contact-message-error"
+            className="font-sans text-sm text-[color:var(--color-accent)] mt-2"
+          >
             {state.fieldErrors.message}
           </p>
         )}
