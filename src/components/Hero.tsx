@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { HeroTitle } from "./HeroTitle";
+import { HairlineLine } from "./HairlineLine";
 
 export function Hero() {
   return (
@@ -10,20 +12,14 @@ export function Hero() {
         {/* Eyebrow */}
         <div className="flex items-center gap-3 mb-10">
           <span className="eyebrow">Lifeforge Studio</span>
-          <span className="h-px w-12 bg-[color:var(--color-line-strong)]" />
+          <HairlineLine width="w-12" />
           <span className="eyebrow">est. 2026</span>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           {/* Left — copy */}
           <div className="lg:col-span-7 order-2 lg:order-1">
-            <h1 className="font-display text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[1.2] tracking-[-0.02em] text-[color:var(--color-ink)] mb-8 whitespace-nowrap">
-              <span style={{ color: "var(--color-accent)" }}>AI</span> 給你槓桿
-              <br />
-              <span style={{ color: "var(--color-accent)" }}>閱讀</span> 給你底氣
-              <br />
-              <span style={{ color: "var(--color-accent)" }}>一人公司</span>給你自由
-            </h1>
+            <HeroTitle />
 
             <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
               在被加速的時代，走一條不急的路
@@ -57,7 +53,7 @@ export function Hero() {
         {/* Footer marker */}
         <div className="mt-20 flex items-center gap-4 text-xs font-sans text-[color:var(--color-fg-subtle)]">
           <span className="font-mono tabular-nums">01</span>
-          <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
+          <HairlineLine />
           <span>Josh - Sharing what I learn along the way</span>
         </div>
       </div>

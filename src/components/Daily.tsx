@@ -1,4 +1,5 @@
 import { DayCounter } from "./DayCounter";
+import { HairlineLine } from "./HairlineLine";
 
 // 日更起算日：2026-04-01（台北時區）
 // 用 UTC+8 鎖定避免伺服器在 UTC 0:00–8:00 之間少算一天
@@ -22,7 +23,7 @@ export function Daily() {
               <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                 06
               </span>
-              <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
+              <HairlineLine />
             </div>
             <h2 className="eyebrow">Daily</h2>
             <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">

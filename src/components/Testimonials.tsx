@@ -1,3 +1,6 @@
+import { Reveal } from "./Reveal";
+import { HairlineLine } from "./HairlineLine";
+
 type Testimonial = {
   number: string;
   name: string;
@@ -46,53 +49,62 @@ export function Testimonials() {
     >
       <div className="container-narrow">
         {/* Section header */}
-        <div className="grid lg:grid-cols-12 gap-12 mb-20">
-          <div className="lg:col-span-3">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                05
-              </span>
-              <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
-            </div>
-            <h2 className="eyebrow">Testimonials</h2>
-            <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
-              課後留下來的話
-            </p>
-          </div>
-          <div className="lg:col-span-9 max-w-2xl">
-            <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              n8n 工作坊與 AI 自動化分享會的學員見證。
-            </p>
-            <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-              幾乎一字不改放在這裡。
-            </p>
-          </div>
-        </div>
-
-        {/* Testimonial cards — 2x2 grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 lg:gap-x-12 gap-y-12 pt-12 border-t border-[color:var(--color-line-strong)]">
-          {testimonials.map((t) => (
-            <article key={t.number} className="flex flex-col">
-              <div className="flex items-baseline gap-3 mb-4">
+        <Reveal>
+          <div className="grid lg:grid-cols-12 gap-12 mb-20">
+            <div className="lg:col-span-3">
+              <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                  {t.number}
+                  05
                 </span>
-                <span className="eyebrow">{t.role}</span>
+                <HairlineLine />
               </div>
-              <blockquote className="font-display text-lg md:text-xl leading-[1.6] text-[color:var(--color-ink)] mb-6">
-                {t.quote}
-              </blockquote>
-              <div className="mt-auto flex items-center gap-3">
-                <span className="h-px w-6 bg-[color:var(--color-line-strong)]" />
-                <cite className="font-sans not-italic text-sm text-[color:var(--color-fg)]">
-                  {t.name}
-                  <span className="text-[color:var(--color-fg-subtle)]">
-                    {" · "}
-                    {t.role}
+              <h2 className="eyebrow">Testimonials</h2>
+              <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
+                課後留下來的話
+              </p>
+            </div>
+            <div className="lg:col-span-9 max-w-2xl">
+              <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
+                n8n 工作坊與 AI 自動化分享會的學員見證。
+              </p>
+              <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
+                幾乎一字不改放在這裡。
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Testimonial cards — 2x2 grid, staggered reveal */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 lg:gap-x-12 gap-y-12 pt-12 border-t border-[color:var(--color-line-strong)]">
+          {testimonials.map((t, idx) => (
+            <Reveal
+              key={t.number}
+              delay={idx * 80}
+              variant="fade-scale"
+              className="h-full"
+            >
+              <article className="flex flex-col h-full">
+                <div className="flex items-baseline gap-3 mb-4">
+                  <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
+                    {t.number}
                   </span>
-                </cite>
-              </div>
-            </article>
+                  <span className="eyebrow">{t.role}</span>
+                </div>
+                <blockquote className="font-display text-lg md:text-xl leading-[1.6] text-[color:var(--color-ink)] mb-6">
+                  {t.quote}
+                </blockquote>
+                <div className="mt-auto flex items-center gap-3">
+                  <span className="h-px w-6 bg-[color:var(--color-line-strong)]" />
+                  <cite className="font-sans not-italic text-sm text-[color:var(--color-fg)]">
+                    {t.name}
+                    <span className="text-[color:var(--color-fg-subtle)]">
+                      {" · "}
+                      {t.role}
+                    </span>
+                  </cite>
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>
