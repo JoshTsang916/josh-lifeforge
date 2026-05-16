@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import {
   Noto_Serif_TC,
-  Noto_Sans_TC,
   Outfit,
-  Huninn,
   LXGW_WenKai_TC,
 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
@@ -11,6 +9,8 @@ import { VercelToolbar } from "@vercel/toolbar/next";
 import "./globals.css";
 
 // === Main brand pair (v0.5): Noto Serif TC (display, 思源宋) + LXGW WenKai TC (body, 霞鶩文楷) ===
+// /fonts playground 用的 Noto Sans TC + Huninn 不掛在 root html，
+// 已搬進 src/app/fonts/page.tsx 自行 scope —— 避免主站 preload 沒用的字型 CSS
 const notoSerifTC = Noto_Serif_TC({
   variable: "--font-noto-serif-tc",
   subsets: ["latin"],
@@ -30,22 +30,6 @@ const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-// === Reserved / playground alternates ===
-// notoSansTC: v0.3 舊主 body，保留供 /fonts playground 對照用，未接到 @theme
-const notoSansTC = Noto_Sans_TC({
-  variable: "--font-noto-sans-tc",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-  display: "swap",
-});
-
-const huninn = Huninn({
-  variable: "--font-huninn",
-  subsets: ["latin"],
-  weight: ["400"],
   display: "swap",
 });
 
@@ -98,8 +82,6 @@ export default function RootLayout({
         notoSerifTC.variable,
         lxgwWenKaiTC.variable,
         outfit.variable,
-        notoSansTC.variable,
-        huninn.variable,
       ].join(" ")}
     >
       <body>

@@ -60,9 +60,12 @@
     text-wrap: pretty;
   }
   /* Reduced motion 用戶：所有 transition / animation 縮到接近 0，
-     讓 Reveal / DayCounter / HeroTitle / HairlineLine 等動畫直接落定。
-     全域處理可避免 component 內各自 JS 檢測 prefers-reduced-motion 觸發
-     React 19 的 react-hooks/set-state-in-effect lint rule。 */
+     讓 Reveal / HeroTitle / HairlineLine 等基於 CSS transition 的動畫直接落定。
+     全域處理可避免這些 component 各自 JS 檢測 prefers-reduced-motion 觸發
+     React 19 的 react-hooks/set-state-in-effect lint rule。
+     注意：DayCounter 用 requestAnimationFrame 跑數字 count-up，
+     不受 CSS transition-duration 控制，它自己在 IntersectionObserver callback
+     裡用 matchMedia 處理 reduced motion fallback。 */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

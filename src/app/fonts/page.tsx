@@ -1,4 +1,21 @@
 import Link from "next/link";
+import { Noto_Sans_TC, Huninn } from "next/font/google";
+
+// 這兩個字型只給 playground 對照用，scope 在這個 route 而不掛 root layout，
+// 避免主站每個 page 都 preload 沒用到的字型 CSS
+const notoSansTC = Noto_Sans_TC({
+  variable: "--font-noto-sans-tc",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  display: "swap",
+});
+
+const huninn = Huninn({
+  variable: "--font-huninn",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 type FontSpec = {
   id: string;
@@ -61,7 +78,9 @@ const sampleTexts = {
 
 export default function FontsPlayground() {
   return (
-    <div className="min-h-screen">
+    <div
+      className={`${notoSansTC.variable} ${huninn.variable} min-h-screen`}
+    >
       {/* Header */}
       <header className="border-b border-[color:var(--color-line-strong)] section !py-12">
         <div className="container-narrow">
