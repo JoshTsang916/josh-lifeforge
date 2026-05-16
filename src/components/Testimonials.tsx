@@ -83,7 +83,7 @@ export function Testimonials() {
               variant="fade-scale"
               className="h-full"
             >
-              <article className="flex flex-col h-full">
+              <figure className="flex flex-col h-full">
                 <div className="flex items-baseline gap-3 mb-4">
                   <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                     {t.number}
@@ -93,17 +93,20 @@ export function Testimonials() {
                 <blockquote className="font-display text-lg md:text-xl leading-[1.6] text-[color:var(--color-ink)] mb-6">
                   {t.quote}
                 </blockquote>
-                <div className="mt-auto flex items-center gap-3">
-                  <span className="h-px w-6 bg-[color:var(--color-line-strong)]" />
-                  <cite className="font-sans not-italic text-sm text-[color:var(--color-fg)]">
+                <figcaption className="mt-auto flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-6 bg-[color:var(--color-line-strong)]"
+                  />
+                  <span className="font-sans text-sm text-[color:var(--color-fg)]">
                     {t.name}
                     <span className="text-[color:var(--color-fg-subtle)]">
                       {" · "}
                       {t.role}
                     </span>
-                  </cite>
-                </div>
-              </article>
+                  </span>
+                </figcaption>
+              </figure>
             </Reveal>
           ))}
         </div>
