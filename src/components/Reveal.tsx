@@ -2,21 +2,27 @@
 
 import { useEffect, useRef, useState } from "react";
 
+type Variant = "fade-up" | "fade-scale";
+
 type Props = {
   children: React.ReactNode;
   delay?: number;
   threshold?: number;
   className?: string;
+  variant?: Variant;
 };
 
-// 進場淡入 + 微 translateY 動畫。第一次進入 viewport 觸發後 disconnect observer。
-// prefers-reduced-motion 由 globals.css 的全域 @media query 處理（把 transition-duration
-// 壓到接近 0），所以這裡只負責 trigger 狀態切換、不在 effect body 直接 setState。
+// 進場動畫 wrapper：
+//   variant="fade-up"     opacity 0→1 + translateY 20px→0（預設，長文 / vertical stack）
+//   variant="fade-scale"  opacity 0→1 + scale 0.96→1（grid cards "settle in"，跟 fade-up 形成節奏對比）
+// 第一次進入 viewport 觸發後 disconnect observer。
+// prefers-reduced-motion 由 globals.css 全域 @media query 處理（直接零化 transition）。
 export function Reveal({
   children,
   delay = 0,
   threshold = 0.15,
   className = "",
+  variant = "fade-up",
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
@@ -39,6 +45,9 @@ export function Reveal({
     return () => observer.disconnect();
   }, [threshold]);
 
+  const initialTransform =
+    variant === "fade-scale" ? "scale(0.96)" : "translateY(20px)";
+
   return (
     <div
       ref={ref}
@@ -49,7 +58,7 @@ export function Reveal({
         transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
         transitionDelay: `${delay}ms`,
         opacity: revealed ? 1 : 0,
-        transform: revealed ? "translateY(0)" : "translateY(20px)",
+        transform: revealed ? "none" : initialTransform,
       }}
     >
       {children}

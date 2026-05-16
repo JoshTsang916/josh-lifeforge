@@ -74,7 +74,12 @@ export function RecentWork() {
         {/* Work cards — 3-column grid, staggered reveal */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12 pt-12 border-t border-[color:var(--color-line-strong)]">
           {works.map((work, idx) => (
-            <Reveal key={work.id} delay={idx * 100} className="h-full">
+            <Reveal
+              key={work.id}
+              delay={idx * 100}
+              variant="fade-scale"
+              className="h-full"
+            >
               <article className="flex flex-col h-full">
                 <div className="relative aspect-[4/5] overflow-hidden rounded-sm mb-6 bg-[color:var(--color-bg-deep)]">
                   <Image

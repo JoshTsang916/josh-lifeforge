@@ -77,7 +77,12 @@ export function Testimonials() {
         {/* Testimonial cards — 2x2 grid, staggered reveal */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 lg:gap-x-12 gap-y-12 pt-12 border-t border-[color:var(--color-line-strong)]">
           {testimonials.map((t, idx) => (
-            <Reveal key={t.number} delay={idx * 80} className="h-full">
+            <Reveal
+              key={t.number}
+              delay={idx * 80}
+              variant="fade-scale"
+              className="h-full"
+            >
               <article className="flex flex-col h-full">
                 <div className="flex items-baseline gap-3 mb-4">
                   <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
