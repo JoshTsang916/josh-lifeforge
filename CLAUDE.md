@@ -113,6 +113,18 @@ Vercel Preview Comments 是 Josh 跟 Claude 之間做 design review feedback 的
 - He may ask via Telegram — replies happen in the parent ccdailytalk session
 - For 3+ file changes → submit to 智囊團 agent for multi-model review
 
+## Git workflow
+
+- **Production code changes → feature branch + PR + squash merge**（lifeforge 22+ commits 慣例）。Vercel auto preview，Josh 自己 merge
+- **Doc-only changes → commit `main` directly, no PR**（2026-05-16 拍板）：
+  - ✅ `*.md`（TODO / CLAUDE / README / dev-logs / ATTRIBUTION 等元資料）
+  - ✅ Code comment-only edits（不改 runtime behavior）
+  - ❌ `next.config.*` / `package.json` / `.env.example` / `tsconfig.*`（build / runtime 設定）
+  - ❌ `src/app/layout.tsx` 的 `metadata` title / description / openGraph / twitter（SEO/OG runtime 影響）
+  - Rationale: solo repo + 沒 branch protection，PR 純 overhead（preview build / branch cleanup）；doc 改錯直接再 commit 修就好
+- **Commit message**: 英文 Conventional Commits (`feat / fix / chore / refactor / docs`)
+- **Author**: `bonkerser@gmail.com` / `JoshTsang916`（Vercel 會 block invalid author）
+
 ## Related repos
 - Parent workspace: `D:/VibeCodingProject/ClaudeCodeProject/ccdailytalk` (his content studio + skills + CLAUDE.md hub) — Windows 機路徑
 - Sister: `D:/VibeCodingProject/ClaudeCodeProject/remotion` (video rendering) — Windows 機路徑
