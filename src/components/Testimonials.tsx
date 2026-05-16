@@ -50,8 +50,8 @@ export function Testimonials() {
       <div className="container-narrow">
         {/* Section header */}
         <Reveal>
-          <div className="grid lg:grid-cols-12 gap-12 mb-20">
-            <div className="lg:col-span-3">
+          <div className="grid md:grid-cols-12 gap-12 mb-20">
+            <div className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                   05
@@ -63,7 +63,7 @@ export function Testimonials() {
                 課後留下來的話
               </p>
             </div>
-            <div className="lg:col-span-9 max-w-2xl">
+            <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
               <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
                 n8n 工作坊與 AI 自動化分享會的學員見證。
               </p>

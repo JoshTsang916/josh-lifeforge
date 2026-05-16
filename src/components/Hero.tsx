@@ -7,7 +7,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="section min-h-[88vh] flex items-center"
+      className="section min-h-[calc(100vh-4rem)] min-h-[calc(100svh-4rem)] sm:min-h-[calc(100vh-7rem)] sm:min-h-[calc(100svh-7rem)] flex items-center"
     >
       <div className="container-narrow w-full">
         {/* Eyebrow */}
@@ -33,7 +33,7 @@ export function Hero() {
             <Reveal delay={1000}>
               <div className="flex flex-wrap gap-4">
                 <a href="#contact" className="btn btn-primary">
-                  預約 1:1 諮詢
+                  預約 1 對 1 諮詢
                 </a>
                 <a href="#work" className="btn btn-ghost">
                   看作品

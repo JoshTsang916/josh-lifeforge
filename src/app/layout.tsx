@@ -40,7 +40,7 @@ const TAGLINE = "閱讀 × AI × 時間 ＝ 鍛造人生";
 
 // Description 同步用於 SEO / og / twitter — 把 hero 三元素 + 「駕馭 AI」融進去
 const DESCRIPTION =
-  "AI 給你槓桿，閱讀給你底氣，時間給你自由。Josh 教你駕馭 AI、讀更深、活得不急。工作坊 / 1:1 諮詢 / 演講邀約。";
+  "AI 給你槓桿，閱讀給你底氣，時間給你自由。Josh 教你駕馭 AI、讀更深、活得不急。工作坊 / 1 對 1 諮詢 / 演講邀約。";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

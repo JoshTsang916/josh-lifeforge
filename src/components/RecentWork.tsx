@@ -47,8 +47,8 @@ export function RecentWork() {
       <div className="container-narrow">
         {/* Section header */}
         <Reveal>
-          <div className="grid lg:grid-cols-12 gap-12 mb-20">
-            <div className="lg:col-span-3">
+          <div className="grid md:grid-cols-12 gap-12 mb-20">
+            <div className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                   04
@@ -60,7 +60,7 @@ export function RecentWork() {
                 近期作品
               </p>
             </div>
-            <div className="lg:col-span-9 max-w-2xl">
+            <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
               <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
                 教過的場、講過的主題，留下一點痕跡。
               </p>
@@ -72,7 +72,7 @@ export function RecentWork() {
         </Reveal>
 
         {/* Work cards — 3-column grid, staggered reveal */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12 pt-12 border-t border-[color:var(--color-line-strong)]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12 pt-12 border-t border-[color:var(--color-line-strong)]">
           {works.map((work, idx) => (
             <Reveal
               key={work.id}

@@ -17,8 +17,8 @@ export function Daily() {
   return (
     <section id="daily" className="section">
       <div className="container-narrow">
-        <div className="grid lg:grid-cols-12 gap-12">
-          <div className="lg:col-span-3">
+        <div className="grid md:grid-cols-12 gap-12">
+          <div className="md:col-span-4 lg:col-span-3">
             <div className="flex items-center gap-3 mb-6">
               <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                 06
@@ -31,7 +31,7 @@ export function Daily() {
             </p>
           </div>
 
-          <div className="lg:col-span-9 flex flex-col lg:flex-row items-center lg:items-start gap-12 lg:gap-16">
+          <div className="md:col-span-8 lg:col-span-9 flex flex-col lg:flex-row items-center lg:items-start gap-12 lg:gap-16">
             <div className="shrink-0">
               <DayCounter day={day} milestone={100} />
             </div>
