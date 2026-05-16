@@ -1,6 +1,6 @@
 # josh-lifeforge — 待調整清單
 
-> 最近更新：2026-05-09
+> 最近更新：2026-05-16
 > 按優先度分組；按「先決策、再實作、最後加錦上添花」排序。
 > 維護慣例：完成一項就從 🔴/🟡/🟢 移到「已完成」並標日期；想到新的就加到對應分類。
 
@@ -53,6 +53,12 @@
 - 同 PR 一併更新 CLAUDE.md「Database」段
 
 **Funnel framing**：日更短影片（top）→ 月文章（mid）→ 季 anchor 文 + Newsletter（bottom）→ 諮詢 / 報名 / 付費轉化。Phase 1 是 funnel 中段缺的 mid 層 step change，不是 small fix。
+
+**進度更新（2026-05-16）**：
+- Phase 1 infra 已寫進 `feat/writings-section` branch（10+ commits、智囊團三方審核 + 修完、Vercel preview deploy + branch-scoped preview env var 設好）—— branch parked 未 merge
+- **卡點 1**：第一篇「100% AI 味」要 Josh 親寫（AI 改寫版被 Josh 終審判定，row status 從 `published` 改回 `draft`）
+- **卡點 2**：首頁改造 — Daily 縮短（5/16 早 PR #15 已環形化省 73% ✓）+ 加首頁 Writings section（未做）
+- **threshold**：Josh 親寫第一篇 ready + 決定首頁 Writings section 位置 → 再 unpark merge
 
 來源：2026-05-10 session 討論（Josh 提 Supabase 路徑反推 → Claude 修正 4 phase plan + 5 sub-decisions 拍板）
 
@@ -108,13 +114,26 @@ Parked: 2026-04-23
 來源：2026-04-25 morning-flow 五元素定錨討論
 參照：BRAND.md 「FORGE callout」段
 
+### 14. Reveal SSR `opacity:0` → CSS `@starting-style`（LCP 改善）
+目前 `src/components/Reveal.tsx` 用 JS state（`useState` + `IntersectionObserver`）做 fade-in，SSR 初始 HTML 全部 `opacity:0`、JS hydrate 後才接管 → FCP/LCP 在 Reveal-wrapped sections 略 slow。
+
+修法：用 CSS `@starting-style`（Tailwind v4 + Next 16 支援）取代 JS state-based Reveal——CSS-only，無 hydration 等待。需要重寫 Reveal API + 影響範圍 verify（About 左 rail / Hero subtitle+CTAs / Services articles / RecentWork cards / Testimonials cards / Contact）。
+
+預估：1-2 小時
+來源：2026-05-16 PR #21 智囊團 round 1 review，deferred 為獨立 PR
+
+### 15. About narrative copy 校稿（Josh 親改）
+2026-05-16 PR #21 智囊團 round 1 review 由 Codex 發現：
+- `src/components/About.tsx` 代名詞「他/它」混用——同段主詞 AI 在不同句換稱謂
+- `src/components/About.tsx:59`「不著痕跡的滑過」應為「地」非「的」（助詞）
+
+About 是 Josh 親寫 narrative copy（CLAUDE.md「Content status」標明），AI 不動。要 Josh 親自改。
+
+來源：2026-05-16 PR #21 智囊團 round 1 review（Claude + Codex 同意）
+
 ---
 
 ## 🟢 錦上添花 / 標準件
-
-### 8. robots.txt / sitemap.xml / 404 page
-SEO 標準件。Next.js App Router 可用 `app/robots.ts` + `app/sitemap.ts` + `app/not-found.tsx` 自動生成。
-預估：20 分鐘
 
 ### 9. 剩餘照片利用
 目前用了 3 張，還有 8 張沒用：
@@ -125,24 +144,8 @@ SEO 標準件。Next.js App Router 可用 `app/robots.ts` + `app/sitemap.ts` + `
 
 之後可做「活動詳情頁」(`/work/[slug]`)，點卡片進入看更多照片 + 詳細描述。
 
-### 10. Vercel Preview 環境變數
-目前只有 production 設了 SUPABASE_URL / SUPABASE_ANON_KEY。preview deploy 時 Writings 會 fallback 到 empty state。如果要讓 preview deploys 也能展示文章，手動在 Vercel dashboard 設 preview env vars。
-
 ### 11. Services section `<article>` 語意
 Claude 審核提到每個服務項目用 `<article>` 語意不精確（article = 可獨立分發的內容）。可以在下次重構時改成 `<li>` in `<ol>` 或 `<div>`。低優先。
-
-### 12. MobileMenu.tsx 既有 lint error
-`react-hooks/set-state-in-effect` 錯誤——`useEffect` 內直接 `setMounted(true)` 觸發 cascading renders。
-
-從 PR #1 (`472b4d8` / `68a6930`) 引入時就有，2026-05-08 跑 `npm run build` 才注意到。Vercel build 仍過所以非阻塞。
-
-修法（任選）：
-- 用 `useSyncExternalStore` 取代 mounted flag
-- 用 `useId()` + `useState(() => typeof document !== "undefined")` 條件初始化
-
-預估：10 分鐘。低優先——不影響功能。
-
-來源：2026-05-08 加 SectionIndex 後跑 build 抓到
 
 ### 13. 動工機路徑寫死
 CLAUDE.md「Related repos」段把 ccdailytalk / remotion 寫成 `D:/...` Windows 路徑。M5 (Mac) 已是 lifeforge 動工機（多個 commit 證實）。已在 CLAUDE.md 加註，但長期看路徑寫死太脆，未來第三台或團隊接手要重整。
@@ -150,6 +153,72 @@ CLAUDE.md「Related repos」段把 ccdailytalk / remotion 寫成 `D:/...` Window
 低優先——不影響開發。
 
 來源：2026-05-08 加 toolbar 時掃 CLAUDE.md 發現
+
+---
+
+## ✅ 今天完成（2026-05-16 PM）
+
+PR #21 + PR #22 兩條 branch 收尾「post-#20 review backlog」——智囊團跑三輪、修十條、合計 8 commits / 24 檔案動到。
+
+### PR #21 (`fix/review-pr16-20-followups` → squash `3e43860`)：5 commits / 14 檔案
+智囊團 round 1 + round 2：
+1. `5262996` **fix(a11y)** — MobileMenu rAF wrap setMounted（修 ✅ 原 #12 lint）+ focus trap + 背景 inert + ContactForm aria-invalid/aria-describedby + radio focus-visible + Testimonials `<cite>` → `<figcaption>`（HTML spec）+ HairlineLine decorative aria-hidden
+2. `cce5576` **fix(hero,about)** — HeroTitle 移除 `whitespace-nowrap` + `text-balance`（320px 防溢出）/ Hero 補 Reveal 包 paragraph + CTAs（delay 750/1000ms 對齊 HeroTitle stagger）/ 拿掉 About 整塊 Reveal wrapper（長文 fade 影響閱讀）/ Hero footer hyphen → em dash
+3. `e8db2d9` **chore** — Noto Sans TC + Huninn 字型從 root html 移到 `/fonts/page` scope（省 ~50-100KB 主站 preload）+ globals.css reduced-motion 註解修正不再宣稱 cover DayCounter
+4. `72f3f65` **fix(a11y) round-2**（智囊團 catch 我修法的 bug）— MobileMenu inert target 改 `main, footer` 不全 body children（避免把 nav 內 trigger button 一起 inert 導致 keyboard 進 dialog 後 click 不到 X）+ filter 既有 inert 元素避免 cleanup 誤移除 / ContactForm radio aria-describedby 加在個別 input（不只 fieldset）/ Testimonials separator `{" · "}` 包 aria-hidden span
+5. `ced2f96` **fix(nav)** — mobile narrow viewport bug：commit `e71e212` (5/14) logo 64→96px 後沒同步 `hidden sm:flex` → mobile 只剩無名 logo + 漢堡，Josh 截圖回報。修：logo `h-12` mobile / `h-24` sm+，「人生鍛造所」永遠 visible，「The Life Forge」副標仍 sm+ 才顯示
+
+### PR #22 (`chore/layout-seo-a11y-followups` → squash `63a67cb`)：3 commits / 10 檔案
+Josh 選「2+3」layout 殘餘 + SEO 收尾，智囊團 round 3（0 必修符合 prediction + 3 polish）：
+1. `2a2caa7` **fix(layout)** — 全 section header 補 `md:grid-cols-12 md:col-span-4/8`（tablet 768-1023px 不再退單欄）/ RecentWork cards `md:grid-cols-3` / Hero `min-h-[88vh]` → `min-h-[calc(100svh-4rem)] sm:min-h-[calc(100svh-7rem)]`（short laptop 不擠壓 CTAs）/ About 補 partial Reveal 只裹 left rail（長文 narrative 不裹）/ 「預約 1:1 諮詢」「預約 1:1」 統一為「預約 1 對 1 諮詢」「預約 1 對 1」
+2. `00e80a1` **feat(seo)** — `src/app/robots.ts`（allow + disallow `/fonts`）+ `src/app/sitemap.ts`（單一 `/`）+ `src/app/not-found.tsx`（warm-brown editorial 風格 404，不是 Next 預設）—— ✅ 收掉原 #8 SEO 標準件
+3. `f37195a` **fix round-3**（智囊團 round 3 polish）— sitemap.ts 拿掉 `lastModified`（防 Google 看到頻繁跳動長期忽略）+ Hero svh 加 `100vh` fallback（Safari < 15.4 防呆，cascade 寫法）+ `fonts/page.tsx:76` `buttonLabel` + `layout.tsx:43` SEO description 漏網「1:1」字串統一
+
+### 附帶閉環
+- ✅ 原 #8 SEO 標準件（robots/sitemap/404 全做）
+- ✅ 原 #12 MobileMenu lint error（rAF wrap setMounted）
+
+### 智囊團 review 紀律（三輪 brief 一致）
+每輪 spawn 附「上輪結論摘要避免重複」+「主對話已 self-verify 不報」+「800 字內、質>量、無新發現直說」—— round 3 真有兩模型「無新發現」直說沒湊數，brief 起作用。
+
+### Deferred（PR description 標明，等 Josh 拍板）
+- `#15` About narrative 代名詞「他/它」混用 + 「不著痕跡的滑過」助詞 → 上面 🟡 區，要 Josh 親改
+- `#14` Reveal SSR `opacity:0` → CSS `@starting-style` LCP 改善 → 上面 🟡 區，獨立 PR
+- About 補 Reveal 視覺一致性 — 智囊團 round 2 提，已選擇「只裹 left rail，長 narrative 不裹」折衷做法
+- Hero `dvh` vs `svh` — 智囊團 round 3 分歧（風格取捨），維持 svh（無 reflow）
+
+### 沉澱 → dev-log
+- 📝 `~/project/dev-logs/2026-05-16-josh-lifeforge-multi-round-review-and-fix-surface-area.md`
+- **萃出 P35**：fix 自帶 surface area，修完要 re-review（B1 inert scope wrong / B2 aria-invalid on radio lint flag / B3 self-verify viewport single-point sample / B4 single-pass 兩 concern 沒分開 verify ── 4 instance 同源同 session）
+- 新 E1-E2 josh-lifeforge sub-thread reset（Josh 把 review ROI 評估外推給 AI / Mobile narrow viewport 手動測補 Playwright 盲點）
+
+---
+
+## ✅ 今天完成（2026-05-16 AM）
+
+7 個 PR 一條 session 連發、全 merge 進 main：homepage 連環瘦身 + scroll-reveal 動畫。累積首頁省 2400px+ scroll。
+
+1. **`#14`** `docs` — 字體 docs drift（CLAUDE.md Design system 段過時：寫 Newsreader + Outfit，實際 v0.5 是 Noto Serif TC + LXGW WenKai TC + Outfit）
+2. **`#15`** `feat(daily)` — 環形 day counter SVG + IntersectionObserver + rAF count-up（1.8s easeOutCubic）+ 每小時 ISR 刷新；4 篇 IG reel 卡片改成 1 個環形 counter，**省 73% 高度**
+3. **`#16`** `feat(recentwork)` — 3-column grid 取代 editorial stack，省 24%
+4. **`#17`** `feat(homepage)` — eyebrow 加「est. 2026」/ drop SectionIndex（sticky Nav 已 cover navigation 需求）/ Testimonials ↔ RecentWork 對調（trust block 從客觀→主觀遞進）
+5. **`#18`** `feat(homepage)` — Testimonials 2x2 grid + Services layout 收緊（padding/spacing/leading；description 字數不動，由 Josh 親寫）
+6. **`#19`** `fix(logo)` — logo PNG asset 收尾：transparent alpha + 1.5x + crop wordmark（y_end iterate 4 次定案 726；row density alpha profile 找 graphic↔wordmark anti-alias overlap zone）
+7. **`#20`** `feat(homepage)` — scroll-reveal animations A/B/C set：Reveal client wrapper（IntersectionObserver-triggered fade-up / fade-scale variant）+ HeroTitle mount-triggered 三行 stagger + HairlineLine scaleX(0→1) draw-in；reduced-motion 用 globals.css 全域 `@media` zero transition duration（避開 per-component JS 偵測）
+
+### 沉澱 → dev-log
+- 📝 `~/project/dev-logs/2026-05-16-josh-lifeforge-homepage-trim-and-animations.md`
+- **萃出 P33-P34**：funnel-role 投資判斷（editorial cadence 對 trust signal section 是 over-investment、對 conversion section 是必要）/ layout 動 vs copy 動嚴格分離（AI 動 layout、brand voice copy 不碰）
+
+---
+
+## ✅ 今天完成（2026-05-12，部分閉環）
+
+- ✅ 原 #10 Vercel Preview 環境變數 — Writings Phase 1 deploy 時設好 `feat/writings-section` branch-scoped preview env var（SUPABASE_URL / SUPABASE_ANON_KEY），preview deploy 能 read writings table
+- 📦 Writings Phase 1 infra 寫完進 `feat/writings-section` branch（智囊團三方審核 + 修完、push + Vercel preview deploy 上線）—— **branch parked 未 merge，狀態見上方 #1 「進度更新」段**
+
+### 沉澱 → dev-log
+- 📝 `~/project/dev-logs/2026-05-12-josh-lifeforge-writings-phase1.md`（萃出 P27-P28：AI 改寫=注入 AI 味 / 架構決策看實物後 revise）
 
 ---
 
