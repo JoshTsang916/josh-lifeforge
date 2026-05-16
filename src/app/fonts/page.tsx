@@ -24,7 +24,7 @@ type FontSpec = {
   source: string;
   license: string;
   fit: string;
-  cssVar: string; // CSS variable from layout.tsx
+  cssVar: string; // CSS variable — Noto Serif TC / LXGW WenKai TC / Outfit 來自 layout.tsx；Noto Sans TC / Huninn 來自本 page scope
 };
 
 const fonts: FontSpec[] = [

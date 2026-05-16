@@ -82,6 +82,9 @@ export function ContactForm() {
                 required
                 className="sr-only peer"
                 defaultChecked={s.value === "workshop"}
+                aria-describedby={
+                  state.fieldErrors?.service ? "service-error" : undefined
+                }
               />
               <span className="font-display text-base text-[color:var(--color-ink)] peer-checked:text-[color:var(--color-accent)]">
                 {s.title}

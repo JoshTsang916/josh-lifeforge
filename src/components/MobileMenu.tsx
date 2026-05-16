@@ -39,8 +39,10 @@ export function MobileMenu({ links }: { links: NavLink[] }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // Dialog 開啟時：(1) 背景內容設 inert，screen reader / focus 都不能遊走
-  // (2) focus trap — Tab 在最後一個跳回第一個，Shift+Tab 在第一個跳到最後
+  // Dialog 開啟時：(1) 把 main / footer 設 inert，背景 SR / focus 都不能遊走
+  //   ── 不 inert <nav>，因為 trigger button 在 nav 內，使用者要能點它關閉 dialog；
+  //   ── 也不 inert Vercel Toolbar / Analytics 等注入到 body 直系的元素
+  // (2) focus trap：Tab 在最後一個跳回第一個，Shift+Tab 在第一個跳到最後
   // (3) 開啟瞬間 focus 第一個選單項
   useEffect(() => {
     if (!open || !mounted) return;
@@ -48,11 +50,11 @@ export function MobileMenu({ links }: { links: NavLink[] }) {
     const dialog = document.getElementById("mobile-menu");
     if (!dialog) return;
 
-    // 背景 inert：dialog 之外 body 直系子元素全部關掉
-    const siblings = Array.from(document.body.children).filter(
-      (el) => el.id !== "mobile-menu"
-    );
-    siblings.forEach((el) => el.setAttribute("inert", ""));
+    // 只 inert 我們自己加的 — 過濾掉原本就有 inert 的元素，cleanup 時才不會誤移除
+    const inertTargets = Array.from(
+      document.querySelectorAll<HTMLElement>("main, footer")
+    ).filter((el) => !el.hasAttribute("inert"));
+    inertTargets.forEach((el) => el.setAttribute("inert", ""));
 
     const focusables = dialog.querySelectorAll<HTMLElement>(
       'a[href], button:not([disabled])'
@@ -76,7 +78,7 @@ export function MobileMenu({ links }: { links: NavLink[] }) {
 
     return () => {
       document.removeEventListener("keydown", onKey);
-      siblings.forEach((el) => el.removeAttribute("inert"));
+      inertTargets.forEach((el) => el.removeAttribute("inert"));
     };
   }, [open, mounted]);
 

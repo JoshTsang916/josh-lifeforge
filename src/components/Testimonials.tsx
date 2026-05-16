@@ -101,7 +101,7 @@ export function Testimonials() {
                   <span className="font-sans text-sm text-[color:var(--color-fg)]">
                     {t.name}
                     <span className="text-[color:var(--color-fg-subtle)]">
-                      {" · "}
+                      <span aria-hidden="true">{" · "}</span>
                       {t.role}
                     </span>
                   </span>
