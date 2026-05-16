@@ -22,8 +22,8 @@ export function Nav() {
           <Image
             src="/logo.png"
             alt="人生鍛造所"
-            width={64}
-            height={64}
+            width={96}
+            height={96}
             priority
             className="transition-transform duration-300 group-hover:rotate-[3deg]"
           />
