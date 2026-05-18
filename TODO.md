@@ -79,6 +79,8 @@ CLAUDE.md「Design notes」記錄這個拍板：先匿名上線，等授權升�
 ### 3. Services 01-03 對齊新 BRAND（7b 殘餘）
 04 Build With Me 已對齊「一人公司 + AI」主軸，01 工作坊 / 02 1 對 1 / 03 演講 仍是 v0 草稿——當初寫的是「內容工作流 / 職涯轉型」訊息，跟新 BRAND 的「AI 鍛造工具 / 閱讀鍛造自己 / 慢富」不同步。
 
+**2026-05-18 update**：04 description 又從 stack-flex (developer voice，「用 AI + Supabase + Next.js 蓋一套真的能跑的系統」) 升級到 customer voice (PR #24 squash merge，「討論需求，幫你打造訂製化的系統」)。01-03 重寫時對齊新 voice 標準：受眾痛點 entry、不堆 stack 名、講客戶能拿到什麼。
+
 要 Josh 決定的：
 - 三條 description 是否要重寫對齊「一人公司必須會的 AI 知識」主軸？
 - 或維持原描述（教學產品定位本來就跟 04 客製化開發不同主軸，不一定要硬同步）
@@ -130,6 +132,23 @@ Parked: 2026-04-23
 About 是 Josh 親寫 narrative copy（CLAUDE.md「Content status」標明），AI 不動。要 Josh 親自改。
 
 來源：2026-05-16 PR #21 智囊團 round 1 review（Claude + Codex 同意）
+
+### 16. HyperFrames demo video v0.8 下一步用途決定
+v0.8 已 settle 到 22s 5-beat、no VO、customer voice 演示影片（22s / 1.6 MB）。下一步用途有 4 個方向沒拍板：
+- **A**：社群 preview（30-60s 短版，FB/Threads/IG 連結預覽 / OpenGraph video）
+- **C**：邀約 pitch（90s 長版，給講座 / 工作坊 / 諮詢邀約方）
+- **嵌 hero**：lifeforge 首頁 Hero section 內嵌 muted autoplay loop（取代 hero 靜態圖 / 配合 hero-loop 設計）
+- **Skill 範例**：lifeforge-skills repo 的 hyperframes / video 類 skill 範例素材
+
+要 Josh 決定的：
+- 4 個方向哪個（或哪幾個）先做？
+- 嵌 hero 要不要做 9:16 mobile 版？
+- A/C 方向上 social 平台要不要做平台適配（IG 1:1 / FB 16:9 / Threads 文字+影片）？
+
+延伸：影響 [[reference_skill_backlog]] D 條目 (M5 audio-first video skill) — 5/14 dev-log 設計 Remotion-based audio-first，5/18 dogfood HyperFrames 確認 no-VO 純動畫對 lifeforge demo 的 fit 度高，是否要 reframe skill 為「audio-optional video」？等用途拍板後 settle。
+
+來源：2026-05-18 HyperFrames dogfood + lifeforge demo v0.8 build
+參照：`~/project/dev-logs/2026-05-18-josh-lifeforge-hyperframes-demo-and-services-copy-review.md`
 
 ---
 
