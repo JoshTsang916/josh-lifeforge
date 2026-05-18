@@ -26,7 +26,7 @@ const works: Work[] = [
     title: "AI 自動化，進入了文件驅動的時代",
     subtitle: "為未來而引導學會 × AI 分享會",
     description:
-      "談上下文脈絡怎麼決定你跟 AI 對話的品質。提示詞、偏好設定、記憶、skill（技能），設定好 AI Agent 什麼時候該讀取什麼文件，做好我們能做的 harness（駕馭工程），才能更精準的讓 AI 做它該做的工作。",
+      "談上下文脈絡怎麼決定你跟 AI 對話的品質。提示詞、偏好設定、記憶、skill（技能），設定好 AI Agent 什麼時候該讀取什麼文件，做好我們能做的 harness（駕馭工程），才能更精準地讓 AI 做它該做的工作。",
     image: "/photos/talk-ai-forum-moment.jpg",
     imageAlt: "為未來而引導學會 AI 分享會現場",
   },
