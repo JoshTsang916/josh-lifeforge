@@ -33,8 +33,7 @@ export function Contact() {
               </p>
               <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)] mb-12">
                 不收費的初談。告訴我你在做什麼、卡在哪、想走到哪裡。
-                如果我能幫上忙，我會誠實告訴你要怎麼開始；
-                如果不是我擅長的，我也會說，可能幫你推薦別人。
+                一起踏上 AI 自動化、駕馭 AI Agent 的世界。
               </p>
 
               {/* 主視覺：結構化表單 */}

@@ -17,7 +17,7 @@ const works: Work[] = [
     title: "n8n Automation Workshop",
     subtitle: "From Learner to Builder",
     description:
-      "帶學員從 AI 的使用者，走到能自己 build 自動化系統的位置。結業時每個人都有一份自己做出來、真的在跑的 workflow——不是 demo 而已。",
+      "帶學員從 AI 的使用者，走到能自己 build 自動化系統的位置。從底層邏輯，基本操作，到實際做出 workflow 完整閉環。",
     image: "/photos/workshop-n8n-3.jpg",
     imageAlt: "n8n workshop 結業合照，學員手持 Automation Builder 結業證書",
   },
@@ -26,7 +26,7 @@ const works: Work[] = [
     title: "AI 自動化，進入了文件驅動的時代",
     subtitle: "為未來而引導學會 × AI 分享會",
     description:
-      "談上下文脈絡怎麼決定你跟 AI 對話的品質。不是 prompt 技巧，是更上游的「脈絡建立」——這是我看到大部分人卡住的地方。",
+      "談上下文脈絡怎麼決定你跟 AI 對話的品質。提示詞、偏好設定、記憶、skill（技能），設定好 AI Agent 什麼時候該讀取什麼文件，做好我們能做的 harness（駕馭工程），才能更精準地讓 AI 做它該做的工作。",
     image: "/photos/talk-ai-forum-moment.jpg",
     imageAlt: "為未來而引導學會 AI 分享會現場",
   },
@@ -35,7 +35,7 @@ const works: Work[] = [
     title: "神經可塑性說書專場",
     subtitle: "HPX × Wee 讀書會 — 神經可塑性",
     description:
-      "用 50 分鐘講 The Brain That Changes Itself 這本書，配上我自己 7 次公開演講緊張程度的真實變化軌跡，說明大腦是怎麼被重塑的。",
+      "用 50 分鐘講《神經可塑性》這本書，配上我自己 7 次公開演講緊張程度的真實變化軌跡，說明大腦是怎麼被重塑的。",
     image: "/photos/talk-neuroplasticity-solo.jpg",
     imageAlt: "Josh 在 HPX 神經可塑性說書會講「騎象人學會了與大象共處」",
   },
