@@ -61,34 +61,69 @@ export default function LinksPage() {
   const year = new Date().getFullYear();
 
   return (
-    <main className="min-h-dvh flex flex-col items-center justify-center px-6 py-16">
-      <div className="w-full max-w-md">
-        {/* 頁首：logo + 名字 + 一句引導，整塊可點連回首頁 */}
+    // paper-grain：globals.css 的 ::after 在最上層鋪極淡紙感顆粒；overflow-hidden 收住光暈
+    <main className="paper-grain relative flex min-h-dvh flex-col items-center overflow-hidden px-6 py-16">
+      {/* 暖色光暈：頂部一抹從磚紅 accent-soft 暈開的橢圓，增加深度，不喧賓奪主 */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/2 h-96 w-[140%] max-w-3xl -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,var(--color-accent-soft),transparent_70%)] opacity-50 blur-3xl"
+      />
+
+      <div className="relative z-10 my-auto w-full max-w-md">
+        {/* 頂部 duotone 演講照 banner —— 全彩照經雙色調處理統一到品牌米咖啡調，不跟暖色站打架 */}
         <Reveal>
-          <header className="flex flex-col items-center text-center mb-12">
+          <div className="relative isolate mb-7 aspect-[4/3] overflow-hidden rounded-md ring-1 ring-[color:var(--color-line-strong)] shadow-[0_8px_30px_rgba(92,64,51,0.12)]">
+            <Image
+              src="/photos/hero.jpg"
+              alt="Josh 在 n8n 自動化工作坊帶領學員"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 28rem"
+              className="object-cover object-[68%_22%]"
+              style={{
+                filter:
+                  "grayscale(1) sepia(0.55) contrast(1.05) brightness(0.96)",
+              }}
+            />
+            {/* 暖磚紅 tint：把去飽和後的褐調統一到品牌暖色（multiply 不洗白、保留照片細節）*/}
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-[color:var(--color-accent)] opacity-25 mix-blend-multiply"
+            />
+            {/* 底部漸層：讓照片下緣平滑融入頁面米白底 */}
+            <div
+              aria-hidden
+              className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[color:var(--color-bg)] to-transparent"
+            />
+          </div>
+        </Reveal>
+
+        {/* 名字 + 引導語（logo 縮小，整塊可點連回首頁）*/}
+        <Reveal delay={80}>
+          <header className="mb-10 flex flex-col items-center text-center">
             <Link
               href="/"
-              className="group inline-flex flex-col items-center gap-4"
+              className="group inline-flex flex-col items-center gap-2"
               aria-label="回到人生鍛造所首頁"
             >
               <Image
                 src="/logo.png"
-                alt="人生鍛造所"
+                alt=""
                 width={96}
                 height={96}
                 priority
-                className="h-20 w-20 transition-transform duration-300 group-hover:rotate-[3deg]"
+                className="h-12 w-12 transition-transform duration-300 group-hover:rotate-[3deg]"
               />
               <span>
-                <span className="block font-display text-2xl text-[color:var(--color-ink)] tracking-wider">
+                <span className="block font-display text-2xl tracking-wider text-[color:var(--color-ink)]">
                   人生鍛造所
                 </span>
-                <span className="block font-ui text-[10px] tracking-[0.22em] uppercase text-[color:var(--color-fg-subtle)] mt-1">
+                <span className="mt-1 block font-ui text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-fg-subtle)]">
                   The Life Forge
                 </span>
               </span>
             </Link>
-            <p className="mt-6 font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)] max-w-[16rem]">
+            <p className="mt-5 max-w-[16rem] font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)]">
               AI 給你槓桿，閱讀給你底氣。
               <br />
               挑一個你想去的地方。
@@ -105,15 +140,17 @@ export default function LinksPage() {
 
             return (
               // delay 隨索引遞增 → 由上而下依序浮現，跟主站 Reveal 節奏一致
-              <Reveal key={item.label} delay={120 + idx * 80}>
+              <Reveal key={item.label} delay={160 + idx * 80}>
                 <a
                   href={item.href}
                   {...externalProps}
                   className={[
                     "group flex items-center justify-between gap-4 rounded-sm px-6 py-5 transition-all duration-200",
+                    // 暖色系陰影（取自 --color-fg），讓按鈕從「平貼」變「浮起的卡片」
+                    "shadow-[0_2px_10px_rgba(92,64,51,0.06)] hover:shadow-[0_6px_18px_rgba(92,64,51,0.12)]",
                     item.primary
                       ? "bg-[color:var(--color-accent)] text-[color:var(--color-bg)] hover:bg-[color:var(--color-accent-hover)]"
-                      : "border border-[color:var(--color-line-strong)] bg-transparent text-[color:var(--color-ink)] hover:border-[color:var(--color-accent)] hover:bg-[color:var(--color-bg-muted)]",
+                      : "border border-[color:var(--color-line-strong)] bg-[color:var(--color-bg)] text-[color:var(--color-ink)] hover:border-[color:var(--color-accent)] hover:bg-[color:var(--color-bg-muted)]",
                   ].join(" ")}
                 >
                   <span className="min-w-0">
@@ -122,7 +159,7 @@ export default function LinksPage() {
                     </span>
                     <span
                       className={[
-                        "block font-sans text-sm mt-0.5 truncate",
+                        "mt-0.5 block truncate font-sans text-sm",
                         item.primary
                           ? "text-[color:var(--color-bg)] opacity-80"
                           : "text-[color:var(--color-fg-subtle)]",
@@ -134,7 +171,7 @@ export default function LinksPage() {
                   {/* 外連用 ↗、站內/mailto 用 →；hover 時箭頭右移呼應「前往」*/}
                   <span
                     className={[
-                      "font-ui text-lg shrink-0 transition-transform duration-200 group-hover:translate-x-1",
+                      "shrink-0 font-ui text-lg transition-transform duration-200 group-hover:translate-x-1",
                       item.primary
                         ? ""
                         : "text-[color:var(--color-fg-subtle)] group-hover:text-[color:var(--color-accent)]",
@@ -150,7 +187,7 @@ export default function LinksPage() {
         </nav>
 
         {/* 頁尾：導回完整網站 + copyright */}
-        <Reveal delay={120 + links.length * 80 + 80}>
+        <Reveal delay={160 + links.length * 80 + 80}>
           <footer className="mt-14 text-center">
             <Link
               href="/"
