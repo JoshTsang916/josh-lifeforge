@@ -102,6 +102,7 @@ FORGE 是你品牌核心 IP，目前只在 About 有一行 callout，太可惜�
 要 Josh 決定：
 - 要做嗎？
 - 要的話選哪家？**Buttondown** 最簡單、**ConvertKit** 功能多
+- 做了之後：`/links`（PR #29）也加一顆「電子報訂閱」按鈕——往 `src/app/links/page.tsx` 的 `links` 陣列加一筆物件即可點亮
 
 ### 6. 找更好的標題字體（取代思源宋）
 你之前說「思源宋有點氾濫」park 起來。候選可以去 justfont / 文鼎 / Adobe Fonts 看商用付費字體，或試其他 Google Fonts 開源字體。
@@ -172,6 +173,18 @@ CLAUDE.md「Related repos」段把 ccdailytalk / remotion 寫成 `D:/...` Window
 低優先——不影響開發。
 
 來源：2026-05-08 加 toolbar 時掃 CLAUDE.md 發現
+
+---
+
+## ✅ 今天完成（2026-05-23）
+
+PR #29 (`feat/links-page`)：新增 `/links` linktree 落地頁——給 IG/FB bio 放單一連結用，訪客點進來直接挑想去的地方、不必滑完主站長頁。**開立 + preview 驗收完成，待 Josh merge 到 main**（上線後正式網址 `josh0916.com/links`，那個才是貼 bio 用的）。
+
+- 3 commits：`7f28efa` feat 基礎頁面（data-driven 連結：預約聊聊 / YouTube / IG / Threads / Email，全真連結零死連結）+ `a29a542` duotone banner + paper-grain 材質 + 暖光暈 + 卡片陰影 + `16fb2b6` fix 色調（膚色修正）
+- 內容決策：**精實派**——只放現有真連結；電子報 / Skill 專區 / Blog 等 roadmap 項目不放佔位按鈕（避免死連結），做好一個往 `links` 陣列加一筆即可點亮
+- 設計：沿用 warm brown editorial，頂部 `hero.jpg` 暖調 banner + 紙感 + 暖光暈 + 卡片陰影；`my-auto` safe-centering
+- 踩雷：人臉照片重度單色 duotone → 膚色詭異，改輕暖調（詳見 CLAUDE.md Design notes `/links` 條）
+- 待 Josh 決定：merge 時機（現在上線 / 之後色調再調一起）；可調旋鈕＝色調暖度 / banner 裁切 / 預約排序
 
 ---
 
