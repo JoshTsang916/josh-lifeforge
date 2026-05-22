@@ -81,14 +81,16 @@ export default function LinksPage() {
               sizes="(max-width: 768px) 100vw, 28rem"
               className="object-cover object-[68%_22%]"
               style={{
+                // 保留自然膚色：不做 grayscale，只輕微提飽和/對比讓照片通透，
+                // sepia 壓到 0.12 僅作極淡暖調，避免人臉單色化造成的「臘像」詭異感
                 filter:
-                  "grayscale(1) sepia(0.55) contrast(1.05) brightness(0.96)",
+                  "saturate(1.08) contrast(1.04) brightness(1.02) sepia(0.12)",
               }}
             />
-            {/* 暖磚紅 tint：把去飽和後的褐調統一到品牌暖色（multiply 不洗白、保留照片細節）*/}
+            {/* 極輕暖光：soft-light 柔和統一色溫到米咖啡調，不壓暗、不染壞膚色 */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-[color:var(--color-accent)] opacity-25 mix-blend-multiply"
+              className="absolute inset-0 bg-[color:var(--color-accent-soft)] opacity-[0.12] mix-blend-soft-light"
             />
             {/* 底部漸層：讓照片下緣平滑融入頁面米白底 */}
             <div
