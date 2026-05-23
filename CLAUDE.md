@@ -2,7 +2,7 @@
 
 ## Project
 Josh's personal brand website — **人生鍛造所 (Lifeforge Studio)**.
-Single-page site for workshops, 1:1 consulting, speaking, writings, and recent work.
+Single-page site for workshops, 1:1 consulting, speaking, writings, and recent work（主站為 single-page；另有獨立 `/links` linktree 落地頁給社群 bio 導流用）。
 
 Audience: students + prospective clients. Goal: clarify who Josh is and convert curious visitors into conversations.
 
@@ -26,7 +26,7 @@ Defined in `src/app/globals.css` via `@theme` (Tailwind v4):
   - All UI colors must come from these tokens — no rogue hex values
 - **Typography** (v0.5): `--font-display` (Noto Serif TC 思源宋) for headlines, `--font-sans` (LXGW WenKai TC 霞鶩文楷) for body, `--font-ui` (Outfit) for Latin UI labels & buttons
 - **Radii**: small (2/6/10px) — editorial restraint, not soft consumer
-- **Component classes**: `.section`, `.container-narrow`, `.eyebrow`, `.btn`, `.btn-primary`, `.btn-ghost`, `.link-underline`
+- **Component classes**: `.section`, `.container-narrow`, `.eyebrow`, `.btn`, `.btn-primary`, `.btn-ghost`, `.link-underline`, `.paper-grain`（紙感顆粒材質 overlay，目前用於 `/links`）
 
 ## Design rules (from `.claude/skills/web-design-engineer/`)
 This project uses the **web-design-engineer** skill globally installed at `~/.claude/skills/`. When editing visuals, follow:
@@ -47,7 +47,9 @@ src/
 ├── app/
 │   ├── layout.tsx          # Noto Serif TC + LXGW WenKai TC + Outfit fonts, metadata
 │   ├── page.tsx            # Composes all sections in 01–07 order
-│   └── globals.css         # @theme tokens + .section/.btn/.link-underline classes
+│   ├── links/
+│   │   └── page.tsx        # /links — 獨立 linktree 落地頁（IG/FB bio 用），data-driven 連結陣列，非 single-page 主站的一部分
+│   └── globals.css         # @theme tokens + .section/.btn/.link-underline/.paper-grain classes
 └── components/
     ├── Nav.tsx             # Sticky top nav，desktop 橫式選單 + mobile 漢堡 trigger
     ├── MobileMenu.tsx      # client component，用 React Portal 渲染到 body 避開 Nav backdrop-blur 造成的 stacking 限制
@@ -76,6 +78,7 @@ src/
 - **Testimonials ↔ RecentWork 2026-05-15 對調為 04→RecentWork / 05→Testimonials** — 兩個 trust block 從「客觀（教過什麼）→ 主觀（學員怎麼說）」遞進，讓主觀背書更靠近 Contact。Nav.tsx navLinks 順序也對調，MobileMenu 編號是 `idx+1` 動態算自動跟著。
 - **Services 04「Build With Me」用 inline `proof.cases` 而不是另開 Portfolio section** — 因為 doris/tibonus 客戶授權還沒拿，先匿名（「某會計事務所」/「某食品代理商」）嵌在 service description 內。等授權拿到後可升級到獨立 Builds section + 截圖。
 - **Vercel Toolbar 用 `process.env.VERCEL_ENV === "preview"` gate 條件 inject** — 不在 production main branch 出現（避免真實訪客看到），也不在 dev 出現（Josh 不需要）。改 gate 把 `'development'` 加進去就會在 dev 出現。
+- **`/links` linktree 落地頁 2026-05-23 新增（PR #29，待 merge）** — 獨立於主站 single-page 的精實連結頁，給 IG/FB bio 放單一連結用。`src/app/links/page.tsx` 單檔，連結用 data-driven 陣列（加一筆物件＝多一顆按鈕，未來電子報 / Skill / Blog 直接擴充，版面零改動）。頂部 `hero.jpg` 暖調 banner + `.paper-grain` 紙感 + 暖光暈 + 卡片暖陰影；`my-auto` safe-centering 防內容高於視窗被裁。**踩雷記錄**：對人臉照片做重度單色 duotone（`grayscale` + `sepia` + accent `multiply`）會讓膚色變土褐「臘像」詭異感 → 改回保留原色 + 極輕暖調（`sepia(0.12)` + faint accent-soft `soft-light`）。教訓：有人臉的照片，自然膚色 > 完全色溫統一。
 
 ## Comments / Feedback workflow
 
