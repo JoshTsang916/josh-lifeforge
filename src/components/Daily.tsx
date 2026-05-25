@@ -1,3 +1,5 @@
+// PAUSED 2026-05-25 — 日更暫停，已從 page.tsx 移除 import 與 render。
+// 恢復時：page.tsx 加回 import + <Daily />，section 編號（目前 Contact = 06）重編往後挪。
 import { DayCounter } from "./DayCounter";
 import { HairlineLine } from "./HairlineLine";
 

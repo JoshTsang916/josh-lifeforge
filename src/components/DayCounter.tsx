@@ -1,5 +1,7 @@
 "use client";
 
+// PAUSED 2026-05-25 — 只被 Daily.tsx 使用，Daily 暫停後當前無 caller。
+// 恢復時跟 Daily 一起復活，無需獨立改動。
 import { useEffect, useRef, useState } from "react";
 
 type Props = {

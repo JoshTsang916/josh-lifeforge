@@ -13,8 +13,7 @@ Audience: students + prospective clients. Goal: clarify who Josh is and convert 
 - **Deployment**: Vercel (preview = branch URL, production = main)
 - **Database**: 網站目前 read-only Supabase 資料只用於 Writings；其他區塊內容仍 hardcoded 在 component 中
   - Testimonials / Recent Work / Services / Hero / About 等區塊：人工挑選 → hardcode
-  - Daily 的 IG 影片素材來源是 Supabase `ig_posts`（shared instance `srpqvtkliesdfnqirdpt`），但網站不直接連——更新流程：開發時用 Supabase MCP 撈最新 reels → 下載縮圖到 `public/photos/writings/`（路徑沿用舊名）→ 改 `Daily.tsx` 的 `videos` 陣列
-  - 之後若要動態抓最新 N 則影片，需重新加回 `@supabase/supabase-js` 依賴並建立 server-side fetch
+  - **Daily section paused 2026-05-25** — 日更暫停，已從 `page.tsx` 移除 import 與 render。`Daily.tsx` / `DayCounter.tsx` 兩個 component 檔保留並標 paused 註解，恢復時加回 import + section 編號重編即可。歷史脈絡：早期 Daily 影片素材來源是 Supabase `ig_posts`（shared instance `srpqvtkliesdfnqirdpt`），由 Supabase MCP 撈 reels → 縮圖落 `public/photos/writings/` → 改 `Daily.tsx` 的 `videos` 陣列；後來精簡為純環形 DayCounter + 一段文案 + IG 連結（沒 videos 陣列）。
   - **Writings（規劃中，2026-05-10 拍板，待動工）**：Josh 寫 Obsidian `80-blogpost/<slug>.md` 初稿 → 跟 Claude 校稿 → Claude 用 Supabase MCP push 到 shared instance `srpqvtkliesdfnqirdpt` 的 `writings` table（schema：`slug / title / excerpt / body_md / cover_image_url / status / published_at / tags / reading_time`）→ 配圖 / 投影片截圖 / mp3 audio 走 Storage `writings-assets/<slug>/` bucket → 前端 Next.js `/writings/[slug]` ISR 60s revalidate 讀 + `react-markdown` + `remark-gfm` + `rehype-raw` 渲染（允許 `<audio>` / `<iframe>` 等 HTML）。**不走 build-time sync / 不走 markdown-in-repo / 不走 MDX**——Supabase runtime 對 non-coder 寫作流程摩擦最低 + Claude 介入 (校稿 / push) 用 MCP 直接操作。詳見 TODO.md 🔴 #1 4-phase plan。
 
 ## Design system (Warm brown editorial)
@@ -46,7 +45,7 @@ This project uses the **web-design-engineer** skill globally installed at `~/.cl
 src/
 ├── app/
 │   ├── layout.tsx          # Noto Serif TC + LXGW WenKai TC + Outfit fonts, metadata
-│   ├── page.tsx            # Composes all sections in 01–07 order
+│   ├── page.tsx            # Composes all sections in 01–06 order
 │   ├── links/
 │   │   └── page.tsx        # /links — 獨立 linktree 落地頁（IG/FB bio 用），data-driven 連結陣列，非 single-page 主站的一部分
 │   └── globals.css         # @theme tokens + .section/.btn/.link-underline/.paper-grain classes
@@ -58,13 +57,13 @@ src/
     ├── Services.tsx        # Section 03 — workshops / 1:1 / speaking / Build With Me（04 客製化開發含 doris/tibonus proof cases）
     ├── RecentWork.tsx      # Section 04 — 近期作品（hardcoded：n8n / AI 自動化進入文件驅動的時代 / 神經可塑性說書專場）
     ├── Testimonials.tsx    # Section 05 — 學員見證（hardcoded：Du / Tammy / Kin / 大大）
-    ├── Daily.tsx           # Section 06 — 日更短影片（環形 DayCounter 從 2026-04-01 算 day，每小時 ISR 刷新）
-    ├── DayCounter.tsx      # client component — SVG 環形 + IntersectionObserver + RAF count-up，1.8s easeOutCubic
-    ├── Contact.tsx         # Section 07 — Email + Calendly
+    ├── Daily.tsx           # [paused 2026-05-25] 原 Section 06 日更短影片，已從 page.tsx 移除 import；檔案保留待恢復
+    ├── DayCounter.tsx      # [paused 2026-05-25] client component — SVG 環形 + IO + RAF count-up；只給 Daily 用，跟著 paused
+    ├── Contact.tsx         # Section 06 — Email + Calendly（原 07，Daily paused 後改 06）
     └── Footer.tsx          # Connect (Threads/IG/YouTube) + reach out + copyright
 ```
 
-**Section 編號規則**：每個 content section 左欄顯示兩位數編號（01–07）。新增 content section 時整體重編，編號必須連續、不得跳號或重複。對調順序時左欄編號要同步換（譬如 2026-05-15 把 Testimonials 04 跟 RecentWork 05 對調，兩個 component 內的編號字串也都翻過來）。
+**Section 編號規則**：每個 content section 左欄顯示兩位數編號（目前 01–06）。新增 / 移除 / 暫停 content section 時整體重編，編號必須連續、不得跳號或重複。對調順序時左欄編號要同步換（譬如 2026-05-15 把 Testimonials 04 跟 RecentWork 05 對調，兩個 component 內的編號字串也都翻過來；2026-05-25 Daily section paused 後 Contact 從 07 改 06）。
 
 ## Editorial tone
 - Headlines: serif italic accents on key concept words (e.g. "*第二曲線*", "*跟 AI 對話建出系統*")
@@ -106,7 +105,7 @@ Vercel Preview Comments 是 Josh 跟 Claude 之間做 design review feedback 的
 - **About copy**：Josh 親寫版本（commit 24a624f / 6814cb2 之後）
 - **Testimonials**：四條真實學員見證（Du / Tammy / Kin / 大大），出自 `2026n8nWorkshop` repo + 引導力學院 AI 分享會——若要新增引用前請與 Josh 核對真偽（同 repo 內曾有 AI 生假見證 Betty）
 - **Recent Work**：三場真實活動（n8n Automation Workshop / AI 自動化進入文件驅動的時代 / 神經可塑性說書專場），照片在 `public/photos/`
-- **Daily**：4 則手選日更短影片（Day 33/31/25/24），縮圖在 `public/photos/writings/`（路徑沿用舊名），連回 IG Reel
+- **Daily**：paused 2026-05-25（日更暫停，section 從首頁移除）。歷史內容為環形 DayCounter 從 2026-04-01 算 day + IG Reel 導流連結。
 - **Writings**（純文章區塊）：尚未建立。未來規劃從 Obsidian vault 的 `published/` 子目錄走 markdown + frontmatter，build 時 sync 到網站，不走線上 CMS
 - **Service descriptions**：04 Build With Me 寫定（含 doris/tibonus 匿名 proof cases），01-03（工作坊 / 1:1 / 演講）仍是 v0 草稿，等 BRAND 重新對齊後重寫（TODO 7b 殘餘）
 

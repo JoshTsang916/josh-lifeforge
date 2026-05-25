@@ -6,7 +6,6 @@ const navLinks = [
   { href: "#services", label: "服務" },
   { href: "#work", label: "作品" },
   { href: "#testimonials", label: "見證" },
-  { href: "#daily", label: "日更" },
   { href: "#contact", label: "聯絡" },
 ];
 

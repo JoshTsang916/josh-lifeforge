@@ -14,7 +14,7 @@ export function Contact() {
             <div className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                  07
+                  06
                 </span>
                 <HairlineLine />
               </div>
