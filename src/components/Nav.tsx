@@ -1,11 +1,15 @@
 import Image from "next/image";
+import Link from "next/link";
 import { MobileMenu } from "./MobileMenu";
 
+// 大部分是首頁區塊錨點（#...）；"文章" 是唯一的跨頁連結（/writings），
+// 兩者在 render 時用 href 開頭區分（"/" → next/link，"#" → 一般 <a> 走平滑捲動）。
 const navLinks = [
   { href: "#about", label: "關於" },
   { href: "#services", label: "服務" },
   { href: "#work", label: "作品" },
   { href: "#testimonials", label: "見證" },
+  { href: "/writings", label: "文章" },
   { href: "#contact", label: "聯絡" },
 ];
 
@@ -40,9 +44,15 @@ export function Nav() {
         <ul className="hidden md:flex items-center gap-8 text-sm font-sans text-[color:var(--color-fg-muted)]">
           {navLinks.map((l) => (
             <li key={l.href}>
-              <a href={l.href} className="link-underline">
-                {l.label}
-              </a>
+              {l.href.startsWith("/") ? (
+                <Link href={l.href} className="link-underline">
+                  {l.label}
+                </Link>
+              ) : (
+                <a href={l.href} className="link-underline">
+                  {l.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>

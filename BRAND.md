@@ -68,6 +68,8 @@
 
 ## FORGE callout（位置：About 最後一塊）
 
+> ⏸️ **狀態（2026-05-12）：FORGE 五步法暫不上線。** Josh 認為 F/O/R/G/E 為了拼「人生鍛造所」太硬湊，框架本身在重新打磨中，打磨完才會重新放上 About。**此重打磨由 Win + M1 端處理，M5 不碰。** 在那之前 `src/components/About.tsx` 裡刻意沒有 FORGE callout——這是 deliberate hold，不是 doc/code drift 疏漏，不要去補、也不要建議 M5 把它上線。下面的 callout 規格保留作打磨完後的參照。
+
 FORGE 是 Josh 整理的 AI 互動方法論，歸在「AI」元素底下（不是平行第六元素）。
 
 **三層架構（CLAUDE.md 既有定義）**
@@ -82,6 +84,6 @@ FORGE 是 Josh 整理的 AI 互動方法論，歸在「AI」元素底下（不�
 ## 後續 TODO
 
 - [x] Hero 自介 third tier：移除 Hero、改在 About 段 1 前加「我是 Josh」eyebrow（2026-04-25 拍）
-- [ ] FORGE callout 副標重寫
+- [⏸] FORGE callout 副標重寫 —— 暫緩，FORGE 框架重打磨中（見上方〈FORGE callout〉狀態註記）；打磨由 Win/M1 端處理
 - [ ] 個人網頁 TODO #3「Hero vs Services 訊息不一致」隨此次更新解決，Services 文案是否也要對齊新定位
 - [x] Hero footer marker：改為「Josh - Sharing what I learn along the way」（2026-04-25 拍）
