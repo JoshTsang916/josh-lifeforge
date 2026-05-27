@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { Reveal } from "./Reveal";
+import { HairlineLine } from "./HairlineLine";
 
 type Work = {
   id: string;
@@ -15,7 +17,7 @@ const works: Work[] = [
     title: "n8n Automation Workshop",
     subtitle: "From Learner to Builder",
     description:
-      "帶學員從 AI 的使用者，走到能自己 build 自動化系統的位置。結業時每個人都有一份自己做出來、真的在跑的 workflow——不是 demo 而已。",
+      "帶學員從 AI 的使用者，走到能自己 build 自動化系統的位置。從底層邏輯，基本操作，到實際做出 workflow 完整閉環。",
     image: "/photos/workshop-n8n-3.jpg",
     imageAlt: "n8n workshop 結業合照，學員手持 Automation Builder 結業證書",
   },
@@ -24,7 +26,7 @@ const works: Work[] = [
     title: "AI 自動化，進入了文件驅動的時代",
     subtitle: "為未來而引導學會 × AI 分享會",
     description:
-      "談上下文脈絡怎麼決定你跟 AI 對話的品質。不是 prompt 技巧，是更上游的「脈絡建立」——這是我看到大部分人卡住的地方。",
+      "談上下文脈絡怎麼決定你跟 AI 對話的品質。提示詞、偏好設定、記憶、skill（技能），設定好 AI Agent 什麼時候該讀取什麼文件，做好我們能做的 harness（駕馭工程），才能更精準地讓 AI 做它該做的工作。",
     image: "/photos/talk-ai-forum-moment.jpg",
     imageAlt: "為未來而引導學會 AI 分享會現場",
   },
@@ -33,7 +35,7 @@ const works: Work[] = [
     title: "神經可塑性說書專場",
     subtitle: "HPX × Wee 讀書會 — 神經可塑性",
     description:
-      "用 50 分鐘講 The Brain That Changes Itself 這本書，配上我自己 7 次公開演講緊張程度的真實變化軌跡，說明大腦是怎麼被重塑的。",
+      "用 50 分鐘講《神經可塑性》這本書，配上我自己 7 次公開演講緊張程度的真實變化軌跡，說明大腦是怎麼被重塑的。",
     image: "/photos/talk-neuroplasticity-solo.jpg",
     imageAlt: "Josh 在 HPX 神經可塑性說書會講「騎象人學會了與大象共處」",
   },
@@ -44,64 +46,67 @@ export function RecentWork() {
     <section id="work" className="section bg-[color:var(--color-bg-muted)]">
       <div className="container-narrow">
         {/* Section header */}
-        <div className="grid lg:grid-cols-12 gap-12 mb-20">
-          <div className="lg:col-span-3">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                05
-              </span>
-              <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
-            </div>
-            <h2 className="eyebrow">Recent Work</h2>
-            <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
-              近期作品
-            </p>
-          </div>
-          <div className="lg:col-span-9 max-w-2xl">
-            <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              教過的場、講過的主題，留下一點痕跡。
-            </p>
-            <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-              想在你的團隊、讀書會、學會內部辦一場？寫信跟我聊。
-            </p>
-          </div>
-        </div>
-
-        {/* Work cards — editorial stack */}
-        <div className="border-t border-[color:var(--color-line-strong)]">
-          {works.map((work, idx) => (
-            <article
-              key={work.id}
-              className="grid lg:grid-cols-12 gap-8 py-12 border-b border-[color:var(--color-line-strong)]"
-            >
-              <div className="lg:col-span-2">
-                <div className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
-                  {String(idx + 1).padStart(2, "0")}
-                </div>
-                <div className="eyebrow">{work.subtitle}</div>
+        <Reveal>
+          <div className="grid md:grid-cols-12 gap-12 mb-20">
+            <div className="md:col-span-4 lg:col-span-3">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
+                  04
+                </span>
+                <HairlineLine />
               </div>
+              <h2 className="eyebrow">Recent Work</h2>
+              <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
+                近期作品
+              </p>
+            </div>
+            <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
+              <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
+                教過的場、講過的主題，留下一點痕跡。
+              </p>
+              <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
+                想在你的團隊、讀書會、學會內部辦一場？寫信跟我聊。
+              </p>
+            </div>
+          </div>
+        </Reveal>
 
-              <div className="lg:col-span-5">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
+        {/* Work cards — 3-column grid, staggered reveal */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12 pt-12 border-t border-[color:var(--color-line-strong)]">
+          {works.map((work, idx) => (
+            <Reveal
+              key={work.id}
+              delay={idx * 100}
+              variant="fade-scale"
+              className="h-full"
+            >
+              <article className="flex flex-col h-full">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-sm mb-6 bg-[color:var(--color-bg-deep)]">
                   <Image
                     src={work.image}
                     alt={work.imageAlt}
                     fill
-                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    sizes="(max-width: 1024px) 100vw, 30vw"
                     className="object-cover"
                   />
                 </div>
-              </div>
 
-              <div className="lg:col-span-5">
-                <h3 className="font-display text-2xl md:text-3xl leading-tight text-[color:var(--color-ink)] mb-4">
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <span className="eyebrow">{work.subtitle}</span>
+                </div>
+
+                <h3 className="font-display text-xl md:text-2xl leading-tight text-[color:var(--color-ink)] mb-3">
                   {work.title}
                 </h3>
+
                 <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)]">
                   {work.description}
                 </p>
-              </div>
-            </article>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

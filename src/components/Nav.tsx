@@ -7,9 +7,8 @@ import { MobileMenu } from "./MobileMenu";
 const navLinks = [
   { href: "#about", label: "關於" },
   { href: "#services", label: "服務" },
-  { href: "#testimonials", label: "見證" },
   { href: "#work", label: "作品" },
-  { href: "#daily", label: "日更" },
+  { href: "#testimonials", label: "見證" },
   { href: "/writings", label: "文章" },
   { href: "#contact", label: "聯絡" },
 ];
@@ -26,16 +25,16 @@ export function Nav() {
           <Image
             src="/logo.png"
             alt="人生鍛造所"
-            width={64}
-            height={64}
+            width={96}
+            height={96}
             priority
-            className="transition-transform duration-300 group-hover:rotate-[3deg]"
+            className="h-12 w-12 sm:h-24 sm:w-24 transition-transform duration-300 group-hover:rotate-[3deg]"
           />
-          <div className="hidden sm:flex flex-col leading-tight">
-            <span className="font-display text-lg font-normal text-[color:var(--color-ink)] tracking-wider">
+          <div className="flex flex-col leading-tight">
+            <span className="font-display text-base sm:text-lg font-normal text-[color:var(--color-ink)] tracking-wider">
               人生鍛造所
             </span>
-            <span className="font-ui text-[10px] tracking-[0.22em] uppercase text-[color:var(--color-fg-subtle)] mt-1">
+            <span className="hidden sm:block font-ui text-[10px] tracking-[0.22em] uppercase text-[color:var(--color-fg-subtle)] mt-1">
               The Life Forge
             </span>
           </div>

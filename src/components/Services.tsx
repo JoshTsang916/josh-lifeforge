@@ -1,3 +1,6 @@
+import { Reveal } from "./Reveal";
+import { HairlineLine } from "./HairlineLine";
+
 type Service = {
   number: string;
   title: string;
@@ -27,7 +30,7 @@ const services: Service[] = [
     description:
       "60 分鐘對話，針對你的內容工作流、學習方法、職涯轉型給出可執行建議。不是泛泛的勵志談話，是看著你的實際素材，跟你一起拆解、重組、找出下一步。",
     forWho: "個人創作者、教育工作者、轉型中的專業人士",
-    cta: "預約 1:1",
+    cta: "預約 1 對 1",
   },
   {
     number: "03",
@@ -43,7 +46,7 @@ const services: Service[] = [
     title: "一起把它蓋出來",
     subtitle: "Build With Me",
     description:
-      "你的流程卡住、團隊還在用 Excel、想把資料串起來——我跟你一起，從場景拆到資料模型再到上線，用 AI + Supabase + Next.js 蓋一套真的能跑的系統。不是丟需求等成品，是我陪你走完一輪，順手把這套思路留下，下次你能自己接手下一個流程。",
+      "你的流程卡住、團隊還在用 Excel、想把資料串起來，想幫自己的團隊每天省下幾個小時。想知道 AI 自動化怎麼低成本地引進工作流程。我跟你一起，從場景拆到資料模型再到上線，打造出一個屬於你自己或團隊的客製化系統。",
     forWho: "想把日常重複工作交給系統處理的中小企業、傳產老闆、專業事務所",
     cta: "聊聊你的場景",
     proof: {
@@ -60,83 +63,84 @@ export function Services() {
     <section id="services" className="section">
       <div className="container-narrow">
         {/* Section header */}
-        <div className="grid lg:grid-cols-12 gap-12 mb-20">
-          <div className="lg:col-span-3">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                03
-              </span>
-              <span className="h-px w-8 bg-[color:var(--color-line-strong)]" />
+        <Reveal>
+          <div className="grid md:grid-cols-12 gap-12 mb-20">
+            <div className="md:col-span-4 lg:col-span-3">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
+                  03
+                </span>
+                <HairlineLine />
+              </div>
+              <h2 className="eyebrow">Services</h2>
+              <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
+                我提供什麼
+              </p>
             </div>
-            <h2 className="eyebrow">Services</h2>
-            <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
-              我提供什麼
-            </p>
+            <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
+              <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
+                四種協作形式，
+                從教學到實作，
+                對應你正在面對的不同處境。
+              </p>
+              <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
+                如果你還在猶豫哪一種適合你，
+                直接寫信跟我聊，我會誠實告訴你哪個有用、哪個不必。
+              </p>
+            </div>
           </div>
-          <div className="lg:col-span-9 max-w-2xl">
-            <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-              四種協作形式，
-              從教學到實作，
-              對應你正在面對的不同處境。
-            </p>
-            <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-              如果你還在猶豫哪一種適合你，
-              直接寫信跟我聊，我會誠實告訴你哪個有用、哪個不必。
-            </p>
-          </div>
-        </div>
+        </Reveal>
 
-        {/* Service list — editorial table-like layout */}
+        {/* Service list — editorial table-like layout, staggered reveal */}
         <div className="border-t border-[color:var(--color-line-strong)]">
-          {services.map((service) => (
-            <article
-              key={service.number}
-              className="grid lg:grid-cols-12 gap-8 py-12 border-b border-[color:var(--color-line-strong)] group"
-            >
-              <div className="lg:col-span-2">
-                <div className="font-mono text-sm tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
-                  {service.number}
-                </div>
-                <div className="eyebrow">{service.subtitle}</div>
-              </div>
-
-              <div className="lg:col-span-7">
-                <h3 className="font-display text-3xl md:text-4xl leading-tight text-[color:var(--color-ink)] mb-4 group-hover:text-[color:var(--color-accent)] transition-colors duration-300">
-                  {service.title}
-                </h3>
-                <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)] mb-4">
-                  {service.description}
-                </p>
-                {service.proof && (
-                  <div className="mt-6 mb-6 pt-6 border-t border-[color:var(--color-line)] space-y-3">
-                    {service.proof.cases.map((c, i) => (
-                      <p
-                        key={i}
-                        className="font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)] flex gap-3"
-                      >
-                        <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)] pt-0.5 shrink-0">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span>{c}</span>
-                      </p>
-                    ))}
+          {services.map((service, idx) => (
+            <Reveal key={service.number} delay={idx * 100}>
+              <article className="grid lg:grid-cols-12 gap-6 py-10 border-b border-[color:var(--color-line-strong)] group">
+                <div className="lg:col-span-2">
+                  <div className="font-mono text-sm tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
+                    {service.number}
                   </div>
-                )}
-                <p className="font-sans text-sm text-[color:var(--color-fg-subtle)]">
-                  <span className="text-[color:var(--color-fg)]">適合 </span>
-                  {service.forWho}
-                </p>
-              </div>
+                  <div className="eyebrow">{service.subtitle}</div>
+                </div>
 
-              <div className="lg:col-span-3 flex lg:justify-end items-start">
-                <a
-                  href="#contact"
-                  className="link-underline font-sans text-sm font-medium"
-                >
-                  {service.cta} →
-                </a>
-              </div>
-            </article>
+                <div className="lg:col-span-7">
+                  <h3 className="font-display text-3xl md:text-4xl leading-tight text-[color:var(--color-ink)] mb-3 group-hover:text-[color:var(--color-accent)] transition-colors duration-300">
+                    {service.title}
+                  </h3>
+                  <p className="font-sans text-base leading-[1.65] text-[color:var(--color-fg-muted)] mb-3">
+                    {service.description}
+                  </p>
+                  {service.proof && (
+                    <div className="mt-5 mb-5 pt-5 border-t border-[color:var(--color-line)] space-y-2">
+                      {service.proof.cases.map((c, i) => (
+                        <p
+                          key={i}
+                          className="font-sans text-sm leading-[1.65] text-[color:var(--color-fg-muted)] flex gap-3"
+                        >
+                          <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)] pt-0.5 shrink-0">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <span>{c}</span>
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                  <p className="font-sans text-sm text-[color:var(--color-fg-subtle)]">
+                    <span className="text-[color:var(--color-fg)]">適合 </span>
+                    {service.forWho}
+                  </p>
+                </div>
+
+                <div className="lg:col-span-3 flex lg:justify-end items-start">
+                  <a
+                    href="#contact"
+                    className="link-underline font-sans text-sm font-medium"
+                  >
+                    {service.cta} →
+                  </a>
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

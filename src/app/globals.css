@@ -59,6 +59,23 @@
     text-rendering: optimizeLegibility;
     text-wrap: pretty;
   }
+  /* Reduced motion 用戶：所有 transition / animation 縮到接近 0，
+     讓 Reveal / HeroTitle / HairlineLine 等基於 CSS transition 的動畫直接落定。
+     全域處理可避免這些 component 各自 JS 檢測 prefers-reduced-motion 觸發
+     React 19 的 react-hooks/set-state-in-effect lint rule。
+     注意：DayCounter 用 requestAnimationFrame 跑數字 count-up，
+     不受 CSS transition-duration 控制，它自己在 IntersectionObserver callback
+     裡用 matchMedia 處理 reduced motion fallback。 */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
   ::selection {
     background: var(--color-accent-soft);
     color: var(--color-ink);
@@ -345,4 +362,19 @@
     width: 100%;
     margin-top: 0.8em;
   }
+}
+
+/* 紙感顆粒材質 —— 在頁面最上層鋪一層極淡 noise（soft-light 混合），
+   讓整頁像印在帶纖維的米白紙上，增加溫度與層次，但不傷文字可讀性。
+   pointer-events:none 不擋互動。給 /links 這類想要質感又維持極簡的頁面用。 */
+.paper-grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
 }

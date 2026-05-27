@@ -1,4 +1,21 @@
 import Link from "next/link";
+import { Noto_Sans_TC, Huninn } from "next/font/google";
+
+// 這兩個字型只給 playground 對照用，scope 在這個 route 而不掛 root layout，
+// 避免主站每個 page 都 preload 沒用到的字型 CSS
+const notoSansTC = Noto_Sans_TC({
+  variable: "--font-noto-sans-tc",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  display: "swap",
+});
+
+const huninn = Huninn({
+  variable: "--font-huninn",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 
 type FontSpec = {
   id: string;
@@ -7,7 +24,7 @@ type FontSpec = {
   source: string;
   license: string;
   fit: string;
-  cssVar: string; // CSS variable from layout.tsx
+  cssVar: string; // CSS variable — Noto Serif TC / LXGW WenKai TC / Outfit 來自 layout.tsx；Noto Sans TC / Huninn 來自本 page scope
 };
 
 const fonts: FontSpec[] = [
@@ -56,12 +73,14 @@ const sampleTexts = {
   paragraph:
     "我是 Josh。原本是高中數學老師，2024 年離開教職，把全部精力投入「AI × 教育」的第二曲線。這幾年我發現，大部分人對 AI 的想像，還停留在「叫 ChatGPT 寫一段文字」。但真正的可能性，是跟 AI 對話，建出一整套屬於自己的工作流。",
   sectionHeading: "FORGE 五步法 — Context is King",
-  buttonLabel: "預約 1:1 諮詢",
+  buttonLabel: "預約 1 對 1 諮詢",
 };
 
 export default function FontsPlayground() {
   return (
-    <div className="min-h-screen">
+    <div
+      className={`${notoSansTC.variable} ${huninn.variable} min-h-screen`}
+    >
       {/* Header */}
       <header className="border-b border-[color:var(--color-line-strong)] section !py-12">
         <div className="container-narrow">
