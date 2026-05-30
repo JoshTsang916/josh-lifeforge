@@ -2,6 +2,7 @@ import Image from "next/image";
 import { HeroTitle } from "./HeroTitle";
 import { HairlineLine } from "./HairlineLine";
 import { Reveal } from "./Reveal";
+import { TypingText } from "./TypingText";
 
 export function Hero() {
   return (
@@ -22,15 +23,18 @@ export function Hero() {
           <div className="lg:col-span-7 order-2 lg:order-1">
             <HeroTitle />
 
-            {/* delay 對齊 HeroTitle 三行 stagger（0/250/500ms + 800ms duration），
-                第三行 fade 進行中時 paragraph 接續，CTAs 收尾 */}
-            <Reveal delay={750}>
-              <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
-                在被加速的時代，走一條不急的路
-              </p>
-            </Reveal>
+            {/* 小字逐字浮現；startDelay 約對齊標題第三行跑完前，讓節奏接續不留空白 */}
+            <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
+              <TypingText
+                text="在被加速的時代，走一條不急的路"
+                startDelay={1300}
+                perChar={95}
+                charDur={700}
+                riseY={8}
+              />
+            </p>
 
-            <Reveal delay={1000}>
+            <Reveal delay={2000}>
               <div className="flex flex-wrap gap-4">
                 <a href="#contact" className="btn btn-primary">
                   預約 1 對 1 諮詢

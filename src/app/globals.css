@@ -73,6 +73,8 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      /* delay 也歸零，否則 stagger / 逐字（HeroTitle / TypingText）的階梯延遲會殘留 */
+      transition-delay: 0ms !important;
       scroll-behavior: auto !important;
     }
   }
