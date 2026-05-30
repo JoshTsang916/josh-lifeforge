@@ -8,9 +8,10 @@ const LINES = [
   { accent: "一人公司", rest: "給你自由" },
 ];
 
-// Hero 主標：三行逐行 fade-up 進場（mount-triggered，Hero 在首屏立即 visible）。
-// 每行 delay 250ms 間隔。setMounted 透過 rAF callback 觸發，避免直接在 effect body
-// 內 setState 觸發 React 19 的 react-hooks/set-state-in-effect lint rule。
+// Hero 主標：三行逐行整體 fade-up 浮現（紅字 accent + 黑字一起，不逐字）。
+// mount 觸發（首屏立即可見），每行 stagger 220ms。
+// 逐字效果刻意只留給底下標語「…走一條不急的路」+ About『不急』那行——
+// 標題俐落定調、標語慢慢道出，兩種手法分開。
 // prefers-reduced-motion 由 globals.css 全域處理。
 export function HeroTitle() {
   const [mounted, setMounted] = useState(false);
@@ -30,7 +31,7 @@ export function HeroTitle() {
             transitionProperty: "opacity, transform",
             transitionDuration: "800ms",
             transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-            transitionDelay: `${i * 250}ms`,
+            transitionDelay: `${i * 220}ms`,
             opacity: mounted ? 1 : 0,
             transform: mounted ? "translateY(0)" : "translateY(24px)",
           }}

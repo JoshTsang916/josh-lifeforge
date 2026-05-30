@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { HairlineLine } from "./HairlineLine";
 import { Reveal } from "./Reveal";
+import { TypingText } from "./TypingText";
 
 export function About() {
   return (
@@ -67,8 +68,16 @@ export function About() {
                   時間不可逆也無法加速，對每個人都公平。
                   慢，並非拖延，只是一種必然的進展。
                 </p>
+                {/* 唯一在 About 長文裡加動畫的一行：逐字呼應「不急」語意，
+                    捲到才觸發、放慢節奏。其餘長文維持不加動畫（見上方 left rail 註解）。 */}
                 <p className="text-[color:var(--color-fg)] font-medium">
-                  『不急』，是相信時間，也相信自己。
+                  <TypingText
+                    text="『不急』，是相信時間，也相信自己。"
+                    whenVisible
+                    perChar={100}
+                    charDur={700}
+                    riseY={6}
+                  />
                 </p>
                 <p>
                   與其像是踏上社會賦予的倉鼠輪子不斷追逐快錢，
