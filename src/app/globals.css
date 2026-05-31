@@ -278,6 +278,25 @@
   }
 }
 
+/* 鐵砧受擊：鎚砸到底那刻砧輕微下沉再回彈（被敲的反作用力，強化敲擊感）。
+   時序對齊 forge-strike 的砸到底時刻（≈56%）。只動 translateY，定位交給外層。 */
+@keyframes forge-anvil-hit {
+  0%,
+  52% {
+    transform: translateY(0);
+  }
+  58% {
+    transform: translateY(3px);
+  }
+  68% {
+    transform: translateY(1px);
+  }
+  78%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
 /* ============================================================
    暖色星塵底（forge section）—— 用多層 radial-gradient 疊出
    散佈的暖橘金細光點（餘燼/暖星空），破除純漸層的「死色板」感。

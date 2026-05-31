@@ -21,8 +21,9 @@ function nodePos(i: number) {
   return { x: round2(50 + r * Math.cos(rad)), y: round2(50 + r * Math.sin(rad)) };
 }
 
-// 弧線：起點→終點的二次貝茲，控制點往下垂（重力墜落感）。
-// 配合 SVG preserveAspectRatio="none"（容器扁，弧度會跟著壓，sagMul 補償加大）。
+// 弧線：起點→終點的二次貝茲，控制點偏移做出弧度（非直線連接，柔化星圖骨架）。
+// 注意：配合 SVG preserveAspectRatio="none"（容器扁 3:2，垂直被壓縮），實際視覺
+// 弧線略往上凸而非往下垂 —— 效果一樣自然，保留。sagMul 控制彎度。
 function arcPath(x1: number, y1: number, x2: number, y2: number, sagMul = 0.26) {
   const mx = (x1 + x2) / 2;
   const my = (y1 + y2) / 2;
@@ -113,6 +114,27 @@ export function ForgeConstellation() {
 
   return (
     <div className="flex w-full flex-col items-center">
+      {/* 手繪鉛筆質感 filter：雜訊位移把規整線條推成手抖筆觸（鎚 + 砧共用，靜態不抖動）*/}
+      <svg width="0" height="0" className="absolute" aria-hidden>
+        <defs>
+          <filter id="forge-pencil" x="-30%" y="-30%" width="160%" height="160%">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.022"
+              numOctaves="3"
+              seed="11"
+              result="noise"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="noise"
+              scale="3"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        </defs>
+      </svg>
       {/* 舞台 */}
       <div
         ref={ref}
@@ -167,11 +189,38 @@ export function ForgeConstellation() {
           })}
         </svg>
 
-        {/* 砸擊火星碎屑（敲到底炸出，重敲重播）*/}
+        {/* 鐵砧：自畫寬版（方稜角、左 horn 尖、上寬下收 + 窄腰 + 寬底座），套手繪 pencil filter。
+            被敲的鍛造台，恆在鎚正下方。鎚砸到底那刻震動（forge-anvil-hit）= 敲擊感。
+            DOM 排在鎚之前 → 疊在鎚下層（鎚在砧上敲）。struck / 聚焦時略淡當中心錨點。
+            位置/大小為初版，待 preview 對位微調。 */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2"
+          style={{
+            transform: "translate(-50%, 26%)",
+            opacity: expandedId || hoveredId ? 0.5 : 0.85,
+            transition: "opacity 300ms ease",
+          }}
+        >
+          <span
+            key={`anvil-${strikeKey}`}
+            className="block"
+            style={{
+              animation:
+                strikeKey > 0
+                  ? "forge-anvil-hit 900ms cubic-bezier(0.45,0,0.25,1) both"
+                  : "none",
+            }}
+          >
+            <SketchAnvil size="clamp(66px, 15.5vmin, 92px)" />
+          </span>
+        </div>
+
+        {/* 砸擊火星碎屑（敲到底炸出，重敲重播；源點落在鎚砧接觸面）*/}
         <div
           key={`embers-${strikeKey}`}
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2"
+          className="pointer-events-none absolute left-1/2 top-[56%]"
           style={{ width: 0, height: 0 }}
         >
           {strikeKey > 0 &&
@@ -236,8 +285,11 @@ export function ForgeConstellation() {
                 width: "clamp(48px, 12vmin, 70px)",
                 height: "clamp(48px, 12vmin, 70px)",
                 color: "var(--color-ink)",
+                filter: "url(#forge-pencil)",
               }}
-              strokeWidth={1.5}
+              strokeWidth={1.6}
+              strokeLinecap="square"
+              strokeLinejoin="miter"
             />
           </span>
         </button>
@@ -382,5 +434,29 @@ function SparkNode({
         {node.label}
       </span>
     </span>
+  );
+}
+
+// 自畫鐵砧：寬扁、方稜角、左 horn 尖出、上寬砧面 + 窄腰 + 寬底座。
+// 不用 lucide Anvil（線條圓潤可愛、辨識度像杯子）。stroke 版 + pencil filter = 手繪鐵砧質感。
+function SketchAnvil({ size }: { size: string }) {
+  return (
+    <svg
+      viewBox="0 0 36 26"
+      fill="none"
+      stroke="var(--color-ink)"
+      strokeWidth={2}
+      strokeLinejoin="miter"
+      strokeLinecap="square"
+      aria-hidden
+      style={{ width: size, height: "auto", filter: "url(#forge-pencil)" }}
+    >
+      {/* 砧面 + 左 horn（上寬下收的倒梯形，左端錐形尖出，加長加尖辨識度更高）*/}
+      <path d="M0.5 7 L6 4 L31 4 L24 11 L12 11 L6 10 Z" />
+      {/* 腰：砧身收向底座 */}
+      <path d="M14 11 L15 18 M22 11 L21 18" />
+      {/* 底座：寬梯形 */}
+      <path d="M8 23 L28 23 L25 18 L11 18 Z" />
+    </svg>
   );
 }
