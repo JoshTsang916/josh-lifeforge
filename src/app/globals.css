@@ -187,3 +187,113 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
 }
+
+/* ============================================================
+   鐵鎚敲擊火花動畫（/forge section）—— 全部一次性、不循環。
+   reduced-motion 由上方全域 @media 砍 animation-duration → 直接落定。
+   注意：這些 keyframe 是 ForgeConstellation 的命脈，少了就完全不動。
+   ============================================================ */
+
+/* 鐵鎚敲擊：套 button 內層 span（transformOrigin: bottom center）。
+   高舉蓄力(-54) → 狠狠砸下(+24，大振幅讓敲擊明顯可見) → 回彈兩下安定。
+   砸到底那刻火花炸出（JS 540ms 切 struck）。 */
+@keyframes forge-strike {
+  0% {
+    transform: rotate(-54deg);
+  }
+  32% {
+    transform: rotate(-60deg);
+  }
+  56% {
+    transform: rotate(24deg);
+  }
+  72% {
+    transform: rotate(-10deg);
+  }
+  86% {
+    transform: rotate(5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* 砸擊閃光：敲到底瞬間中心一炸，向外擴散淡出 */
+@keyframes forge-flash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+/* 火星碎屑：從砸擊點往各方向飛散（--dx/--dy 由 JS 給）→ 邊飛邊縮小淡出 */
+@keyframes forge-ember {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1.2);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.2);
+  }
+}
+
+/* 小火花就地長出：展開分支時從父火花位置 scale 彈入到定位（主支線不抽換）*/
+@keyframes forge-twig {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* hover shimmer：小火花從主火花身上往外彈散（--bx/--by 由 JS 給），星星散開 */
+@keyframes forge-branch {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.2);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.9;
+    transform: translate(var(--bx), var(--by)) scale(1);
+  }
+}
+
+/* 鐵砧受擊：鎚砸到底那刻砧輕微下沉再回彈（被敲的反作用力，強化敲擊感）。
+   時序對齊 forge-strike 的砸到底時刻（≈56%）。只動 translateY，定位交給外層。 */
+@keyframes forge-anvil-hit {
+  0%,
+  52% {
+    transform: translateY(0);
+  }
+  58% {
+    transform: translateY(3px);
+  }
+  68% {
+    transform: translateY(1px);
+  }
+  78%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
