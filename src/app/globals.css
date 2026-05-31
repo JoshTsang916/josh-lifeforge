@@ -277,3 +277,34 @@
     transform: translate(var(--bx), var(--by)) scale(1);
   }
 }
+
+/* ============================================================
+   暖色星塵底（forge section）—— 用多層 radial-gradient 疊出
+   散佈的暖橘金細光點（餘燼/暖星空），破除純漸層的「死色板」感。
+   全 CSS、不吃圖檔、全暖色（不跟全站暖調打架）。pointer-events:none 不擋互動。
+   ============================================================ */
+.forge-stardust {
+  background-image:
+    /* 大顆暖星（疏、亮）*/
+    radial-gradient(1.6px 1.6px at 12% 22%, rgba(255, 214, 165, 0.9), transparent 60%),
+    radial-gradient(2px 2px at 78% 16%, rgba(255, 200, 150, 0.85), transparent 60%),
+    radial-gradient(1.6px 1.6px at 64% 70%, rgba(255, 220, 175, 0.8), transparent 60%),
+    radial-gradient(2px 2px at 30% 82%, rgba(255, 205, 150, 0.8), transparent 60%),
+    radial-gradient(1.6px 1.6px at 88% 60%, rgba(255, 215, 170, 0.75), transparent 60%),
+    /* 中顆（中密、中亮）*/
+    radial-gradient(1.2px 1.2px at 22% 50%, rgba(245, 190, 140, 0.7), transparent 60%),
+    radial-gradient(1.2px 1.2px at 46% 30%, rgba(245, 195, 145, 0.65), transparent 60%),
+    radial-gradient(1.2px 1.2px at 56% 12%, rgba(245, 190, 140, 0.6), transparent 60%),
+    radial-gradient(1.2px 1.2px at 70% 44%, rgba(245, 195, 150, 0.65), transparent 60%),
+    radial-gradient(1.2px 1.2px at 38% 64%, rgba(245, 190, 140, 0.6), transparent 60%),
+    radial-gradient(1.2px 1.2px at 84% 84%, rgba(245, 195, 145, 0.6), transparent 60%),
+    radial-gradient(1.2px 1.2px at 16% 74%, rgba(245, 190, 140, 0.55), transparent 60%),
+    /* 小顆碎塵（密、淡）*/
+    radial-gradient(0.9px 0.9px at 8% 40%, rgba(230, 175, 130, 0.5), transparent 70%),
+    radial-gradient(0.9px 0.9px at 50% 56%, rgba(230, 175, 130, 0.45), transparent 70%),
+    radial-gradient(0.9px 0.9px at 92% 34%, rgba(230, 175, 130, 0.45), transparent 70%),
+    radial-gradient(0.9px 0.9px at 34% 18%, rgba(230, 175, 130, 0.4), transparent 70%),
+    radial-gradient(0.9px 0.9px at 72% 90%, rgba(230, 175, 130, 0.4), transparent 70%),
+    radial-gradient(0.9px 0.9px at 26% 36%, rgba(230, 175, 130, 0.4), transparent 70%);
+  background-repeat: no-repeat;
+}
