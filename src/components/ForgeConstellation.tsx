@@ -8,13 +8,12 @@ import { SparkStar } from "./forge/SparkStar";
 // round2 統一精度，避免 SSR/client 浮點差造成 hydration mismatch
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
-// ── 主火花佈局：手調角度+半徑，散開錯落（非正交十字）──────────
-// 桌機把火花間距拉開（半徑加大、角度錯落），手機因舞台等比縮放會自然收斂
+// ── 主火花佈局：角度+半徑手調，散開錯落、長度刻意不一（非等長、非十字）──────
 const LAYOUT_4 = [
-  { angle: -68, r: 40 }, // 我提供什麼 — 右上
-  { angle: 30, r: 37 }, //  近期作品 — 右下
-  { angle: 114, r: 41 }, // 關於鍛造所 — 左下
-  { angle: 198, r: 38 }, // 學員見證 — 左上
+  { angle: -64, r: 38 }, // 我提供什麼 — 右上（中長）
+  { angle: 24, r: 31 }, //  近期作品 — 右（短）
+  { angle: 120, r: 37 }, // 關於鍛造所 — 左下（長）
+  { angle: 210, r: 29 }, // 學員見證 — 左上（最短）
 ];
 function nodePos(i: number) {
   const { angle, r } = LAYOUT_4[i] ?? { angle: -90 + i * 90, r: 29 };
@@ -22,13 +21,22 @@ function nodePos(i: number) {
   return { x: round2(50 + r * Math.cos(rad)), y: round2(50 + r * Math.sin(rad)) };
 }
 
-// 小火花分支：從父火花往「離心方向」扇形長出（不碰中心、不抽換主支線）
+// 弧線：起點→終點的二次貝茲，控制點往下垂（重力墜落感）。
+// 配合 SVG preserveAspectRatio="none"（容器扁，弧度會跟著壓，sagMul 補償加大）。
+function arcPath(x1: number, y1: number, x2: number, y2: number, sagMul = 0.26) {
+  const mx = (x1 + x2) / 2;
+  const my = (y1 + y2) / 2;
+  const dist = Math.hypot(x2 - x1, y2 - y1);
+  return `M ${round2(x1)} ${round2(y1)} Q ${round2(mx)} ${round2(my + dist * sagMul)} ${round2(x2)} ${round2(y2)}`;
+}
+
+// 小火花分支：從父火花往「離心方向」扇形長出，散更開、長度不一（不碰中心、不抽換主支線）
 function childPos(parent: { x: number; y: number }, i: number, n: number) {
   const outAng = (Math.atan2(parent.y - 50, parent.x - 50) * 180) / Math.PI;
-  const arc = n <= 1 ? 0 : 86;
+  const arc = n <= 1 ? 0 : 132;
   const a = outAng + (i - (n - 1) / 2) * (arc / Math.max(1, n - 1));
   const rad = (a * Math.PI) / 180;
-  const dist = 16;
+  const dist = 16 + (i % 3) * 5; // 長度不一
   return { x: round2(parent.x + dist * Math.cos(rad)), y: round2(parent.y + dist * Math.sin(rad)) };
 }
 
@@ -109,26 +117,25 @@ export function ForgeConstellation() {
       <div
         ref={ref}
         className="relative"
-        style={{ width: "min(94vw, 760px)", aspectRatio: "1 / 1" }}
+        style={{ width: "min(92vw, 680px)", aspectRatio: "3 / 2" }}
         onMouseLeave={() => setHoveredId(null)}
       >
         {/* 主支線 + 分支連線 */}
-        <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
           {/* 主支線：中心 → 四顆主火花（恆在，不因展開而消失）*/}
           {FORGE_ROOT.map((node, i) => {
             const p = nodePos(i);
             const otherExpanded = expandedId !== null && expandedId !== node.id;
             const dimByHover = hoveredId !== null && hoveredId !== node.id;
             return (
-              <line
+              <path
                 key={`spine-${node.id}`}
-                x1="50"
-                y1="50"
-                x2={p.x}
-                y2={p.y}
+                d={arcPath(50, 50, p.x, p.y)}
+                fill="none"
                 stroke={node.tint}
-                strokeWidth="0.35"
+                strokeWidth="1"
                 strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
                 style={{
                   opacity: struck ? (otherExpanded || dimByHover ? 0.12 : 0.4) : 0,
                   transition: "opacity 450ms ease",
@@ -142,17 +149,16 @@ export function ForgeConstellation() {
             const pp = nodePos(FORGE_ROOT.findIndex((n) => n.id === expanded.id));
             const cp = childPos(pp, ci, expanded.children!.length);
             return (
-              <line
+              <path
                 key={`twig-${child.id}`}
-                x1={pp.x}
-                y1={pp.y}
-                x2={cp.x}
-                y2={cp.y}
+                d={arcPath(pp.x, pp.y, cp.x, cp.y, 0.32)}
+                fill="none"
                 stroke={child.tint}
-                strokeWidth="0.3"
+                strokeWidth="1"
                 strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
                 style={{
-                  opacity: 0.45,
+                  opacity: 0.5,
                   transition: "opacity 400ms ease",
                   transitionDelay: `${ci * 60}ms`,
                 }}
