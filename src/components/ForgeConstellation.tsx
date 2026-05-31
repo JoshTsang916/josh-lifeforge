@@ -6,18 +6,37 @@ import { FORGE_ROOT, type ForgeNode } from "./forge/forgeData";
 import { SparkStar } from "./forge/SparkStar";
 
 // ── 佈局 ────────────────────────────────────────────────
-// 火花散佈在以舞台中心為圓心的圓周上，帶手工微抖讓它「有機」不死板（非正交十字）。
-const RADIUS = 33;
-// 每顆火花相對均分角度的微偏移（度）+ 半徑微擾，打破機械感（非正交十字）
-const ANGLE_NUDGE = [-8, 7, -5, 6, -7, 5, -4];
-const RADIUS_NUDGE = [2, -3, 3, -2, 1, -3, 2];
+// 火花從鐵鎚砸擊點往外迸散。刻意「不」均分圓周（均分=正交十字最死板），
+// 改用一組手調的角度 + 半徑，讓火花像真的炸開後散落、高低遠近不一。
+// round2 統一精度，避免 SSR/client 浮點差造成 hydration mismatch。
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+// 角度：0=正右，順時針增。半徑：% of stage 半邊。手調出「散開」的感覺。
+// 依節點數量取對應組（4 顆走 LAYOUT_4，其餘 fallback 均分+微擾）。
+const LAYOUT_4 = [
+  { angle: -68, r: 36 }, // 右上偏上
+  { angle: 22, r: 33 }, // 右偏下
+  { angle: 108, r: 38 }, // 左下偏下
+  { angle: 200, r: 32 }, // 左上
+];
+const LAYOUT_3 = [
+  { angle: -74, r: 35 },
+  { angle: 44, r: 37 },
+  { angle: 158, r: 33 },
+];
 
 function nodePos(index: number, total: number) {
-  const baseAngle = -90 + index * (360 / total);
-  const angle = baseAngle + (ANGLE_NUDGE[index % ANGLE_NUDGE.length] ?? 0);
-  const r = RADIUS + (RADIUS_NUDGE[index % RADIUS_NUDGE.length] ?? 0);
+  let angle: number, r: number;
+  const table = total === 4 ? LAYOUT_4 : total === 3 ? LAYOUT_3 : null;
+  if (table) {
+    ({ angle, r } = table[index]);
+  } else {
+    // fallback：均分 + 交錯半徑微擾
+    angle = -90 + index * (360 / total) + (index % 2 ? 9 : -7);
+    r = 34 + (index % 2 ? -3 : 3);
+  }
   const rad = (angle * Math.PI) / 180;
-  return { x: 50 + r * Math.cos(rad), y: 50 + r * Math.sin(rad), angle };
+  return { x: round2(50 + r * Math.cos(rad)), y: round2(50 + r * Math.sin(rad)), angle };
 }
 
 // 樹導航
@@ -33,14 +52,14 @@ function resolve(path: string[]): { parent: ForgeNode | null; nodes: ForgeNode[]
   return { parent, nodes };
 }
 
-// 砸擊瞬間從中心炸開的火星碎屑：一次性向外飛散後淡出
+// 砸擊瞬間從中心炸開的火星碎屑：一次性向外飛散後淡出。round2（上方宣告）統一精度。
 const EMBERS = Array.from({ length: 14 }, (_, i) => {
   const angle = (i * 360) / 14 + (i % 3) * 9;
   const rad = (angle * Math.PI) / 180;
   const dist = 22 + (i % 4) * 9; // 飛散距離 %
   return {
-    dx: Math.cos(rad) * dist,
-    dy: Math.sin(rad) * dist,
+    dx: round2(Math.cos(rad) * dist),
+    dy: round2(Math.sin(rad) * dist),
     size: 4 + (i % 3) * 3,
     delay: (i % 5) * 18,
   };
@@ -284,8 +303,8 @@ function SparkNode({
               key={`${burst}-${bi}`}
               className="absolute left-0 top-0"
               style={{
-                ["--bx" as string]: `${Math.sin(rad) * dist}px`,
-                ["--by" as string]: `${-Math.cos(rad) * dist}px`,
+                ["--bx" as string]: `${round2(Math.sin(rad) * dist)}px`,
+                ["--by" as string]: `${round2(-Math.cos(rad) * dist)}px`,
                 opacity: 0,
                 animation: isHovered
                   ? `forge-branch 520ms cubic-bezier(0.16,1,0.3,1) ${bi * 45}ms forwards`
