@@ -9,11 +9,12 @@ import { SparkStar } from "./forge/SparkStar";
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 // ── 主火花佈局：手調角度+半徑，散開錯落（非正交十字）──────────
+// 桌機把火花間距拉開（半徑加大、角度錯落），手機因舞台等比縮放會自然收斂
 const LAYOUT_4 = [
-  { angle: -66, r: 30 }, // 我提供什麼 — 右上
-  { angle: 28, r: 28 }, //  近期作品 — 右下
-  { angle: 112, r: 31 }, // 關於鍛造所 — 左下
-  { angle: 196, r: 27 }, // 學員見證 — 左上
+  { angle: -68, r: 40 }, // 我提供什麼 — 右上
+  { angle: 30, r: 37 }, //  近期作品 — 右下
+  { angle: 114, r: 41 }, // 關於鍛造所 — 左下
+  { angle: 198, r: 38 }, // 學員見證 — 左上
 ];
 function nodePos(i: number) {
   const { angle, r } = LAYOUT_4[i] ?? { angle: -90 + i * 90, r: 29 };
@@ -108,7 +109,7 @@ export function ForgeConstellation() {
       <div
         ref={ref}
         className="relative"
-        style={{ width: "min(94vw, 600px)", aspectRatio: "1 / 1" }}
+        style={{ width: "min(94vw, 760px)", aspectRatio: "1 / 1" }}
         onMouseLeave={() => setHoveredId(null)}
       >
         {/* 主支線 + 分支連線 */}
@@ -228,7 +229,7 @@ export function ForgeConstellation() {
               style={{
                 width: "clamp(48px, 12vmin, 70px)",
                 height: "clamp(48px, 12vmin, 70px)",
-                color: "#e8d6b8",
+                color: "var(--color-ink)",
               }}
               strokeWidth={1.5}
             />
@@ -302,7 +303,7 @@ export function ForgeConstellation() {
       {/* Caption：hover 才顯示該火花描述（無形容詞標語）*/}
       <p
         className="mt-6 min-h-[2.75rem] max-w-md px-4 text-center font-sans text-sm leading-[1.7]"
-        style={{ color: "#cdb992" }}
+        style={{ color: "var(--color-fg-muted)" }}
         aria-live="polite"
       >
         {caption}
@@ -369,7 +370,7 @@ function SparkNode({
           fontSize: main ? "clamp(0.74rem, 2.4vmin, 0.9rem)" : "clamp(0.68rem, 2vmin, 0.8rem)",
           maxWidth: "11ch",
           textAlign: "center",
-          color: active ? "#fff2dd" : "#d6c2a1",
+          color: active ? "var(--color-ink)" : "var(--color-fg-muted)",
         }}
       >
         {node.label}
