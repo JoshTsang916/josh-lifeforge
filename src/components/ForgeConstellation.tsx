@@ -1,22 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Hammer, ArrowLeft } from "lucide-react";
-import { FORGE_ROOT, FORGE_CENTER, type ForgeNode } from "./forge/forgeData";
+import { useEffect, useMemo, useState } from "react";
+import { Hammer } from "lucide-react";
+import { FORGE_ROOT, type ForgeNode } from "./forge/forgeData";
+import { SparkStar } from "./forge/SparkStar";
 
-// 徑向佈局：把 n 個節點均勻分佈在以 stage 中心為圓心、半徑 RADIUS(%) 的圓周上。
-// 從正上方（-90°）開始順時針。回傳百分比座標（相對 stage 方形）。
-const RADIUS = 34;
+// ── 佈局 ────────────────────────────────────────────────
+// 火花散佈在以舞台中心為圓心的圓周上，帶手工微抖讓它「有機」不死板（非正交十字）。
+const RADIUS = 33;
+// 每顆火花相對均分角度的微偏移（度）+ 半徑微擾，打破機械感（非正交十字）
+const ANGLE_NUDGE = [-8, 7, -5, 6, -7, 5, -4];
+const RADIUS_NUDGE = [2, -3, 3, -2, 1, -3, 2];
+
 function nodePos(index: number, total: number) {
-  const angleDeg = -90 + index * (360 / total);
-  const rad = (angleDeg * Math.PI) / 180;
-  return {
-    x: 50 + RADIUS * Math.cos(rad),
-    y: 50 + RADIUS * Math.sin(rad),
-  };
+  const baseAngle = -90 + index * (360 / total);
+  const angle = baseAngle + (ANGLE_NUDGE[index % ANGLE_NUDGE.length] ?? 0);
+  const r = RADIUS + (RADIUS_NUDGE[index % RADIUS_NUDGE.length] ?? 0);
+  const rad = (angle * Math.PI) / 180;
+  return { x: 50 + r * Math.cos(rad), y: 50 + r * Math.sin(rad), angle };
 }
 
-// 依 path 取得當前要顯示的火花群 + 當前父節點（path 為空 = root，父為鍛錘）
+// 樹導航
 function resolve(path: string[]): { parent: ForgeNode | null; nodes: ForgeNode[] } {
   let nodes = FORGE_ROOT;
   let parent: ForgeNode | null = null;
@@ -29,85 +33,86 @@ function resolve(path: string[]): { parent: ForgeNode | null; nodes: ForgeNode[]
   return { parent, nodes };
 }
 
+// 砸擊瞬間從中心炸開的火星碎屑：一次性向外飛散後淡出
+const EMBERS = Array.from({ length: 14 }, (_, i) => {
+  const angle = (i * 360) / 14 + (i % 3) * 9;
+  const rad = (angle * Math.PI) / 180;
+  const dist = 22 + (i % 4) * 9; // 飛散距離 %
+  return {
+    dx: Math.cos(rad) * dist,
+    dy: Math.sin(rad) * dist,
+    size: 4 + (i % 3) * 3,
+    delay: (i % 5) * 18,
+  };
+});
+
 export function ForgeConstellation() {
-  // phase: idle = 只有鍛錘（進場前）；sparked = 火花已噴出、可互動
-  const [phase, setPhase] = useState<"idle" | "sparked">("idle");
-  // path: 展開路徑（[] = root；['services'] = 在「我提供什麼」這層）
+  // idle = 鐵鎚舉著還沒敲；struck = 已敲、火花炸開就位
+  const [phase, setPhase] = useState<"idle" | "struck">("idle");
   const [path, setPath] = useState<string[]>([]);
-  // hovered / focused 節點 → 驅動 caption
-  const [active, setActive] = useState<ForgeNode | null>(null);
-  // 每次切層 +1，讓火花重新從中心飛出
+  const [hovered, setHovered] = useState<string | null>(null);
   const [burst, setBurst] = useState(0);
 
-  // 進場敲擊：mount 後在「敲下」時刻噴出火花。
-  // reduced-motion 由 globals.css 全域砍動畫；這裡仍跳過等待直接 sparked。
+  // 進場：鐵鎚砸下 → 在敲到底那刻切 struck（火花炸出）
   useEffect(() => {
-    const prefersReduced =
+    const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const delay = prefersReduced ? 0 : 690; // ≈ forge-strike 85%（敲到最低點）後濺出
-    const t = setTimeout(() => setPhase("sparked"), delay);
+    const t = setTimeout(() => setPhase("struck"), reduce ? 0 : 760);
     return () => clearTimeout(t);
   }, []);
 
   const { parent, nodes } = resolve(path);
   const atRoot = path.length === 0;
 
-  // 麵包屑：鍛造宇宙 › 父層 label
-  const crumbs: { label: string; depth: number }[] = [
-    { label: "鍛造宇宙", depth: 0 },
-  ];
-  {
+  const crumbs = useMemo(() => {
+    const out: { label: string; depth: number }[] = [{ label: "鍛造宇宙", depth: 0 }];
     let cur = FORGE_ROOT;
     path.forEach((id, i) => {
       const n = cur.find((x) => x.id === id);
       if (n) {
-        crumbs.push({ label: n.label, depth: i + 1 });
+        out.push({ label: n.label, depth: i + 1 });
         cur = n.children ?? [];
       }
     });
-  }
+    return out;
+  }, [path]);
 
   const goTo = (depth: number) => {
     setPath((p) => p.slice(0, depth));
-    setActive(null);
+    setHovered(null);
     setBurst((b) => b + 1);
   };
-
   const openNode = (node: ForgeNode) => {
     if (node.children) {
       setPath((p) => [...p, node.id]);
-      setActive(null);
+      setHovered(null);
       setBurst((b) => b + 1);
     }
-    // 葉節點：用 <a href>，不走這裡（瀏覽器原生跳轉）
   };
 
-  const caption =
-    active?.blurb ??
-    (atRoot ? FORGE_CENTER.hint : parent?.blurb ?? FORGE_CENTER.hint);
+  const activeNode = nodes.find((n) => n.id === hovered) ?? null;
+  const caption = activeNode?.blurb ?? parent?.blurb ?? "";
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex w-full flex-col items-center">
       {/* 麵包屑 */}
       <nav
         aria-label="鍛造宇宙路徑"
-        className="mb-6 flex items-center gap-2 font-ui text-xs tracking-wider min-h-5"
+        className="mb-6 flex min-h-5 items-center gap-2 font-ui text-xs tracking-wider"
       >
         {crumbs.map((c, i) => {
           const isLast = i === crumbs.length - 1;
           return (
             <span key={c.depth} className="flex items-center gap-2">
-              {i > 0 && (
-                <span className="text-[color:var(--color-fg-subtle)]">›</span>
-              )}
+              {i > 0 && <span className="text-[#7a6651]">›</span>}
               {isLast ? (
-                <span className="text-[color:var(--color-accent)]">{c.label}</span>
+                <span className="text-[color:var(--color-spark)]">{c.label}</span>
               ) : (
                 <button
                   type="button"
                   onClick={() => goTo(c.depth)}
-                  className="text-[color:var(--color-fg-subtle)] hover:text-[color:var(--color-accent)] transition-colors"
+                  className="text-[#9a866d] transition-colors hover:text-[color:var(--color-spark)]"
                 >
                   {c.label}
                 </button>
@@ -117,19 +122,17 @@ export function ForgeConstellation() {
         })}
       </nav>
 
-      {/* Stage — 方形舞台，所有定位用百分比，整體隨寬度等比縮放（RWD） */}
+      {/* 舞台 */}
       <div
         className="relative"
-        style={{ width: "min(92vw, 560px)", aspectRatio: "1 / 1" }}
+        style={{ width: "min(92vw, 580px)", aspectRatio: "1 / 1" }}
+        onMouseLeave={() => setHovered(null)}
       >
-        {/* 連線層 — 從中心畫到每個火花（呼應 logo 三角形的細線） */}
-        <svg
-          viewBox="0 0 100 100"
-          className="absolute inset-0 h-full w-full"
-          aria-hidden="true"
-        >
+        {/* 連線：從中心到每顆火花，hover 時非當前的線一起變暗 */}
+        <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden>
           {nodes.map((node, i) => {
             const p = nodePos(i, nodes.length);
+            const dim = hovered !== null && hovered !== node.id;
             return (
               <line
                 key={`${burst}-${node.id}`}
@@ -137,30 +140,63 @@ export function ForgeConstellation() {
                 y1="50"
                 x2={p.x}
                 y2={p.y}
-                stroke="var(--color-line-strong)"
-                strokeWidth="0.4"
+                stroke={node.tint}
+                strokeWidth="0.3"
                 strokeLinecap="round"
                 style={{
-                  opacity: phase === "sparked" ? 0.7 : 0,
-                  transition: "opacity 600ms ease",
-                  transitionDelay: `${300 + i * 70}ms`,
+                  opacity: phase === "struck" ? (dim ? 0.06 : 0.32) : 0,
+                  transition: "opacity 450ms ease",
+                  transitionDelay: phase === "struck" ? `${250 + i * 60}ms` : "0ms",
                 }}
               />
             );
           })}
         </svg>
 
-        {/* 中央 — root 為鍛錘（可重敲）；深入層為父節點 + 收起返回 */}
+        {/* 砸擊火星碎屑（一次性，root 進場 + 重敲時播） */}
+        {atRoot && (
+          <div
+            key={`embers-${burst}`}
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2"
+            style={{ width: 0, height: 0 }}
+          >
+            {EMBERS.map((e, i) => (
+              <span
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  left: 0,
+                  top: 0,
+                  width: e.size,
+                  height: e.size,
+                  background: "var(--color-spark)",
+                  boxShadow: "0 0 6px var(--color-spark)",
+                  // CSS 變數帶給 keyframe 目標位移
+                  ["--dx" as string]: `${e.dx}%`,
+                  ["--dy" as string]: `${e.dy}%`,
+                  opacity: 0,
+                  animation:
+                    phase === "struck"
+                      ? `forge-ember 820ms ease-out ${e.delay}ms both`
+                      : "none",
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* 中央：root = 鐵鎚（可重敲）；深入層 = 返回核心 */}
         <CenterCore
           atRoot={atRoot}
           parent={parent}
           phase={phase}
+          dimmed={hovered !== null}
           onStrike={() => {
-            // 彩蛋：在 root 再敲一下 → 火花重新噴發
             if (atRoot) {
               setPhase("idle");
               setBurst((b) => b + 1);
-              setTimeout(() => setPhase("sparked"), 690);
+              setTimeout(() => setPhase("struck"), 760);
             }
           }}
           onBack={() => goTo(path.length - 1)}
@@ -169,76 +205,53 @@ export function ForgeConstellation() {
         {/* 火花節點 */}
         {nodes.map((node, i) => {
           const p = nodePos(i, nodes.length);
-          const shown = phase === "sparked";
-          const Icon = node.icon;
+          const shown = phase === "struck";
+          const isHovered = hovered === node.id;
+          const dim = hovered !== null && !isHovered;
           const isLeaf = !node.children;
 
-          const common = {
-            onMouseEnter: () => setActive(node),
-            onMouseLeave: () => setActive(null),
-            onFocus: () => setActive(node),
-            onBlur: () => setActive(null),
+          const handlers = {
+            onMouseEnter: () => setHovered(node.id),
+            onFocus: () => setHovered(node.id),
+            onBlur: () => setHovered(null),
             "aria-label": node.blurb,
-            className:
-              "group absolute flex flex-col items-center gap-2 outline-none",
+            className: "group absolute outline-none",
             style: {
               left: `${shown ? p.x : 50}%`,
               top: `${shown ? p.y : 50}%`,
               transform: "translate(-50%, -50%)",
-              opacity: shown ? 1 : 0,
+              opacity: shown ? (dim ? 0.32 : 1) : 0,
               transition:
-                "left 700ms cubic-bezier(0.16,1,0.3,1), top 700ms cubic-bezier(0.16,1,0.3,1), opacity 500ms ease",
-              transitionDelay: `${i * 70}ms`,
+                "left 720ms cubic-bezier(0.18,1.1,0.3,1), top 720ms cubic-bezier(0.18,1.1,0.3,1), opacity 360ms ease",
+              transitionDelay: shown ? `${i * 70}ms` : "0ms",
+              zIndex: isHovered ? 20 : 10,
             } as React.CSSProperties,
           };
 
-          const inner = (
-            <>
-              <span
-                className="flex items-center justify-center rounded-full border backdrop-blur-sm transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110"
-                style={{
-                  width: "clamp(58px, 15vmin, 82px)",
-                  height: "clamp(58px, 15vmin, 82px)",
-                  backgroundColor: `color-mix(in srgb, ${node.tint} 14%, transparent)`,
-                  borderColor: node.tint,
-                  boxShadow: `0 0 0 0 ${node.tint}`,
-                }}
-              >
-                <Icon
-                  style={{ width: "42%", height: "42%", color: node.tint }}
-                  strokeWidth={1.6}
-                />
-              </span>
-              <span
-                className="font-sans text-center leading-tight text-[color:var(--color-fg)]"
-                style={{ fontSize: "clamp(0.72rem, 2.6vmin, 0.85rem)", maxWidth: "11ch" }}
-              >
-                {node.label}
-              </span>
-            </>
+          const body = (
+            <SparkNode node={node} isHovered={isHovered} burst={burst} />
           );
 
-          // 葉節點 → <a> 原生跳轉（首頁錨點）；可展開 → <button>
           return isLeaf ? (
-            <a key={`${burst}-${node.id}`} href={node.href} {...common}>
-              {inner}
+            <a key={`${burst}-${node.id}`} href={node.href} {...handlers}>
+              {body}
             </a>
           ) : (
             <button
               key={`${burst}-${node.id}`}
               type="button"
               onClick={() => openNode(node)}
-              {...common}
+              {...handlers}
             >
-              {inner}
+              {body}
             </button>
           );
         })}
       </div>
 
-      {/* Caption — 顯示 hover/focus 節點的描述，預設顯示當前層提示。min-h 防跳動 */}
+      {/* Caption：hover 才顯示該火花描述，無 hover 時留白（不放那種形容詞文案） */}
       <p
-        className="mt-8 max-w-md text-center font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)] min-h-[2.5rem] px-4"
+        className="mt-8 min-h-[2.5rem] max-w-md px-4 text-center font-sans text-sm leading-[1.7] text-[#bda988]"
         aria-live="polite"
       >
         {caption}
@@ -247,55 +260,139 @@ export function ForgeConstellation() {
   );
 }
 
-// 中央核心 —— root 顯示鍛錘（可敲擊彩蛋）；深入層顯示父節點 icon + 收起返回
+// ── 單顆火花 ────────────────────────────────────────────
+// hover 時：本體放大、發光增強，並從身上抽出小火花分支往外彈開（星星散開）。
+const BRANCH_ANGLES = [-52, -18, 18, 52, 90]; // 相對「離心方向」往外扇開
+function SparkNode({
+  node,
+  isHovered,
+  burst,
+}: {
+  node: ForgeNode;
+  isHovered: boolean;
+  burst: number;
+}) {
+  return (
+    <span className="relative flex flex-col items-center gap-2">
+      {/* 小火花分支：hover 才長出，從中心往外彈散 */}
+      <span aria-hidden className="pointer-events-none absolute left-1/2 top-[18px] -translate-x-1/2">
+        {BRANCH_ANGLES.map((a, bi) => {
+          const rad = (a * Math.PI) / 180;
+          const dist = 30 + (bi % 3) * 10;
+          return (
+            <span
+              key={`${burst}-${bi}`}
+              className="absolute left-0 top-0"
+              style={{
+                ["--bx" as string]: `${Math.sin(rad) * dist}px`,
+                ["--by" as string]: `${-Math.cos(rad) * dist}px`,
+                opacity: 0,
+                animation: isHovered
+                  ? `forge-branch 520ms cubic-bezier(0.16,1,0.3,1) ${bi * 45}ms forwards`
+                  : "none",
+              }}
+            >
+              <SparkStar size={9 + (bi % 2) * 4} color={node.tint} coreOpacity={0.6} />
+            </span>
+          );
+        })}
+      </span>
+
+      {/* 主火花 */}
+      <span
+        className="transition-all duration-300"
+        style={{
+          filter: isHovered
+            ? `drop-shadow(0 0 14px ${node.tint}) drop-shadow(0 0 28px ${node.tint})`
+            : `drop-shadow(0 0 6px color-mix(in srgb, ${node.tint} 55%, transparent))`,
+          transform: isHovered ? "scale(1.32)" : "scale(1)",
+        }}
+      >
+        <SparkStar
+          size="clamp(40px, 11vmin, 60px)"
+          color={node.tint}
+          coreOpacity={isHovered ? 1 : 0.82}
+        />
+      </span>
+
+      {/* 標籤 */}
+      <span
+        className="font-sans leading-tight transition-colors duration-300"
+        style={{
+          fontSize: "clamp(0.74rem, 2.5vmin, 0.9rem)",
+          maxWidth: "12ch",
+          textAlign: "center",
+          color: isHovered ? "#fff2dd" : "#d8c4a3",
+        }}
+      >
+        {node.label}
+      </span>
+    </span>
+  );
+}
+
+// ── 中央核心 ────────────────────────────────────────────
 function CenterCore({
   atRoot,
   parent,
   phase,
+  dimmed,
   onStrike,
   onBack,
 }: {
   atRoot: boolean;
   parent: ForgeNode | null;
-  phase: "idle" | "sparked";
+  phase: "idle" | "struck";
+  dimmed: boolean;
   onStrike: () => void;
   onBack: () => void;
 }) {
   if (atRoot) {
     return (
       <>
-        {/* 火花爆發閃光 — sparked 瞬間一次性 */}
+        {/* 砸擊閃光：敲到底瞬間中心一炸 */}
         <span
+          key={`flash-${phase}`}
           aria-hidden
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="pointer-events-none absolute left-1/2 top-1/2 rounded-full"
           style={{
-            width: "46%",
-            height: "46%",
+            width: "40%",
+            height: "40%",
             background:
-              "radial-gradient(circle, color-mix(in srgb, var(--color-spark) 45%, transparent) 0%, transparent 65%)",
-            animation: phase === "sparked" ? "forge-flash 900ms ease-out" : "none",
+              "radial-gradient(circle, color-mix(in srgb, var(--color-spark) 70%, transparent) 0%, transparent 62%)",
+            transform: "translate(-50%, -50%)",
             opacity: 0,
+            animation: phase === "struck" ? "forge-flash 760ms ease-out" : "none",
           }}
         />
         <button
           type="button"
           onClick={onStrike}
-          aria-label="敲擊鍛錘，火花重新噴發"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 outline-none"
+          aria-label="敲擊鐵鎚，火花重新炸開"
+          className="absolute left-1/2 top-1/2 outline-none"
           style={{
-            animation:
-              phase === "idle" ? "forge-strike 760ms cubic-bezier(0.5,0,0.2,1) both" : "none",
-            transformOrigin: "bottom center",
+            transform: "translate(-50%, -50%)",
+            opacity: dimmed ? 0.4 : 1,
+            transition: "opacity 300ms ease",
           }}
         >
-          <span className="flex items-center justify-center">
+          <span
+            className="block"
+            style={{
+              transformOrigin: "bottom center",
+              animation:
+                phase === "idle"
+                  ? "forge-strike 780ms cubic-bezier(0.5,0,0.2,1) both"
+                  : "none",
+            }}
+          >
             <Hammer
               style={{
-                width: "clamp(54px, 13vmin, 76px)",
-                height: "clamp(54px, 13vmin, 76px)",
-                color: "var(--color-ink)",
+                width: "clamp(46px, 12vmin, 66px)",
+                height: "clamp(46px, 12vmin, 66px)",
+                color: "#e8d6b8",
               }}
-              strokeWidth={1.4}
+              strokeWidth={1.5}
             />
           </span>
         </button>
@@ -303,31 +400,23 @@ function CenterCore({
     );
   }
 
-  // 深入層：中央為父節點，點擊收起返回
-  const Icon = parent?.icon ?? Hammer;
   return (
     <button
       type="button"
       onClick={onBack}
-      aria-label={`收起，返回上一層`}
-      className="group absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1.5 outline-none"
+      aria-label="收起，返回上一層"
+      className="group absolute left-1/2 top-1/2 flex flex-col items-center gap-1.5 outline-none"
+      style={{ transform: "translate(-50%, -50%)", opacity: dimmed ? 0.4 : 1, transition: "opacity 300ms ease" }}
     >
       <span
-        className="flex items-center justify-center rounded-full border transition-transform duration-300 group-hover:scale-105"
         style={{
-          width: "clamp(64px, 16vmin, 88px)",
-          height: "clamp(64px, 16vmin, 88px)",
-          backgroundColor: `color-mix(in srgb, ${parent?.tint ?? "var(--color-accent)"} 18%, transparent)`,
-          borderColor: parent?.tint ?? "var(--color-accent)",
+          filter: `drop-shadow(0 0 10px ${parent?.tint ?? "var(--color-spark)"})`,
         }}
       >
-        <Icon
-          style={{ width: "42%", height: "42%", color: parent?.tint }}
-          strokeWidth={1.6}
-        />
+        <SparkStar size="clamp(48px, 13vmin, 70px)" color={parent?.tint ?? "var(--color-spark)"} coreOpacity={1} />
       </span>
-      <span className="flex items-center gap-1 font-ui text-[0.65rem] tracking-wider text-[color:var(--color-fg-subtle)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-        <ArrowLeft className="h-3 w-3" /> 收起
+      <span className="flex items-center gap-1 font-ui text-[0.65rem] tracking-wider text-[#9a866d] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        ← 收起
       </span>
     </button>
   );
