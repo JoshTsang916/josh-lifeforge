@@ -1,186 +1,174 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Hammer } from "lucide-react";
 import { FORGE_ROOT, type ForgeNode } from "./forge/forgeData";
 import { SparkStar } from "./forge/SparkStar";
 
-// ── 佈局 ────────────────────────────────────────────────
-// 火花從鐵鎚砸擊點往外迸散。刻意「不」均分圓周（均分=正交十字最死板），
-// 改用一組手調的角度 + 半徑，讓火花像真的炸開後散落、高低遠近不一。
-// round2 統一精度，避免 SSR/client 浮點差造成 hydration mismatch。
+// round2 統一精度，避免 SSR/client 浮點差造成 hydration mismatch
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
-// 角度：0=正右，順時針增。半徑：% of stage 半邊。手調出「散開」的感覺。
-// 依節點數量取對應組（4 顆走 LAYOUT_4，其餘 fallback 均分+微擾）。
+// ── 主火花佈局：手調角度+半徑，散開錯落（非正交十字）──────────
 const LAYOUT_4 = [
-  { angle: -68, r: 36 }, // 右上偏上
-  { angle: 22, r: 33 }, // 右偏下
-  { angle: 108, r: 38 }, // 左下偏下
-  { angle: 200, r: 32 }, // 左上
+  { angle: -66, r: 30 }, // 我提供什麼 — 右上
+  { angle: 28, r: 28 }, //  近期作品 — 右下
+  { angle: 112, r: 31 }, // 關於鍛造所 — 左下
+  { angle: 196, r: 27 }, // 學員見證 — 左上
 ];
-const LAYOUT_3 = [
-  { angle: -74, r: 35 },
-  { angle: 44, r: 37 },
-  { angle: 158, r: 33 },
-];
-
-function nodePos(index: number, total: number) {
-  let angle: number, r: number;
-  const table = total === 4 ? LAYOUT_4 : total === 3 ? LAYOUT_3 : null;
-  if (table) {
-    ({ angle, r } = table[index]);
-  } else {
-    // fallback：均分 + 交錯半徑微擾
-    angle = -90 + index * (360 / total) + (index % 2 ? 9 : -7);
-    r = 34 + (index % 2 ? -3 : 3);
-  }
+function nodePos(i: number) {
+  const { angle, r } = LAYOUT_4[i] ?? { angle: -90 + i * 90, r: 29 };
   const rad = (angle * Math.PI) / 180;
-  return { x: round2(50 + r * Math.cos(rad)), y: round2(50 + r * Math.sin(rad)), angle };
+  return { x: round2(50 + r * Math.cos(rad)), y: round2(50 + r * Math.sin(rad)) };
 }
 
-// 樹導航
-function resolve(path: string[]): { parent: ForgeNode | null; nodes: ForgeNode[] } {
-  let nodes = FORGE_ROOT;
-  let parent: ForgeNode | null = null;
-  for (const id of path) {
-    const found = nodes.find((n) => n.id === id);
-    if (!found || !found.children) break;
-    parent = found;
-    nodes = found.children;
-  }
-  return { parent, nodes };
+// 小火花分支：從父火花往「離心方向」扇形長出（不碰中心、不抽換主支線）
+function childPos(parent: { x: number; y: number }, i: number, n: number) {
+  const outAng = (Math.atan2(parent.y - 50, parent.x - 50) * 180) / Math.PI;
+  const arc = n <= 1 ? 0 : 86;
+  const a = outAng + (i - (n - 1) / 2) * (arc / Math.max(1, n - 1));
+  const rad = (a * Math.PI) / 180;
+  const dist = 16;
+  return { x: round2(parent.x + dist * Math.cos(rad)), y: round2(parent.y + dist * Math.sin(rad)) };
 }
 
-// 砸擊瞬間從中心炸開的火星碎屑：一次性向外飛散後淡出。round2（上方宣告）統一精度。
-const EMBERS = Array.from({ length: 14 }, (_, i) => {
-  const angle = (i * 360) / 14 + (i % 3) * 9;
+// 砸擊瞬間從中心炸開的火星碎屑
+const EMBERS = Array.from({ length: 16 }, (_, i) => {
+  const angle = (i * 360) / 16 + (i % 3) * 7;
   const rad = (angle * Math.PI) / 180;
-  const dist = 22 + (i % 4) * 9; // 飛散距離 %
+  const dist = 20 + (i % 4) * 9;
   return {
     dx: round2(Math.cos(rad) * dist),
     dy: round2(Math.sin(rad) * dist),
-    size: 4 + (i % 3) * 3,
-    delay: (i % 5) * 18,
+    size: 3 + (i % 3) * 3,
+    delay: (i % 5) * 16,
   };
 });
 
 export function ForgeConstellation() {
-  // idle = 鐵鎚舉著還沒敲；struck = 已敲、火花炸開就位
-  const [phase, setPhase] = useState<"idle" | "struck">("idle");
-  const [path, setPath] = useState<string[]>([]);
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [burst, setBurst] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const [struck, setStruck] = useState(false); // 火花是否已炸出
+  const [strikeKey, setStrikeKey] = useState(0); // 重敲時 +1，重播鐵鎚 + 火星動畫
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  // 進場：鐵鎚砸下 → 在敲到底那刻切 struck（火花炸出）
+  // 捲到才敲：IntersectionObserver 進入視窗一次性觸發（解決「載入即播、滾到已結束」）
   useEffect(() => {
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const t = setTimeout(() => setPhase("struck"), reduce ? 0 : 760);
-    return () => clearTimeout(t);
+    const el = ref.current;
+    if (!el) return;
+    let timer: ReturnType<typeof setTimeout>;
+    if (reduce) {
+      // rAF callback 觸發，避免在 effect body 同步 setState（React 19 lint rule）
+      const raf = requestAnimationFrame(() => setStruck(true));
+      return () => cancelAnimationFrame(raf);
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          io.disconnect();
+          setStrikeKey((k) => k + 1); // 播鐵鎚敲擊
+          timer = setTimeout(() => setStruck(true), 540); // ≈ 敲到底那刻火花炸出
+        }
+      },
+      { threshold: 0.5 }
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      clearTimeout(timer);
+    };
   }, []);
 
-  const { parent, nodes } = resolve(path);
-  const atRoot = path.length === 0;
-
-  const crumbs = useMemo(() => {
-    const out: { label: string; depth: number }[] = [{ label: "鍛造宇宙", depth: 0 }];
-    let cur = FORGE_ROOT;
-    path.forEach((id, i) => {
-      const n = cur.find((x) => x.id === id);
-      if (n) {
-        out.push({ label: n.label, depth: i + 1 });
-        cur = n.children ?? [];
-      }
-    });
-    return out;
-  }, [path]);
-
-  const goTo = (depth: number) => {
-    setPath((p) => p.slice(0, depth));
-    setHovered(null);
-    setBurst((b) => b + 1);
-  };
-  const openNode = (node: ForgeNode) => {
-    if (node.children) {
-      setPath((p) => [...p, node.id]);
-      setHovered(null);
-      setBurst((b) => b + 1);
-    }
+  const replay = () => {
+    setExpandedId(null);
+    setHoveredId(null);
+    setStruck(false);
+    setStrikeKey((k) => k + 1);
+    setTimeout(() => setStruck(true), 540);
   };
 
-  const activeNode = nodes.find((n) => n.id === hovered) ?? null;
-  const caption = activeNode?.blurb ?? parent?.blurb ?? "";
+  const onMainClick = (node: ForgeNode) => {
+    setExpandedId((cur) => (cur === node.id ? null : node.id));
+    setHoveredId(null);
+  };
+
+  const expanded = expandedId ? FORGE_ROOT.find((n) => n.id === expandedId) ?? null : null;
+  const hoveredNode =
+    (hoveredId &&
+      (FORGE_ROOT.find((n) => n.id === hoveredId) ||
+        FORGE_ROOT.flatMap((n) => n.children ?? []).find((c) => c.id === hoveredId))) ||
+    null;
+  const caption = hoveredNode?.blurb ?? expanded?.blurb ?? "";
 
   return (
     <div className="flex w-full flex-col items-center">
-      {/* 麵包屑 */}
-      <nav
-        aria-label="鍛造宇宙路徑"
-        className="mb-6 flex min-h-5 items-center gap-2 font-ui text-xs tracking-wider"
-      >
-        {crumbs.map((c, i) => {
-          const isLast = i === crumbs.length - 1;
-          return (
-            <span key={c.depth} className="flex items-center gap-2">
-              {i > 0 && <span className="text-[#7a6651]">›</span>}
-              {isLast ? (
-                <span className="text-[color:var(--color-spark)]">{c.label}</span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => goTo(c.depth)}
-                  className="text-[#9a866d] transition-colors hover:text-[color:var(--color-spark)]"
-                >
-                  {c.label}
-                </button>
-              )}
-            </span>
-          );
-        })}
-      </nav>
-
       {/* 舞台 */}
       <div
+        ref={ref}
         className="relative"
-        style={{ width: "min(92vw, 580px)", aspectRatio: "1 / 1" }}
-        onMouseLeave={() => setHovered(null)}
+        style={{ width: "min(94vw, 600px)", aspectRatio: "1 / 1" }}
+        onMouseLeave={() => setHoveredId(null)}
       >
-        {/* 連線：從中心到每顆火花，hover 時非當前的線一起變暗 */}
+        {/* 主支線 + 分支連線 */}
         <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden>
-          {nodes.map((node, i) => {
-            const p = nodePos(i, nodes.length);
-            const dim = hovered !== null && hovered !== node.id;
+          {/* 主支線：中心 → 四顆主火花（恆在，不因展開而消失）*/}
+          {FORGE_ROOT.map((node, i) => {
+            const p = nodePos(i);
+            const otherExpanded = expandedId !== null && expandedId !== node.id;
+            const dimByHover = hoveredId !== null && hoveredId !== node.id;
             return (
               <line
-                key={`${burst}-${node.id}`}
+                key={`spine-${node.id}`}
                 x1="50"
                 y1="50"
                 x2={p.x}
                 y2={p.y}
                 stroke={node.tint}
+                strokeWidth="0.35"
+                strokeLinecap="round"
+                style={{
+                  opacity: struck ? (otherExpanded || dimByHover ? 0.12 : 0.4) : 0,
+                  transition: "opacity 450ms ease",
+                  transitionDelay: struck ? `${200 + i * 70}ms` : "0ms",
+                }}
+              />
+            );
+          })}
+          {/* 分支連線：展開的主火花 → 它的小火花 */}
+          {expanded?.children?.map((child, ci) => {
+            const pp = nodePos(FORGE_ROOT.findIndex((n) => n.id === expanded.id));
+            const cp = childPos(pp, ci, expanded.children!.length);
+            return (
+              <line
+                key={`twig-${child.id}`}
+                x1={pp.x}
+                y1={pp.y}
+                x2={cp.x}
+                y2={cp.y}
+                stroke={child.tint}
                 strokeWidth="0.3"
                 strokeLinecap="round"
                 style={{
-                  opacity: phase === "struck" ? (dim ? 0.06 : 0.32) : 0,
-                  transition: "opacity 450ms ease",
-                  transitionDelay: phase === "struck" ? `${250 + i * 60}ms` : "0ms",
+                  opacity: 0.45,
+                  transition: "opacity 400ms ease",
+                  transitionDelay: `${ci * 60}ms`,
                 }}
               />
             );
           })}
         </svg>
 
-        {/* 砸擊火星碎屑（一次性，root 進場 + 重敲時播） */}
-        {atRoot && (
-          <div
-            key={`embers-${burst}`}
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2"
-            style={{ width: 0, height: 0 }}
-          >
-            {EMBERS.map((e, i) => (
+        {/* 砸擊火星碎屑（敲到底炸出，重敲重播）*/}
+        <div
+          key={`embers-${strikeKey}`}
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2"
+          style={{ width: 0, height: 0 }}
+        >
+          {strikeKey > 0 &&
+            EMBERS.map((e, i) => (
               <span
                 key={i}
                 className="absolute rounded-full"
@@ -191,86 +179,130 @@ export function ForgeConstellation() {
                   height: e.size,
                   background: "var(--color-spark)",
                   boxShadow: "0 0 6px var(--color-spark)",
-                  // CSS 變數帶給 keyframe 目標位移
                   ["--dx" as string]: `${e.dx}%`,
                   ["--dy" as string]: `${e.dy}%`,
                   opacity: 0,
-                  animation:
-                    phase === "struck"
-                      ? `forge-ember 820ms ease-out ${e.delay}ms both`
-                      : "none",
+                  animation: `forge-ember 760ms ease-out ${e.delay}ms both`,
                 }}
               />
             ))}
-          </div>
-        )}
+        </div>
 
-        {/* 中央：root = 鐵鎚（可重敲）；深入層 = 返回核心 */}
-        <CenterCore
-          atRoot={atRoot}
-          parent={parent}
-          phase={phase}
-          dimmed={hovered !== null}
-          onStrike={() => {
-            if (atRoot) {
-              setPhase("idle");
-              setBurst((b) => b + 1);
-              setTimeout(() => setPhase("struck"), 760);
-            }
+        {/* 中央鐵鎚（捲到自動敲；點擊重敲）*/}
+        <button
+          type="button"
+          onClick={replay}
+          aria-label="敲擊鐵鎚，火花重新炸開"
+          className="absolute left-1/2 top-1/2 outline-none"
+          style={{
+            transform: "translate(-50%, -50%)",
+            opacity: expandedId || hoveredId ? 0.5 : 1,
+            transition: "opacity 300ms ease",
           }}
-          onBack={() => goTo(path.length - 1)}
-        />
-
-        {/* 火花節點 */}
-        {nodes.map((node, i) => {
-          const p = nodePos(i, nodes.length);
-          const shown = phase === "struck";
-          const isHovered = hovered === node.id;
-          const dim = hovered !== null && !isHovered;
-          const isLeaf = !node.children;
-
-          const handlers = {
-            onMouseEnter: () => setHovered(node.id),
-            onFocus: () => setHovered(node.id),
-            onBlur: () => setHovered(null),
-            "aria-label": node.blurb,
-            className: "group absolute outline-none",
-            style: {
-              left: `${shown ? p.x : 50}%`,
-              top: `${shown ? p.y : 50}%`,
+        >
+          {/* 砸擊閃光 */}
+          <span
+            key={`flash-${strikeKey}`}
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 rounded-full"
+            style={{
+              width: 150,
+              height: 150,
+              background:
+                "radial-gradient(circle, color-mix(in srgb, var(--color-spark) 75%, transparent) 0%, transparent 60%)",
               transform: "translate(-50%, -50%)",
-              opacity: shown ? (dim ? 0.32 : 1) : 0,
-              transition:
-                "left 720ms cubic-bezier(0.18,1.1,0.3,1), top 720ms cubic-bezier(0.18,1.1,0.3,1), opacity 360ms ease",
-              transitionDelay: shown ? `${i * 70}ms` : "0ms",
-              zIndex: isHovered ? 20 : 10,
-            } as React.CSSProperties,
-          };
+              opacity: 0,
+              animation: strikeKey > 0 ? "forge-flash 700ms ease-out" : "none",
+            }}
+          />
+          <span
+            key={`hammer-${strikeKey}`}
+            className="block"
+            style={{
+              transformOrigin: "bottom center",
+              animation:
+                strikeKey > 0 ? "forge-strike 900ms cubic-bezier(0.45,0,0.25,1) both" : "none",
+            }}
+          >
+            <Hammer
+              style={{
+                width: "clamp(48px, 12vmin, 70px)",
+                height: "clamp(48px, 12vmin, 70px)",
+                color: "#e8d6b8",
+              }}
+              strokeWidth={1.5}
+            />
+          </span>
+        </button>
 
-          const body = (
-            <SparkNode node={node} isHovered={isHovered} burst={burst} />
-          );
-
-          return isLeaf ? (
-            <a key={`${burst}-${node.id}`} href={node.href} {...handlers}>
-              {body}
-            </a>
-          ) : (
+        {/* 四顆主火花 */}
+        {FORGE_ROOT.map((node, i) => {
+          const p = nodePos(i);
+          const isHovered = hoveredId === node.id;
+          const isExpanded = expandedId === node.id;
+          const dim =
+            (hoveredId !== null && !isHovered) || (expandedId !== null && !isExpanded);
+          return (
             <button
-              key={`${burst}-${node.id}`}
+              key={node.id}
               type="button"
-              onClick={() => openNode(node)}
-              {...handlers}
+              onClick={() => onMainClick(node)}
+              onMouseEnter={() => setHoveredId(node.id)}
+              onFocus={() => setHoveredId(node.id)}
+              onBlur={() => setHoveredId(null)}
+              aria-label={`${node.label} —— ${node.blurb}`}
+              aria-expanded={isExpanded}
+              className="group absolute outline-none"
+              style={{
+                left: `${struck ? p.x : 50}%`,
+                top: `${struck ? p.y : 50}%`,
+                transform: "translate(-50%, -50%)",
+                opacity: struck ? (dim ? 0.34 : 1) : 0,
+                transition:
+                  "left 760ms cubic-bezier(0.18,1.1,0.3,1), top 760ms cubic-bezier(0.18,1.1,0.3,1), opacity 360ms ease",
+                transitionDelay: struck ? `${i * 80}ms` : "0ms",
+                zIndex: isHovered || isExpanded ? 20 : 10,
+              }}
             >
-              {body}
+              <SparkNode node={node} active={isHovered || isExpanded} main />
             </button>
+          );
+        })}
+
+        {/* 展開的小火花（就地長出，主支線/主火花不抽換）*/}
+        {expanded?.children?.map((child, ci) => {
+          const pp = nodePos(FORGE_ROOT.findIndex((n) => n.id === expanded.id));
+          const cp = childPos(pp, ci, expanded.children!.length);
+          const isHovered = hoveredId === child.id;
+          return (
+            <a
+              key={`${expanded.id}-${child.id}`}
+              href={child.href}
+              onMouseEnter={() => setHoveredId(child.id)}
+              onFocus={() => setHoveredId(child.id)}
+              onBlur={() => setHoveredId(null)}
+              onClick={() => setExpandedId(null)}
+              aria-label={child.blurb}
+              className="group absolute outline-none"
+              style={{
+                left: `${cp.x}%`,
+                top: `${cp.y}%`,
+                transform: "translate(-50%, -50%)",
+                opacity: 0,
+                animation: `forge-twig 460ms cubic-bezier(0.16,1,0.3,1) ${ci * 70}ms forwards`,
+                zIndex: isHovered ? 25 : 15,
+              }}
+            >
+              <SparkNode node={child} active={isHovered} />
+            </a>
           );
         })}
       </div>
 
-      {/* Caption：hover 才顯示該火花描述，無 hover 時留白（不放那種形容詞文案） */}
+      {/* Caption：hover 才顯示該火花描述（無形容詞標語）*/}
       <p
-        className="mt-8 min-h-[2.5rem] max-w-md px-4 text-center font-sans text-sm leading-[1.7] text-[#bda988]"
+        className="mt-6 min-h-[2.75rem] max-w-md px-4 text-center font-sans text-sm leading-[1.7]"
+        style={{ color: "#cdb992" }}
         aria-live="polite"
       >
         {caption}
@@ -279,164 +311,69 @@ export function ForgeConstellation() {
   );
 }
 
-// ── 單顆火花 ────────────────────────────────────────────
-// hover 時：本體放大、發光增強，並從身上抽出小火花分支往外彈開（星星散開）。
-const BRANCH_ANGLES = [-52, -18, 18, 52, 90]; // 相對「離心方向」往外扇開
+// 單顆火花：本體 + hover 高亮發光 + 小火花 shimmer 分支（星星散開）
+const SHIMMER = [-46, 0, 46];
 function SparkNode({
   node,
-  isHovered,
-  burst,
+  active,
+  main = false,
 }: {
   node: ForgeNode;
-  isHovered: boolean;
-  burst: number;
+  active: boolean;
+  main?: boolean;
 }) {
+  const size = main ? "clamp(38px, 9.5vmin, 54px)" : "clamp(28px, 7vmin, 38px)";
   return (
-    <span className="relative flex flex-col items-center gap-2">
-      {/* 小火花分支：hover 才長出，從中心往外彈散 */}
-      <span aria-hidden className="pointer-events-none absolute left-1/2 top-[18px] -translate-x-1/2">
-        {BRANCH_ANGLES.map((a, bi) => {
+    <span className="relative flex flex-col items-center gap-1.5">
+      {/* hover shimmer：小火花往上方扇形彈散（純裝飾，呼應「星星散開」）*/}
+      <span aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        {SHIMMER.map((a, si) => {
           const rad = (a * Math.PI) / 180;
-          const dist = 30 + (bi % 3) * 10;
+          const d = 26;
           return (
             <span
-              key={`${burst}-${bi}`}
+              key={si}
               className="absolute left-0 top-0"
               style={{
-                ["--bx" as string]: `${round2(Math.sin(rad) * dist)}px`,
-                ["--by" as string]: `${round2(-Math.cos(rad) * dist)}px`,
+                ["--bx" as string]: `${round2(Math.sin(rad) * d)}px`,
+                ["--by" as string]: `${round2(-Math.cos(rad) * d)}px`,
                 opacity: 0,
-                animation: isHovered
-                  ? `forge-branch 520ms cubic-bezier(0.16,1,0.3,1) ${bi * 45}ms forwards`
+                animation: active
+                  ? `forge-branch 520ms cubic-bezier(0.16,1,0.3,1) ${si * 50}ms forwards`
                   : "none",
               }}
             >
-              <SparkStar size={9 + (bi % 2) * 4} color={node.tint} coreOpacity={0.6} />
+              <SparkStar size={8} color={node.tint} coreOpacity={0.6} />
             </span>
           );
         })}
       </span>
 
-      {/* 主火花 */}
+      {/* 主體 */}
       <span
         className="transition-all duration-300"
         style={{
-          filter: isHovered
-            ? `drop-shadow(0 0 14px ${node.tint}) drop-shadow(0 0 28px ${node.tint})`
-            : `drop-shadow(0 0 6px color-mix(in srgb, ${node.tint} 55%, transparent))`,
-          transform: isHovered ? "scale(1.32)" : "scale(1)",
+          filter: active
+            ? `drop-shadow(0 0 12px ${node.tint}) drop-shadow(0 0 26px ${node.tint})`
+            : `drop-shadow(0 0 5px color-mix(in srgb, ${node.tint} 50%, transparent))`,
+          transform: active ? "scale(1.28)" : "scale(1)",
         }}
       >
-        <SparkStar
-          size="clamp(40px, 11vmin, 60px)"
-          color={node.tint}
-          coreOpacity={isHovered ? 1 : 0.82}
-        />
+        <SparkStar size={size} color={node.tint} coreOpacity={active ? 1 : 0.8} />
       </span>
 
       {/* 標籤 */}
       <span
         className="font-sans leading-tight transition-colors duration-300"
         style={{
-          fontSize: "clamp(0.74rem, 2.5vmin, 0.9rem)",
-          maxWidth: "12ch",
+          fontSize: main ? "clamp(0.74rem, 2.4vmin, 0.9rem)" : "clamp(0.68rem, 2vmin, 0.8rem)",
+          maxWidth: "11ch",
           textAlign: "center",
-          color: isHovered ? "#fff2dd" : "#d8c4a3",
+          color: active ? "#fff2dd" : "#d6c2a1",
         }}
       >
         {node.label}
       </span>
     </span>
-  );
-}
-
-// ── 中央核心 ────────────────────────────────────────────
-function CenterCore({
-  atRoot,
-  parent,
-  phase,
-  dimmed,
-  onStrike,
-  onBack,
-}: {
-  atRoot: boolean;
-  parent: ForgeNode | null;
-  phase: "idle" | "struck";
-  dimmed: boolean;
-  onStrike: () => void;
-  onBack: () => void;
-}) {
-  if (atRoot) {
-    return (
-      <>
-        {/* 砸擊閃光：敲到底瞬間中心一炸 */}
-        <span
-          key={`flash-${phase}`}
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 rounded-full"
-          style={{
-            width: "40%",
-            height: "40%",
-            background:
-              "radial-gradient(circle, color-mix(in srgb, var(--color-spark) 70%, transparent) 0%, transparent 62%)",
-            transform: "translate(-50%, -50%)",
-            opacity: 0,
-            animation: phase === "struck" ? "forge-flash 760ms ease-out" : "none",
-          }}
-        />
-        <button
-          type="button"
-          onClick={onStrike}
-          aria-label="敲擊鐵鎚，火花重新炸開"
-          className="absolute left-1/2 top-1/2 outline-none"
-          style={{
-            transform: "translate(-50%, -50%)",
-            opacity: dimmed ? 0.4 : 1,
-            transition: "opacity 300ms ease",
-          }}
-        >
-          <span
-            className="block"
-            style={{
-              transformOrigin: "bottom center",
-              animation:
-                phase === "idle"
-                  ? "forge-strike 780ms cubic-bezier(0.5,0,0.2,1) both"
-                  : "none",
-            }}
-          >
-            <Hammer
-              style={{
-                width: "clamp(46px, 12vmin, 66px)",
-                height: "clamp(46px, 12vmin, 66px)",
-                color: "#e8d6b8",
-              }}
-              strokeWidth={1.5}
-            />
-          </span>
-        </button>
-      </>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={onBack}
-      aria-label="收起，返回上一層"
-      className="group absolute left-1/2 top-1/2 flex flex-col items-center gap-1.5 outline-none"
-      style={{ transform: "translate(-50%, -50%)", opacity: dimmed ? 0.4 : 1, transition: "opacity 300ms ease" }}
-    >
-      <span
-        style={{
-          filter: `drop-shadow(0 0 10px ${parent?.tint ?? "var(--color-spark)"})`,
-        }}
-      >
-        <SparkStar size="clamp(48px, 13vmin, 70px)" color={parent?.tint ?? "var(--color-spark)"} coreOpacity={1} />
-      </span>
-      <span className="flex items-center gap-1 font-ui text-[0.65rem] tracking-wider text-[#9a866d] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-        ← 收起
-      </span>
-    </button>
   );
 }
