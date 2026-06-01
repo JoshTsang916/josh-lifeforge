@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { HeroTitle } from "./HeroTitle";
 import { HairlineLine } from "./HairlineLine";
 import { Reveal } from "./Reveal";
 import { TypingText } from "./TypingText";
+import { HeroSketchReveal } from "./HeroSketchReveal";
 
 export function Hero() {
   return (
@@ -46,18 +46,9 @@ export function Hero() {
             </Reveal>
           </div>
 
-          {/* Right — photo */}
+          {/* Right — photo（素描浮現：真實照 → 從上到下擦成手繪版）*/}
           <div className="lg:col-span-5 order-1 lg:order-2">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-sm">
-              <Image
-                src="/photos/hero.jpg"
-                alt="Josh 在 n8n workshop 授課現場"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover"
-              />
-            </div>
+            <HeroSketchReveal />
           </div>
         </div>
 

@@ -297,3 +297,35 @@
   }
 }
 
+/* Hero 照片「素描鍛造」（HeroSketchReveal）：手繪過程改用 Veo 生成的影片（component 內
+   <video>，空白 → 鉛筆草稿），這裡只留真實照「潑墨浮現」遮罩。
+   .hero-ink-reveal — radial 墨團套大幅 feTurbulence 位移做有機飛濺邊，mask-size 從 0
+   暈染擴大到蓋滿，像山水潑墨浮現、蓋過影片停住的草稿。 */
+.hero-ink-reveal {
+  /* 放大 1.25 倍 + 右移 1% + 上移 2%，對齊影片尾幀視野：影片為 9:16，在 3:4 容器 object-cover
+     後只顯示垂直中央約 75%，視野比完整 3:4 的真實照更近；不放大的話潑墨浮現時人物會「往後退一截」。
+     倍數與位移由「影片尾幀草稿 × 照片」疊圖比對 + Josh 視覺確認定案：放大讓人物貼合草稿、
+     右移＋上移讓頭部對齊。translate 寫在 scale 左側（後套用）＝平移量不被 scale 放大，
+     等於穩定移動指定的畫面百分比，不隨容器尺寸跑掉。 */
+  transform: translate(1%, -2%) scale(1.25);
+  --ink-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='260' preserveAspectRatio='none'><defs><radialGradient id='r' cx='50%25' cy='44%25' r='54%25'><stop offset='.5' stop-color='black'/><stop offset='.82' stop-color='black' stop-opacity='0'/></radialGradient><filter id='d' x='-35%25' y='-35%25' width='170%25' height='170%25'><feTurbulence type='fractalNoise' baseFrequency='.013 .02' numOctaves='2' seed='9' result='n'/><feDisplacementMap in='SourceGraphic' in2='n' scale='70' xChannelSelector='R' yChannelSelector='G'/></filter></defs><rect width='200' height='260' fill='url(%23r)' filter='url(%23d)'/></svg>");
+  -webkit-mask-image: var(--ink-mask);
+  mask-image: var(--ink-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 50% 42%;
+  mask-position: 50% 42%;
+  -webkit-mask-size: 0% 0%;
+  mask-size: 0% 0%;
+  transition: -webkit-mask-size 2.2s ease-out, mask-size 2.2s ease-out;
+}
+.hero-ink-reveal.is-inked {
+  -webkit-mask-size: 360% 360%;
+  mask-size: 360% 360%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-ink-reveal {
+    transition: none;
+  }
+}
+
