@@ -32,7 +32,7 @@ export function HeroSketchReveal() {
           // 影片跟標題同時開始（捲到 hero 即播）
           const v = videoRef.current;
           if (!v) return setInked(true);
-          v.playbackRate = 1.5; // 加速手繪過程（8s → ~5.3s）
+          v.playbackRate = 1.7; // 加速手繪過程（8s → ~4.7s）
           // 程式觸發 muted 播放（自動播放政策允許）；播不動就直接跳潑墨真實
           v.play().catch(() => setInked(true));
         }
