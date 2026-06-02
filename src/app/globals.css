@@ -274,6 +274,27 @@
   }
 }
 
+/* 小火花退場：收合 / 切換到另一顆主火花時，舊的小火花縮小淡出。
+   280ms 比進場 460ms 快——Emil「exit faster than enter」：使用者決定時慢、系統收尾要快。
+   ease-in（先慢後快）讓它俐落地「縮走」。 */
+@keyframes forge-twig-out {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+}
+
+/* 分支連線退場：跟小火花同步淡出，避免連線瞬間消失的突兀感 */
+@keyframes forge-line-out {
+  to {
+    opacity: 0;
+  }
+}
+
 /* hover shimmer：小火花從主火花身上往外彈散（--bx/--by 由 JS 給），星星散開 */
 @keyframes forge-branch {
   0% {

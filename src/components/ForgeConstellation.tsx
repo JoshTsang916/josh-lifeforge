@@ -60,6 +60,8 @@ export function ForgeConstellation() {
   const [strikeKey, setStrikeKey] = useState(0); // 重敲時 +1，重播鐵鎚 + 火星動畫
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [exiting, setExiting] = useState<ForgeNode | null>(null); // 正在退場的舊節點 snapshot（多停留一拍播退場動畫再卸載）
+  const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 捲到才敲：IntersectionObserver 進入視窗一次性觸發（解決「載入即播、滾到已結束」）
   useEffect(() => {
@@ -91,7 +93,17 @@ export function ForgeConstellation() {
     };
   }, []);
 
+  // 啟動退場：把舊節點存進 exiting 播退場動畫，280ms 後卸載。
+  // 用 ref 管 timer——快速連點時清掉前一個未完成的退場，避免殘留 / 競態。
+  const startExit = (oldId: string) => {
+    if (exitTimer.current) clearTimeout(exitTimer.current);
+    setExiting(FORGE_ROOT.find((n) => n.id === oldId) ?? null);
+    exitTimer.current = setTimeout(() => setExiting(null), 280);
+  };
+
   const replay = () => {
+    if (exitTimer.current) clearTimeout(exitTimer.current);
+    setExiting(null);
     setExpandedId(null);
     setHoveredId(null);
     setStruck(false);
@@ -100,7 +112,19 @@ export function ForgeConstellation() {
   };
 
   const onMainClick = (node: ForgeNode) => {
-    setExpandedId((cur) => (cur === node.id ? null : node.id));
+    if (expandedId === node.id) {
+      // 收合：當前這顆退場
+      startExit(node.id);
+      setExpandedId(null);
+    } else {
+      // 切換 / 新展開：舊的退場；若點到的正是「正在退場」那顆，取消其退場（它要重新進場）
+      if (expandedId) startExit(expandedId);
+      if (exiting?.id === node.id) {
+        if (exitTimer.current) clearTimeout(exitTimer.current);
+        setExiting(null);
+      }
+      setExpandedId(node.id);
+    }
     setHoveredId(null);
   };
 
@@ -183,6 +207,26 @@ export function ForgeConstellation() {
                   opacity: 0.5,
                   transition: "opacity 400ms ease",
                   transitionDelay: `${ci * 60}ms`,
+                }}
+              />
+            );
+          })}
+          {/* 分支連線退場：舊節點的連線淡出，跟小火花同步 */}
+          {exiting?.children?.map((child, ci) => {
+            const pp = nodePos(FORGE_ROOT.findIndex((n) => n.id === exiting.id));
+            const cp = childPos(pp, ci, exiting.children!.length);
+            return (
+              <path
+                key={`twig-out-${child.id}`}
+                d={arcPath(pp.x, pp.y, cp.x, cp.y, 0.32)}
+                fill="none"
+                stroke={child.tint}
+                strokeWidth="1"
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+                style={{
+                  opacity: 0.5,
+                  animation: `forge-line-out 280ms ease ${ci * 40}ms forwards`,
                 }}
               />
             );
@@ -354,6 +398,27 @@ export function ForgeConstellation() {
             >
               <SparkNode node={child} active={isHovered} />
             </a>
+          );
+        })}
+        {/* 小火花退場：收合 / 切換時，舊的小火花縮小淡出（aria-hidden、不可互動）*/}
+        {exiting?.children?.map((child, ci) => {
+          const pp = nodePos(FORGE_ROOT.findIndex((n) => n.id === exiting.id));
+          const cp = childPos(pp, ci, exiting.children!.length);
+          return (
+            <span
+              key={`spark-out-${exiting.id}-${child.id}`}
+              aria-hidden
+              className="pointer-events-none absolute"
+              style={{
+                left: `${cp.x}%`,
+                top: `${cp.y}%`,
+                transform: "translate(-50%, -50%)",
+                animation: `forge-twig-out 280ms cubic-bezier(0.4,0,1,1) ${ci * 40}ms forwards`,
+                zIndex: 14,
+              }}
+            >
+              <SparkNode node={child} active={false} />
+            </span>
           );
         })}
       </div>
