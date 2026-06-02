@@ -123,10 +123,16 @@
     font-weight: 500;
     font-size: 0.95rem;
     border-radius: var(--radius-sm);
-    transition: transform 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1),
                 background-color 200ms ease,
                 color 200ms ease,
                 border-color 200ms ease;
+  }
+  /* 按下微縮 0.97 給即時觸覺回饋（press feedback）——全站 CTA（Hero 兩顆 + Nav 預約鈕）
+     共用此 class，改一處全站受惠。transform 用 140ms 強 ease-out：按壓要快才跟手，
+     太慢會像系統延遲、沒「聽見」使用者。色彩變化維持 200ms ease。 */
+  .btn:active {
+    transform: scale(0.97);
   }
   .btn-primary {
     background: var(--color-accent);
@@ -168,8 +174,13 @@
   .link-underline:hover {
     color: var(--color-accent);
   }
-  .link-underline:hover::after {
-    transform: scaleX(1);
+  /* 底線展開是 hover 專屬動畫（scaleX transform），用 @media (hover: hover) gate：
+     觸控裝置 tap 導航連結會觸發 :hover 並殘留，底線會「黏住」不退（sticky hover）。
+     色彩變化（上方 .link-underline:hover）不 gate——觸控變個色無害、甚至像 active 指示。*/
+  @media (hover: hover) {
+    .link-underline:hover::after {
+      transform: scaleX(1);
+    }
   }
 }
 

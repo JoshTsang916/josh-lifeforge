@@ -410,8 +410,9 @@ function SparkNode({
 
       {/* 主體 */}
       <span
-        className="transition-all duration-300"
         style={{
+          // 只過渡 filter（發光）與 transform（放大）——取代 transition-all，避免監聽全部屬性
+          transition: "filter 300ms ease, transform 300ms ease",
           filter: active
             ? `drop-shadow(0 0 12px ${node.tint}) drop-shadow(0 0 26px ${node.tint})`
             : `drop-shadow(0 0 5px color-mix(in srgb, ${node.tint} 50%, transparent))`,
