@@ -13,7 +13,7 @@ const LAYOUT_4 = [
   { angle: -64, r: 38 }, // 我提供什麼 — 右上（中長）
   { angle: 24, r: 31 }, //  近期作品 — 右（短）
   { angle: 120, r: 37 }, // 關於鍛造所 — 左下（長）
-  { angle: 210, r: 29 }, // 學員見證 — 左上（最短）
+  { angle: 210, r: 29 }, // 工具 — 左上（最短）
 ];
 function nodePos(i: number) {
   const { angle, r } = LAYOUT_4[i] ?? { angle: -90 + i * 90, r: 29 };

@@ -50,15 +50,17 @@ export const FORGE_ROOT: ForgeNode[] = [
     ],
   },
   {
-    id: "testimonials",
-    label: "學員見證",
-    tint: "var(--color-reading)", // 抹茶綠
-    blurb: "學員怎麼說 —— 點開看他們的真實回饋。",
+    // 原「學員見證」改為「工具」(2026-06-03)：見證仍在 Testimonials section 05 + Nav「見證」，
+    // 此處改指向 /skills 工具頁，讓 forge 從「首頁地圖」擴成「全站地圖」入口。
+    // 子火花 href 從 /#錨點（同頁捲動）變 /skills（跨頁）—— 這顆是 forge 唯一的跨頁目的地。
+    id: "tools",
+    label: "工具",
+    tint: "var(--color-reading)", // 抹茶綠（沿用第 4 顆位置的色，佈局色彩平衡不變）
+    blurb: "我做的、可以帶走的 skill 與 agent —— 點開挑一個，裝進你自己的環境。",
     children: [
-      { id: "t-du", label: "Du", tint: "var(--color-reading)", href: "/#testimonials", blurb: "「原來 AI 不是拿來聊天的，是拿來幫我把工作做完的。」—— Du · 創業者" },
-      { id: "t-tammy", label: "Tammy", tint: "var(--color-reading)", href: "/#testimonials", blurb: "「Josh 用一個下午就讓我做出第一個能跑的流程。」—— Tammy · 行銷工作者" },
-      { id: "t-kin", label: "Kin", tint: "var(--color-reading)", href: "/#testimonials", blurb: "「會從你的實際問題出發，不是照本宣科。」—— Kin · 工程師" },
-      { id: "t-da", label: "大大", tint: "var(--color-reading)", href: "/#testimonials", blurb: "「不會寫程式的人，也能用 AI 把想法變成現實。」—— 大大 · 自由工作者" },
+      { id: "tl-skillcreator", label: "skill-creator", tint: "var(--color-reading)", href: "/skills", blurb: "建立 / 重構 Claude Code skill 的 meta-skill，內含七層架構放置指南。" },
+      { id: "tl-translate", label: "translate-card", tint: "var(--color-reading)", href: "/skills", blurb: "把英文好文翻成繁中、做成中英對照的 Obsidian 卡，自動下載圖片。" },
+      { id: "tl-braintrust", label: "智囊團", tint: "var(--color-reading)", href: "/skills", blurb: "Claude + Codex + Gemini 三方交叉審查，幫你的程式碼或決策抓盲點。" },
     ],
   },
 ];

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 
 type NavLink = { href: string; label: string };
 
@@ -136,22 +137,42 @@ export function MobileMenu({ links }: { links: NavLink[] }) {
           >
             <div className="container-narrow px-[clamp(1.25rem,4vw,3rem)] pt-28 pb-16">
               <ul className="flex flex-col">
-                {links.map((l, idx) => (
-                  <li key={l.href}>
-                    <a
-                      href={l.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-baseline gap-4 py-5 border-b border-[color:var(--color-line)] hover:text-[color:var(--color-accent)] transition-colors"
-                    >
+                {links.map((l, idx) => {
+                  // 錨點用 <a>（同頁滾動）、跨頁路由用 <Link>（client 導航 + prefetch）；兩者都先關閉選單
+                  const cls =
+                    "flex items-baseline gap-4 py-5 border-b border-[color:var(--color-line)] hover:text-[color:var(--color-accent)] transition-colors";
+                  const inner = (
+                    <>
                       <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
                         {String(idx + 1).padStart(2, "0")}
                       </span>
                       <span className="font-display text-3xl text-[color:var(--color-ink)]">
                         {l.label}
                       </span>
-                    </a>
-                  </li>
-                ))}
+                    </>
+                  );
+                  return (
+                    <li key={l.href}>
+                      {l.href.startsWith("/") ? (
+                        <Link
+                          href={l.href}
+                          onClick={() => setOpen(false)}
+                          className={cls}
+                        >
+                          {inner}
+                        </Link>
+                      ) : (
+                        <a
+                          href={l.href}
+                          onClick={() => setOpen(false)}
+                          className={cls}
+                        >
+                          {inner}
+                        </a>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
 
               <a
