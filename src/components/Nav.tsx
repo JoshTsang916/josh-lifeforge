@@ -1,11 +1,15 @@
 import Image from "next/image";
+import Link from "next/link";
 import { MobileMenu } from "./MobileMenu";
 
+// 錨點（#）= 首頁同頁滾動；絕對路由（/）= 跨頁。render 時依開頭字元決定用 <a> 還是 <Link>。
+// 「工具」(/skills) 是 navLinks 裡第一個跨頁目的地，放在 proof 區（作品／見證）之後、聯絡之前。
 const navLinks = [
   { href: "#about", label: "關於" },
   { href: "#services", label: "服務" },
   { href: "#work", label: "作品" },
   { href: "#testimonials", label: "見證" },
+  { href: "/skills", label: "工具" },
   { href: "#contact", label: "聯絡" },
 ];
 
@@ -40,9 +44,15 @@ export function Nav() {
         <ul className="hidden md:flex items-center gap-8 text-sm font-sans text-[color:var(--color-fg-muted)]">
           {navLinks.map((l) => (
             <li key={l.href}>
-              <a href={l.href} className="link-underline">
-                {l.label}
-              </a>
+              {l.href.startsWith("/") ? (
+                <Link href={l.href} className="link-underline">
+                  {l.label}
+                </Link>
+              ) : (
+                <a href={l.href} className="link-underline">
+                  {l.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>

@@ -12,5 +12,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1,
     },
+    {
+      // /skills 工具專區 —— 對外曝光的內容頁，納入索引（/links 是 bio 專用故意不收）
+      url: `${SITE_URL}/skills`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
   ];
 }
