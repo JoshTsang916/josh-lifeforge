@@ -463,3 +463,355 @@
   stroke: var(--color-accent);
 }
 
+/* ============================================================
+   分支動畫方案評估（demo，選定後留贏家、拆輸家＋切換器）——
+   四個 variant 由 .branch-zone 的 data-variant 切換：
+     a 光脈漣漪：高亮光點沿線流動，到站時節點蕩開波紋
+     b 鍛造火花：火花沿線飛行，擊中卡片頂邊產生熱感冷卻
+     c 彈性回彈：不加元素，全部換成 overshoot 彈簧曲線
+     d 墨滴暈開：墨頭沿線運筆、節點如墨滴在紙上暈開（呼應 Hero 潑墨）
+   共用基礎（佈局／基線生長／hover 聯動）在上方，不因方案而變。
+   ============================================================ */
+
+/* 節點外圈效果容器（halo）：漣漪 / 火花閃光 / 墨暈共用這個 ::after，
+   各方案自己給視覺與 keyframes。halo delay 統一＝節點 delay + 60ms。 */
+.branch-node::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.branch-card,
+.branch-origin {
+  --branch-halo-delay: calc(var(--branch-node-delay, 0ms) + 60ms);
+}
+
+/* Mobile rail 行者（光段／火花點／墨頭共用軌道）：
+   用 background-position 從 rail 頂掃到底（rail 高度不定，
+   百分比 position 天然貼合），不動 layout。 */
+.branch-rail::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: 100% 44px;
+  background-position-y: -44px;
+}
+@keyframes branch-rail-travel {
+  0% {
+    background-position-y: -44px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    background-position-y: calc(100% + 44px);
+    opacity: 0;
+  }
+}
+
+/* ---------- 方案 A：光脈漣漪 ---------- */
+
+/* 光脈：複製一份 path 當高亮層，dash 只露 20% 長度的光點，
+   dashoffset 從 1.2 滑到 -0.2 = 光點從線頭「溜」出線尾 */
+.branch-pulse {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: 0.2 1;
+  stroke-dashoffset: 1.2;
+  opacity: 0;
+}
+@keyframes branch-pulse-run {
+  0% {
+    stroke-dashoffset: 1.2;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -0.2;
+    opacity: 0;
+  }
+}
+/* 時序：基線長完（~780ms）光脈接力跑一趟，到站（~1060ms）節點亮＋漣漪 */
+[data-variant="a"][data-revealed="true"] .branch-pulse-trunk {
+  animation: branch-pulse-run 170ms linear 540ms forwards;
+}
+[data-variant="a"][data-revealed="true"] .branch-pulse-arm {
+  animation: branch-pulse-run 460ms linear 680ms forwards;
+}
+[data-variant="a"][data-revealed="true"] .branch-node::after {
+  border: 1.5px solid var(--color-accent);
+  animation: branch-ripple 700ms cubic-bezier(0.16, 1, 0.3, 1)
+    var(--branch-halo-delay) both;
+}
+@keyframes branch-ripple {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(3.4);
+    opacity: 0;
+  }
+}
+[data-variant="a"][data-revealed="true"] .branch-rail::after {
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--color-accent) 45%,
+    var(--color-accent) 55%,
+    transparent
+  );
+  animation: branch-rail-travel 520ms linear 640ms forwards;
+}
+/* mobile：站點等光段掃過才亮；desktop（見檔尾 md 重申）：等光脈到站 */
+[data-variant="a"] .branch-card {
+  --branch-node-delay: 700ms;
+  --branch-body-delay: 760ms;
+}
+[data-variant="a"] .branch-card:last-child {
+  --branch-node-delay: 1060ms;
+  --branch-body-delay: 1120ms;
+}
+
+/* ---------- 方案 B：鍛造火花 ---------- */
+
+/* 火花：小圓沿分岔線的 motion path 飛行，當「線頭」跟著基線一起長 */
+.branch-spark {
+  fill: var(--color-accent);
+  opacity: 0;
+  offset-rotate: 0deg;
+}
+.branch-spark-l {
+  offset-path: path("M 500 44 C 500 84 240 88 240 128");
+}
+.branch-spark-r {
+  offset-path: path("M 500 44 C 500 84 760 88 760 128");
+}
+@keyframes branch-spark-fly {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+[data-variant="b"][data-revealed="true"] .branch-spark {
+  animation: branch-spark-fly 500ms cubic-bezier(0.23, 1, 0.32, 1) 300ms forwards;
+}
+/* 火花擊中：節點白熱快閃（實心暈，跟 A 的線圈漣漪區隔） */
+[data-variant="b"][data-revealed="true"] .branch-node::after {
+  background: var(--color-accent-soft);
+  animation: branch-node-flash 450ms ease-out var(--branch-halo-delay) forwards;
+}
+@keyframes branch-node-flash {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+/* 熱感冷卻：火花擊中的瞬間，卡片頂邊那條 hairline 燒紅、發光，
+   再花 1.5s 慢慢冷回米色。glow 做在 ::before 的 1px 光條上
+   （蓋在 border-t 位置），光從「線」發出——直接把 box-shadow 打在
+   透明的卡片 wrapper 會勾出整個矩形輪廓，像多了一張實體白卡。
+   只在 desktop（md 卡片才有 border-t 可以「發熱」）。 */
+.branch-card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--color-accent);
+}
+@keyframes branch-heat-cool {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 14px 1.5px var(--color-accent);
+  }
+  40% {
+    opacity: 1;
+    box-shadow: 0 0 10px 0.5px var(--color-accent);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+@media (min-width: 768px) {
+  [data-variant="b"][data-revealed="true"] .branch-card::before {
+    animation: branch-heat-cool 1500ms ease-out var(--branch-body-delay)
+      forwards;
+  }
+}
+[data-variant="b"][data-revealed="true"] .branch-rail::after {
+  background-image: radial-gradient(
+    circle,
+    var(--color-accent) 0 30%,
+    transparent 70%
+  );
+  animation: branch-rail-travel 480ms cubic-bezier(0.23, 1, 0.32, 1) 160ms forwards;
+}
+/* mobile：火花跟著 rail 生長的線頭跑，站點被擊中即亮 */
+[data-variant="b"] .branch-card {
+  --branch-node-delay: 250ms;
+  --branch-body-delay: 310ms;
+}
+[data-variant="b"] .branch-card:last-child {
+  --branch-node-delay: 600ms;
+  --branch-body-delay: 660ms;
+}
+
+/* ---------- 方案 C：彈性回彈 ---------- */
+
+/* 不加元素，換物理：節點放大過頭再縮回、卡片上衝過頭再落回。
+   opacity 維持順滑曲線（透明度彈跳沒有物理意義），只有 transform 彈。 */
+[data-variant="c"] .branch-node {
+  transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1)
+      var(--branch-node-delay, 0ms),
+    transform 380ms cubic-bezier(0.175, 0.885, 0.32, 1.275)
+      var(--branch-node-delay, 0ms),
+    background-color 200ms ease;
+}
+[data-variant="c"] .branch-card-body {
+  transform: translateY(22px);
+  transition: opacity 450ms cubic-bezier(0.16, 1, 0.3, 1)
+      var(--branch-body-delay, 0ms),
+    transform 620ms cubic-bezier(0.34, 1.56, 0.64, 1)
+      var(--branch-body-delay, 0ms);
+}
+
+/* ---------- 方案 D：墨滴暈開 ---------- */
+
+/* 墨頭：深咖啡的短墨點沿線運筆（比光脈慢、沉），呼應 Hero 潑墨語彙 */
+.branch-ink {
+  stroke: var(--color-ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: 0.12 1;
+  stroke-dashoffset: 1.12;
+  opacity: 0;
+}
+@keyframes branch-ink-run {
+  0% {
+    stroke-dashoffset: 1.12;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  88% {
+    opacity: 0.85;
+  }
+  100% {
+    stroke-dashoffset: -0.12;
+    opacity: 0;
+  }
+}
+[data-variant="d"][data-revealed="true"] .branch-ink-trunk {
+  animation: branch-ink-run 200ms ease-in 500ms forwards;
+}
+[data-variant="d"][data-revealed="true"] .branch-ink-arm {
+  animation: branch-ink-run 560ms cubic-bezier(0.45, 0, 0.55, 1) 680ms forwards;
+}
+/* 墨滴落站：radial 墨暈＋輕 blur 模擬紙吸墨，暈開比水波慢 */
+[data-variant="d"][data-revealed="true"] .branch-node::after {
+  background: radial-gradient(
+    circle,
+    var(--color-accent-soft) 0%,
+    transparent 70%
+  );
+  filter: blur(1.5px);
+  animation: branch-ink-bloom 900ms cubic-bezier(0.16, 1, 0.3, 1)
+    var(--branch-halo-delay) both;
+}
+@keyframes branch-ink-bloom {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+/* 卡片「墨乾字現」：blur 3px → 0 疊在浮現上 */
+[data-variant="d"] .branch-card-body {
+  transform: translateY(10px);
+  filter: blur(3px);
+  transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1)
+      var(--branch-body-delay, 0ms),
+    transform 800ms cubic-bezier(0.16, 1, 0.3, 1) var(--branch-body-delay, 0ms),
+    filter 800ms cubic-bezier(0.16, 1, 0.3, 1) var(--branch-body-delay, 0ms);
+}
+[data-variant="d"][data-revealed="true"] .branch-card-body {
+  filter: blur(0);
+}
+[data-variant="d"][data-revealed="true"] .branch-rail::after {
+  background-image: linear-gradient(to bottom, transparent, var(--color-ink));
+  animation: branch-rail-travel 560ms cubic-bezier(0.45, 0, 0.55, 1) 620ms forwards;
+}
+[data-variant="d"] .branch-card {
+  --branch-node-delay: 760ms;
+  --branch-body-delay: 820ms;
+}
+[data-variant="d"] .branch-card:last-child {
+  --branch-node-delay: 1120ms;
+  --branch-body-delay: 1180ms;
+}
+
+/* variant 的 mobile delay 覆蓋（attribute selector）specificity 高於
+   base 的 md 覆蓋，所以 A/B/D 在 md 都要重申桌面時序
+   （兩站同時亮、時間點=各自的行者到站那刻） */
+@media (min-width: 768px) {
+  [data-variant="a"] .branch-card,
+  [data-variant="a"] .branch-card:last-child {
+    --branch-node-delay: 1000ms;
+    --branch-body-delay: 1080ms;
+  }
+  [data-variant="b"] .branch-card,
+  [data-variant="b"] .branch-card:last-child {
+    --branch-node-delay: 760ms;
+    --branch-body-delay: 820ms;
+  }
+  [data-variant="d"] .branch-card,
+  [data-variant="d"] .branch-card:last-child {
+    --branch-node-delay: 1120ms;
+    --branch-body-delay: 1180ms;
+  }
+}
+
