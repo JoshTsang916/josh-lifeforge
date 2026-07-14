@@ -28,9 +28,9 @@ export function Hero() {
                 「不急」線由 About 與星圖子星承接，不孤兒。句變長故 perChar 95→70 補償節奏。 */}
             <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
               <TypingText
-                text="還在紙本登記、Excel 對帳？你卡住的地方，通常就是系統該進場的地方。"
+                text="還在紙本登記、Excel 對帳？想要利用 AI 做點什麼卻沒有頭緒？AI 自動化、提升工作效率，其實比你想像的還要近。"
                 startDelay={1300}
-                perChar={70}
+                perChar={55}
                 charDur={700}
                 riseY={8}
               />
