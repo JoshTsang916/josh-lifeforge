@@ -62,15 +62,13 @@
 
 來源：2026-05-10 session 討論（Josh 提 Supabase 路徑反推 → Claude 修正 4 phase plan + 5 sub-decisions 拍板）
 
-### 2. 客戶授權後 doris/tibonus 露名 + 截圖
-Services 04 Build With Me 目前用「某會計事務所」「某食品代理商」匿名版。客戶授權拿到後可：
-- 把 `proof.cases` 內字串替換成具體公司名（doris 客戶會計事務所 / 台灣愛玉）
-- 加產品截圖（doris dashboard / tibonus Excel 薪資條 / LINE bot 截圖）
-- 視情況升級到獨立 Builds section（編號重編到 01-08）
+### 2. 客戶授權後逐案露名 + 補系統截圖
+~~視情況升級到獨立 Builds section~~ ✅ **2026-07-14 已完成**（PR #36：實戰 section 五案上線＝doris／tibonus／pickleball／student-progress／YT 留言回覆，全匿名，`src/components/Builds.tsx`）。剩餘等授權：
+- 逐案把「某會計事務所」等匿名標籤換成具體名稱（doris 客戶會計事務所 / 台灣愛玉 / 神綺館…哪家授權換哪家）
+- 補去識別化系統截圖（doris dashboard / tibonus Excel 薪資條 / pickleball LINE bot 對話與場次圖）
+- 「溝通成本很低」客戶原話：授權後掛名進 Testimonials 當第一條客戶見證（目前以間接匿名形式在 About 橋段）
 
-CLAUDE.md「Design notes」記錄這個拍板：先匿名上線，等授權升級。
-
-來源：2026-05-08 加 04 Build With Me 時的 trade-off
+來源：2026-05-08 加 04 Build With Me 時的 trade-off；2026-07-14 升格完成後改寫本條
 
 ---
 
