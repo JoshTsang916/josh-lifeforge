@@ -361,3 +361,105 @@
   }
 }
 
+/* ============================================================
+   Services 分支圖（#services「如何開始鍛造」，ServicesBranch）——
+   01 診斷是唯一入口，滾動進場時一條線從 01 底部長出、
+   分岔成 02 教你建 / 03 幫你建 兩條路：線到站、節點彈亮、卡片浮現。
+   一次性敘事動畫，由 .branch-zone 的 data-revealed 單一 state 驅動，
+   線→節點→卡片的時序全用 transition-delay 編排（無 JS 排程）。
+   reduced-motion 由檔頭全域 @media 歸零 duration/delay → 直接落定，
+   最終可見性不依賴動畫。
+   ============================================================ */
+
+/* 分岔線（desktop SVG）：stroke 描邊從 0 畫到 100%，像手繪長出來。
+   pathLength=1 已把三段 path 的 dash 空間標準化，dasharray/offset 直接用 1。 */
+.branch-path {
+  stroke: var(--color-line-strong);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.branch-trunk {
+  transition: stroke-dashoffset 350ms cubic-bezier(0.23, 1, 0.32, 1),
+              stroke 200ms ease;
+}
+.branch-arm {
+  /* delay 280ms：主幹快長完時分支接力，交接輕微重疊避免「等待感」 */
+  transition: stroke-dashoffset 500ms cubic-bezier(0.23, 1, 0.32, 1) 280ms,
+              stroke 200ms ease;
+}
+.branch-zone[data-revealed="true"] .branch-path {
+  stroke-dashoffset: 0;
+}
+
+/* 端點節點：scale 0.2 彈入（不從 0——憑空出現不自然），
+   磚紅小圓呼應星圖 forge-twig 的火花語彙。delay 用 CSS 變數，
+   mobile 是「rail 長到哪、站亮到哪」的序列，desktop 兩站同時亮。 */
+.branch-node {
+  opacity: 0;
+  transform: scale(0.2);
+  transition: opacity 250ms cubic-bezier(0.23, 1, 0.32, 1) var(--branch-node-delay, 0ms),
+              transform 250ms cubic-bezier(0.23, 1, 0.32, 1) var(--branch-node-delay, 0ms),
+              background-color 200ms ease;
+}
+.branch-zone[data-revealed="true"] .branch-node {
+  opacity: 1;
+  transform: scale(1);
+}
+/* 起點小圓（01 底部，線的出發點）：revealed 立刻亮，不等 delay */
+.branch-origin {
+  --branch-node-delay: 0ms;
+}
+
+/* 卡片內容：節點亮起後從下方浮上來「掛」到節點上。
+   desktop 兩張同時進場是刻意的——序列會讀成流程，同時才讀成平行的兩條路。 */
+.branch-card-body {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--branch-body-delay, 0ms),
+              transform 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--branch-body-delay, 0ms);
+}
+.branch-zone[data-revealed="true"] .branch-card-body {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile rail：左側主幹縱線由上往下生長（捷運路線圖語意，
+   02/03 是同一條主幹上分出的兩站）。只動 transform，無 layout 抖動。 */
+.branch-rail {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 550ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.branch-zone[data-revealed="true"] .branch-rail {
+  transform: scaleY(1);
+}
+
+/* 時序編排：
+   mobile —— rail ease-out 前段快，02 站早到、03 站在尾端，節點跟著線頭亮；
+   desktop —— 分支 280ms 起跑 + 500ms 抵達（≈780ms），節點在線到站前一瞬
+   （760ms）開始彈入，體感是「線到、花開」。 */
+.branch-card {
+  --branch-node-delay: 80ms;
+  --branch-body-delay: 160ms;
+}
+.branch-card:last-child {
+  --branch-node-delay: 480ms;
+  --branch-body-delay: 560ms;
+}
+@media (min-width: 768px) {
+  .branch-card,
+  .branch-card:last-child {
+    --branch-node-delay: 760ms;
+    --branch-body-delay: 820ms;
+  }
+}
+
+/* hover 哪張卡，對應那條分支線變磚紅（這條路通到這張卡）。
+   純色變不做 hover gate：觸控 tap 後線亮著反而像 active 指示，無害。 */
+.branch-zone:has(.branch-card:first-child:hover) .branch-arm-l,
+.branch-zone:has(.branch-card:last-child:hover) .branch-arm-r {
+  stroke: var(--color-accent);
+}
+
