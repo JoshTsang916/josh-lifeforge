@@ -58,7 +58,7 @@ export function Hero() {
         <div className="mt-20 flex items-center gap-4 text-xs font-sans text-[color:var(--color-fg-subtle)]">
           <span className="font-mono tabular-nums">01</span>
           <HairlineLine />
-          <span>Josh — Sharing what I learn along the way</span>
+          <span>Josh — Forging workflows into systems</span>
         </div>
       </div>
     </section>

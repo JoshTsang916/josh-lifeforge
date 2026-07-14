@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-// 2026-07-14 B2B 新軸主標（REBUILD-PLAN 01，Josh 雛形收尖版）：
-// 舊「AI 給你槓桿／閱讀給你底氣／一人公司給你自由」對個人自我實現說話，退場；
-// 新主標對「流程卡住的老闆」說話，accent 從行首詞移到行中關鍵詞（pre + accent 結構）。
+// 2026-07-14 B2B 新軸主標（REBUILD-PLAN 01；同日 Josh preview 二修，issue #38）：
+// 「陪你鍛造屬於你自己的系統」——鍛造=磚紅（動作），屬於你自己的系統=焦糖橘（成果），
+// 暖色階層遞進；「先搞懂流程」的診斷訊息由副標鉤子與 Services 01 承接。
+// 每行 accent 可各自指定色（color 欄位），斷行手動控制不交給 text-balance 賭。
 const LINES = [
-  { pre: "先搞懂你的", accent: "工作流程" },
-  { pre: "再陪你鍛造成", accent: "自己的系統" },
+  { pre: "陪你", accent: "鍛造", color: "var(--color-accent)" },
+  { pre: "", accent: "屬於你自己的系統", color: "var(--color-spark)" },
 ];
 
 // Hero 主標：逐行整體 fade-up 浮現（黑字 pre + 紅字 accent 一起，不逐字）。
@@ -39,7 +40,7 @@ export function HeroTitle() {
           }}
         >
           {line.pre}
-          <span style={{ color: "var(--color-accent)" }}>{line.accent}</span>
+          <span style={{ color: line.color }}>{line.accent}</span>
         </span>
       ))}
     </h1>
