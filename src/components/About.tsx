@@ -56,7 +56,7 @@ export function About() {
                 </p>
                 <p>
                   <span className="text-[color:var(--color-fg)] font-medium">第一是 AI 的使用。</span>
-                  我們必須要刻意去練習，不只是與他聊天，而是要讓他操控你的電腦、碰觸你的資料，使用並理解他，直到你能駕馭它，才能達到 10 倍甚至百倍的效果。
+                  我們必須要刻意去練習，不只是與它聊天，而是要讓它操控你的電腦、碰觸你的資料，使用並理解它，直到你能駕馭它，才能達到 10 倍甚至百倍的效果。
                 </p>
                 <p>
                   <span className="text-[color:var(--color-fg)] font-medium">第二是閱讀。</span>
