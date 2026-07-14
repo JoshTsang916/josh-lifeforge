@@ -2,13 +2,19 @@
 
 import { useEffect, useState } from "react";
 
-// 2026-07-14 B2B 新軸主標（REBUILD-PLAN 01；同日 Josh preview 二修，issue #38）：
-// 「陪你鍛造屬於你自己的系統」——鍛造=磚紅（動作），屬於你自己的系統=焦糖橘（成果），
-// 暖色階層遞進；「先搞懂流程」的診斷訊息由副標鉤子與 Services 01 承接。
-// 每行 accent 可各自指定色（color 欄位），斷行手動控制不交給 text-balance 賭。
-const LINES = [
-  { pre: "陪你", accent: "鍛造", color: "var(--color-accent)" },
-  { pre: "", accent: "屬於你自己的系統", color: "var(--color-spark)" },
+// 2026-07-14 B2B 新軸主標（REBUILD-PLAN 01；同日 Josh preview 三修）：
+// 「用 AI 陪你鍛造屬於你自己的系統」，AI=沉穩藍（工具）、鍛造=磚紅（動作）、
+// 屬於你自己的系統=焦糖橘（成果）；AI 入主標讓受眾五秒對號（B2B 認知入口是「AI」這個詞），
+// 藍色小面積當暖底上的冷點綴。每行拆 segments 支援一行多色，斷行手動控制。
+type Segment = { text: string; color?: string };
+const LINES: Segment[][] = [
+  [
+    { text: "用 " },
+    { text: "AI", color: "var(--color-ai)" },
+    { text: " 陪你" },
+    { text: "鍛造", color: "var(--color-accent)" },
+  ],
+  [{ text: "屬於你自己的系統", color: "var(--color-spark)" }],
 ];
 
 // Hero 主標：逐行整體 fade-up 浮現（黑字 pre + 紅字 accent 一起，不逐字）。
@@ -39,8 +45,15 @@ export function HeroTitle() {
             transform: mounted ? "translateY(0)" : "translateY(24px)",
           }}
         >
-          {line.pre}
-          <span style={{ color: line.color }}>{line.accent}</span>
+          {line.map((seg, j) =>
+            seg.color ? (
+              <span key={j} style={{ color: seg.color }}>
+                {seg.text}
+              </span>
+            ) : (
+              <span key={j}>{seg.text}</span>
+            )
+          )}
         </span>
       ))}
     </h1>
