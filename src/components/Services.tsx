@@ -15,37 +15,32 @@ type Service = {
   };
 };
 
+// 2026-07-14 光譜重構（REBUILD-PLAN 05）：四格並排商品 → 同一條路的不同深度。
+// 入口一律是流程診斷，「教你建 vs 幫你建」是診斷後才分的兩條路；
+// 工作坊／一對一併入「教你建」，演講退為 map 外的尾註輕選項（見 component 底部）。
+// 03 幫你建的 description 沿用 f07de7a 打磨過的 customer voice，只留 proofLink 接實戰。
 const services: Service[] = [
   {
     number: "01",
-    title: "工作坊",
-    subtitle: "Workshops",
+    title: "流程診斷",
+    subtitle: "Process Diagnosis",
     description:
-      "半天到一天的實作型工作坊。從你的真實工作場景出發，現場跟 AI 對話，把一套屬於你的工作流建出來。離開教室時帶走的不是筆記，是能繼續用的系統。",
-    forWho: "團隊、學校、企業內訓",
-    cta: "邀約工作坊",
+      "坐下來聊一小時。你不用先學會任何術語，用平常講話的方式講你的日常就行。我看你卡在哪：哪裡還在紙本、哪裡在 Excel 之間搬資料、哪裡其實可以交給 AI。聊完你會拿到一張現況地圖，跟一條看得見的升級路徑。",
+    forWho: "還不確定從哪開始的老闆、主管、工作室",
+    cta: "預約診斷",
   },
   {
     number: "02",
-    title: "1 對 1 諮詢",
-    subtitle: "1-on-1 Consulting",
+    title: "教你建",
+    subtitle: "Learn to Build",
     description:
-      "60 分鐘對話，針對你的內容工作流、學習方法、職涯轉型給出可執行建議。不是泛泛的勵志談話，是看著你的實際素材，跟你一起拆解、重組、找出下一步。",
-    forWho: "個人創作者、教育工作者、轉型中的專業人士",
-    cta: "預約 1 對 1",
+      "診斷後想自己動手？工作坊帶你的團隊從真實場景拆起，現場把第一套流程建出來；一對一陪跑則是你的進度、你的專案，我在旁邊看著你把系統長出來。學會的是能力，留下的是你們自己維護得動的系統。",
+    forWho: "想讓團隊長出自建能力的公司、部門",
+    cta: "聊聊團隊狀態",
   },
   {
     number: "03",
-    title: "演講邀約",
-    subtitle: "Speaking",
-    description:
-      "30 到 90 分鐘的主題演講。聚焦在「AI 不是工具，是新的對話夥伴」、「如何不寫程式也能用對話建系統」、「教育者如何看見 AI 帶來的真機會」這些主題。",
-    forWho: "教育機構、產業活動、讀書會",
-    cta: "邀約演講",
-  },
-  {
-    number: "04",
-    title: "一起把它蓋出來",
+    title: "幫你建",
     subtitle: "Build With Me",
     description:
       "你的流程卡住、團隊還在用 Excel、想把資料串起來，想幫自己的團隊每天省下幾個小時。想知道 AI 自動化怎麼低成本地引進工作流程。我跟你一起，從場景拆到資料模型再到上線，打造出一個屬於你自己或團隊的客製化系統。",
@@ -74,18 +69,16 @@ export function Services() {
               </div>
               <h2 className="eyebrow">Services</h2>
               <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
-                我提供什麼
+                如何開始鍛造
               </p>
             </div>
             <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
               <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-                四種協作形式，
-                從教學到實作，
-                對應你正在面對的不同處境。
+                鍛造的起點，一起挖掘出你的卡點。
               </p>
               <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-                如果你還在猶豫哪一種適合你，
-                直接寫信跟我聊，我會誠實告訴你哪個有用、哪個不必。
+                入口都一樣：先聊你的流程，
+                我會誠實告訴你該走哪條、該多深。
               </p>
             </div>
           </div>
@@ -138,6 +131,20 @@ export function Services() {
             </Reveal>
           ))}
         </div>
+
+        {/* 演講退位為尾註（REBUILD-PLAN 05：不再是招牌，是「想先讓團隊有共識」的入口）*/}
+        <Reveal>
+          <p className="mt-10 font-sans text-sm text-[color:var(--color-fg-subtle)]">
+            想先讓團隊聽一場、有個共識再說？
+            <a
+              href="#contact"
+              className="link-underline text-[color:var(--color-accent)]"
+            >
+              演講邀約也開著
+            </a>
+            。
+          </p>
+        </Reveal>
       </div>
     </section>
   );
