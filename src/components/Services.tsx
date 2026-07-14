@@ -69,13 +69,12 @@ export function Services() {
               </div>
               <h2 className="eyebrow">Services</h2>
               <p className="font-display text-2xl md:text-3xl mt-4 leading-tight text-[color:var(--color-ink)]">
-                怎麼跟我合作
+                如何開始鍛造
               </p>
             </div>
             <div className="md:col-span-8 lg:col-span-9 max-w-2xl">
               <p className="font-display text-2xl md:text-3xl leading-[1.4] text-[color:var(--color-ink)]">
-                不是三種商品——
-                是同一條路，走到你需要的深度。
+                鍛造的起點，一起挖掘出你的卡點。
               </p>
               <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
                 入口都一樣：先聊你的流程，
