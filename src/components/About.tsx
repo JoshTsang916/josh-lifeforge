@@ -3,9 +3,11 @@ import { HairlineLine } from "./HairlineLine";
 import { Reveal } from "./Reveal";
 import { TypingText } from "./TypingText";
 
+// 2026-07-14 About 退位（REBUILD-PLAN 06）：從第二段移到實戰(03)之後，文字一字不改。
+// 底色 muted→預設 bg —— 新位置夾在 Builds(muted) 與 RecentWork(muted) 之間，維持深淺交替。
 export function About() {
   return (
-    <section id="about" className="section bg-[color:var(--color-bg-muted)]">
+    <section id="about" className="section">
       <div className="container-narrow">
         <div className="grid md:grid-cols-12 gap-12 lg:gap-20">
             {/* Left rail — number + label + photo
@@ -14,7 +16,7 @@ export function About() {
             <Reveal className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                  02
+                  04
                 </span>
                 <HairlineLine />
               </div>

@@ -5,8 +5,9 @@ import { MobileMenu } from "./MobileMenu";
 // 錨點（#）= 首頁同頁滾動；絕對路由（/）= 跨頁。render 時依開頭字元決定用 <a> 還是 <Link>。
 // 「工具」(/skills) 是 navLinks 裡第一個跨頁目的地，放在 proof 區（作品／見證）之後、聯絡之前。
 const navLinks = [
-  { href: "#about", label: "關於" },
   { href: "#services", label: "服務" },
+  { href: "#builds", label: "實戰" },
+  { href: "#about", label: "關於" },
   { href: "#work", label: "作品" },
   { href: "#testimonials", label: "見證" },
   { href: "/skills", label: "工具" },

@@ -8,8 +8,10 @@ type Service = {
   description: string;
   forWho: string;
   cta: string;
-  proof?: {
-    cases: string[];
+  /** proof 內容已升格成獨立「實戰」section（#builds），這裡只留錨點連過去 */
+  proofLink?: {
+    href: string;
+    label: string;
   };
 };
 
@@ -49,11 +51,9 @@ const services: Service[] = [
       "你的流程卡住、團隊還在用 Excel、想把資料串起來，想幫自己的團隊每天省下幾個小時。想知道 AI 自動化怎麼低成本地引進工作流程。我跟你一起，從場景拆到資料模型再到上線，打造出一個屬於你自己或團隊的客製化系統。",
     forWho: "想把日常重複工作交給系統處理的中小企業、傳產老闆、專業事務所",
     cta: "聊聊你的場景",
-    proof: {
-      cases: [
-        "某會計事務所｜員工行程登記：員工 LINE 傳一句「下午外出收件」，AI 解析自動寫進行事曆，主管週曆一覽全所行程",
-        "某食品代理商｜業務獎金結算：跟通路規則綁定的應收／沖銷／退貨流程，雙月結算自動產 Excel 薪資條",
-      ],
+    proofLink: {
+      href: "#builds",
+      label: "看五個實戰案例",
     },
   },
 ];
@@ -68,7 +68,7 @@ export function Services() {
             <div className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                  03
+                  02
                 </span>
                 <HairlineLine />
               </div>
@@ -110,20 +110,15 @@ export function Services() {
                   <p className="font-sans text-base leading-[1.65] text-[color:var(--color-fg-muted)] mb-3">
                     {service.description}
                   </p>
-                  {service.proof && (
-                    <div className="mt-5 mb-5 pt-5 border-t border-[color:var(--color-line)] space-y-2">
-                      {service.proof.cases.map((c, i) => (
-                        <p
-                          key={i}
-                          className="font-sans text-sm leading-[1.65] text-[color:var(--color-fg-muted)] flex gap-3"
-                        >
-                          <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)] pt-0.5 shrink-0">
-                            {String(i + 1).padStart(2, "0")}
-                          </span>
-                          <span>{c}</span>
-                        </p>
-                      ))}
-                    </div>
+                  {service.proofLink && (
+                    <p className="mt-5 mb-5 pt-5 border-t border-[color:var(--color-line)]">
+                      <a
+                        href={service.proofLink.href}
+                        className="link-underline font-sans text-sm font-medium text-[color:var(--color-accent)]"
+                      >
+                        {service.proofLink.label} ↓
+                      </a>
+                    </p>
                   )}
                   <p className="font-sans text-sm text-[color:var(--color-fg-subtle)]">
                     <span className="text-[color:var(--color-fg)]">適合 </span>

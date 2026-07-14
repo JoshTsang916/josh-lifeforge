@@ -39,10 +39,10 @@ export function ContactForm() {
         </p>
         <p className="font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)]">
           在那之前，歡迎到{" "}
-          <a href="#daily" className="link-underline text-[color:var(--color-accent)]">
-            Daily
+          <a href="#builds" className="link-underline text-[color:var(--color-accent)]">
+            實戰
           </a>{" "}
-          看我每日記錄的片段，或讀{" "}
+          看看正在跑的系統，或讀{" "}
           <a href="#about" className="link-underline text-[color:var(--color-accent)]">
             About
           </a>{" "}
