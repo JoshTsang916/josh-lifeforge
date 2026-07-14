@@ -23,12 +23,14 @@ export function Hero() {
           <div className="lg:col-span-7 order-2 lg:order-1">
             <HeroTitle />
 
-            {/* 小字逐字浮現；startDelay 約對齊標題第三行跑完前，讓節奏接續不留空白 */}
+            {/* 小字逐字浮現；startDelay 約對齊標題第二行跑完前，讓節奏接續不留空白。
+                2026-07-14 副標從哲學句（在被加速的時代…）換成處境鉤子（REBUILD-PLAN 01）；
+                「不急」線由 About 與星圖子星承接，不孤兒。句變長故 perChar 95→70 補償節奏。 */}
             <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
               <TypingText
-                text="在被加速的時代，走一條不急的路"
+                text="還在紙本登記、Excel 對帳？你卡住的地方，通常就是系統該進場的地方。"
                 startDelay={1300}
-                perChar={95}
+                perChar={70}
                 charDur={700}
                 riseY={8}
               />
@@ -37,10 +39,10 @@ export function Hero() {
             <Reveal delay={2000}>
               <div className="flex flex-wrap gap-4">
                 <a href="#contact" className="btn btn-primary">
-                  預約 1 對 1 諮詢
+                  聊聊你的工作流程
                 </a>
-                <a href="#work" className="btn btn-ghost">
-                  看作品
+                <a href="#builds" className="btn btn-ghost">
+                  看實戰案例
                 </a>
               </div>
             </Reveal>

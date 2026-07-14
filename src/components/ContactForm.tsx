@@ -4,11 +4,13 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { submitContact, type ContactState } from "@/app/actions/contact";
 
+// 2026-07-14 對齊 Services 光譜（診斷／教你建／幫你建）；演講在頁面退為尾註但仍可選。
+// value 需與 actions/contact.ts 的 ContactSchema enum 同步。
 const SERVICES = [
-  { value: "workshop", title: "工作坊", subtitle: "Workshops" },
-  { value: "consulting", title: "1 對 1 諮詢", subtitle: "Consulting" },
+  { value: "diagnosis", title: "流程診斷", subtitle: "Process Diagnosis" },
+  { value: "learn", title: "教你建", subtitle: "Learn to Build" },
+  { value: "build", title: "幫你建", subtitle: "Build With Me" },
   { value: "speaking", title: "演講邀約", subtitle: "Speaking" },
-  { value: "build", title: "一起把它蓋出來", subtitle: "Build With Me" },
 ] as const;
 
 const initialState: ContactState = { ok: false };
@@ -81,7 +83,7 @@ export function ContactForm() {
                 value={s.value}
                 required
                 className="sr-only peer"
-                defaultChecked={s.value === "workshop"}
+                defaultChecked={s.value === "diagnosis"}
                 aria-describedby={
                   state.fieldErrors?.service ? "service-error" : undefined
                 }
