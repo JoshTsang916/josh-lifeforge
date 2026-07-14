@@ -9,7 +9,7 @@ import { CopyCommand } from "@/components/CopyCommand";
 export const metadata: Metadata = {
   title: "工具 — 人生鍛造所",
   description:
-    "Josh 自己在用的 Claude Code skill 與 agent，整理過、去個人化、開源 —— skill-creator、translate-card，以及智囊團多模型審查。一行指令裝進你的環境。",
+    "Josh 自己在用的 Claude Code skill 與 agent，整理過、去個人化、開源：skill-creator、translate-card，以及智囊團多模型審查。一行指令裝進你的環境。",
 };
 
 const REPO_URL = "https://github.com/JoshTsang916/lifeforge-skills";
@@ -36,7 +36,7 @@ const skills: Tool[] = [
     name: "skill-creator",
     tagline: "幫你建立 / 重構 Claude Code skill 的 meta-skill。",
     detail:
-      "內含「七層架構放置指南」—— 一個功能該放 CLAUDE.md、Memory、Skill、Hook、Agent、MCP 還是 Settings，給你一套判斷框架；再把 9 種 skill 類型對應到三種架構模式。",
+      "內含「七層架構放置指南」：一個功能該放 CLAUDE.md、Memory、Skill、Hook、Agent、MCP 還是 Settings，給你一套判斷框架；再把 9 種 skill 類型對應到三種架構模式。",
     status: "stable",
     sourceUrl: `${REPO_URL}/tree/main/skills/skill-creator`,
     accent: "var(--color-ai)", // 沉穩藍 — 架構 / 工程感
@@ -134,7 +134,7 @@ function ToolCard({ tool }: { tool: Tool }) {
         <div className="mt-auto border-t border-[color:var(--color-line)] pt-5">
           <p className="eyebrow mb-1.5">前置需求</p>
           <p className="font-sans text-sm leading-[1.6] text-[color:var(--color-fg-muted)]">
-            {tool.prereq ?? "無 —— 裝了就能用"}
+            {tool.prereq ?? "無，裝了就能用"}
           </p>
         </div>
 
@@ -178,7 +178,7 @@ export default function SkillsPage() {
             可以帶走的工具
           </h1>
           <p className="max-w-2xl font-sans text-lg leading-[1.75] text-[color:var(--color-fg-muted)]">
-            我自己在用的 Claude Code skill 與 agent —— 整理過、去個人化、開源，
+            我自己在用的 Claude Code skill 與 agent：整理過、去個人化、開源，
             <br className="hidden sm:block" />
             讓你裝進自己的環境，跟著你跑。
           </p>
@@ -241,7 +241,7 @@ export default function SkillsPage() {
                   Agents
                 </h2>
                 <p className="mt-3 font-display text-2xl leading-tight text-[color:var(--color-ink)] md:text-3xl">
-                  不是 skill —— 裝法不一樣
+                  不是 skill，裝法不一樣
                 </p>
                 <p className="mt-3 max-w-2xl font-sans text-base leading-[1.7] text-[color:var(--color-fg-muted)]">
                   agent 是另一種 Claude Code 擴充，裝在{" "}

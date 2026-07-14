@@ -353,7 +353,7 @@ export function ForgeConstellation() {
               onMouseEnter={() => setHoveredId(node.id)}
               onFocus={() => setHoveredId(node.id)}
               onBlur={() => setHoveredId(null)}
-              aria-label={`${node.label} —— ${node.blurb}`}
+              aria-label={`${node.label}：${node.blurb}`}
               aria-expanded={isExpanded}
               className="group absolute outline-none"
               style={{
