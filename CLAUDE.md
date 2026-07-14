@@ -53,7 +53,8 @@ src/
     ├── Nav.tsx             # Sticky top nav，desktop 橫式選單 + mobile 漢堡 trigger
     ├── MobileMenu.tsx      # client component，用 React Portal 渲染到 body 避開 Nav backdrop-blur 造成的 stacking 限制
     ├── Hero.tsx            # Section 01 — B2B 主標「用 AI 陪你鍛造屬於你自己的系統」（AI 藍/鍛造紅/系統橘，HeroTitle 每行 Segment[] 多色）+ 處境副標 + CTA（聊聊你的工作流程 #contact／看實戰案例 #builds）
-    ├── Services.tsx        # Section 02 — 「如何開始鍛造」光譜：01 流程診斷（入口）/ 02 教你建 / 03 幫你建（proofLink → #builds）+ 演講尾註（2026-07-14 光譜重構，REBUILD-PLAN 05）
+    ├── Services.tsx        # Section 02 — 「如何開始鍛造」分支版面：01 流程診斷全寬入口 → 02 教你建 / 03 幫你建並排分岔（proofLink → #builds）+ 演講尾註（2026-07-14 光譜重構 + 分支動態化，REBUILD-PLAN 05，PR #44）
+    ├── ServicesBranch.tsx  # client component — Services 的分支段：SVG 分岔線 scroll 生長 + 火花拖光尾擊中卡片（閃光/漣漪/頂邊熱冷卻，A 光脈+B 火花融合方案）；mobile 退化成 rail+兩站；動畫 CSS 在 globals.css .branch-* 區
     ├── Builds.tsx          # Section 03 — 實戰：五個匿名案例（會計事務所/食品代理商/匹克球館/家教/創作者頻道），各含階梯爬升線 from→to + 之前/做了/現在（2026-07-14 新增，REBUILD-PLAN 04）
     ├── About.tsx           # Section 04 — Josh 的故事（2026-07-14 退位到實戰後 + 開頭加教師橋段；主文一字未動）
     ├── RecentWork.tsx      # Section 05 — 近期作品（hardcoded：n8n / AI 自動化進入文件驅動的時代 / 神經可塑性說書專場）
