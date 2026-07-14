@@ -3,15 +3,16 @@
 import { Resend } from "resend";
 import { z } from "zod";
 
+// 2026-07-14 對齊 Services 光譜；value 與 ContactForm.tsx 的 SERVICES 同步。
 const SERVICE_LABEL: Record<string, string> = {
-  workshop: "工作坊",
-  consulting: "1 對 1 諮詢",
+  diagnosis: "流程診斷",
+  learn: "教你建",
+  build: "幫你建",
   speaking: "演講邀約",
-  build: "一起把它蓋出來",
 };
 
 const ContactSchema = z.object({
-  service: z.enum(["workshop", "consulting", "speaking", "build"]),
+  service: z.enum(["diagnosis", "learn", "build", "speaking"]),
   name: z.string().min(1, "請填稱呼").max(50, "稱呼太長（上限 50 字）"),
   email: z.string().email("Email 格式有誤"),
   message: z.string().min(1, "訊息不能空白").max(2000, "訊息太長（上限 2000 字）"),

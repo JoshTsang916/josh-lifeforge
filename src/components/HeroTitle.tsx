@@ -2,15 +2,17 @@
 
 import { useEffect, useState } from "react";
 
+// 2026-07-14 B2B 新軸主標（REBUILD-PLAN 01，Josh 雛形收尖版）：
+// 舊「AI 給你槓桿／閱讀給你底氣／一人公司給你自由」對個人自我實現說話，退場；
+// 新主標對「流程卡住的老闆」說話，accent 從行首詞移到行中關鍵詞（pre + accent 結構）。
 const LINES = [
-  { accent: "AI", rest: " 給你槓桿" },
-  { accent: "閱讀", rest: " 給你底氣" },
-  { accent: "一人公司", rest: "給你自由" },
+  { pre: "先搞懂你的", accent: "工作流程" },
+  { pre: "再陪你鍛造成", accent: "自己的系統" },
 ];
 
-// Hero 主標：三行逐行整體 fade-up 浮現（紅字 accent + 黑字一起，不逐字）。
+// Hero 主標：逐行整體 fade-up 浮現（黑字 pre + 紅字 accent 一起，不逐字）。
 // mount 觸發（首屏立即可見），每行 stagger 220ms。
-// 逐字效果刻意只留給底下標語「…走一條不急的路」+ About『不急』那行——
+// 逐字效果刻意只留給底下標語（處境鉤子句）——
 // 標題俐落定調、標語慢慢道出，兩種手法分開。
 // prefers-reduced-motion 由 globals.css 全域處理。
 export function HeroTitle() {
@@ -36,8 +38,8 @@ export function HeroTitle() {
             transform: mounted ? "translateY(0)" : "translateY(24px)",
           }}
         >
+          {line.pre}
           <span style={{ color: "var(--color-accent)" }}>{line.accent}</span>
-          {line.rest}
         </span>
       ))}
     </h1>
