@@ -58,7 +58,7 @@ const builds: Build[] = [
     from: "腦袋記",
     to: "系統",
     before: "三十幾個學生的年級、進度、數 A 數 B 分流，靠腦袋跟筆記。",
-    built: "學生進度系統——章節進度、分流標記、升年級一鍵處理。",
+    built: "學生進度系統：章節進度、分流標記、升年級一鍵處理。",
     now: "我自己每週上課都在用。自己賣的東西，自己先用。",
   },
   {
@@ -126,7 +126,7 @@ export function Builds() {
                 五種產業，五套正在日常裡跑的系統。
               </p>
               <p className="mt-6 font-sans text-base text-[color:var(--color-fg-muted)]">
-                起點不一樣——有的從紙本開始，有的從 Excel。
+                起點不一樣：有的從紙本開始，有的從 Excel。
                 走的是同一條路：把卡住的流程，一階一階鍛造成自己的系統。
               </p>
             </div>
