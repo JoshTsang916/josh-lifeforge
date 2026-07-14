@@ -3,9 +3,11 @@ import { HairlineLine } from "./HairlineLine";
 import { Reveal } from "./Reveal";
 import { TypingText } from "./TypingText";
 
+// 2026-07-14 About 退位（REBUILD-PLAN 06）：從第二段移到實戰(03)之後，文字一字不改。
+// 底色 muted→預設 bg —— 新位置夾在 Builds(muted) 與 RecentWork(muted) 之間，維持深淺交替。
 export function About() {
   return (
-    <section id="about" className="section bg-[color:var(--color-bg-muted)]">
+    <section id="about" className="section">
       <div className="container-narrow">
         <div className="grid md:grid-cols-12 gap-12 lg:gap-20">
             {/* Left rail — number + label + photo
@@ -14,7 +16,7 @@ export function About() {
             <Reveal className="md:col-span-4 lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xs tabular-nums text-[color:var(--color-fg-subtle)]">
-                  02
+                  04
                 </span>
                 <HairlineLine />
               </div>
@@ -54,11 +56,11 @@ export function About() {
                 </p>
                 <p>
                   <span className="text-[color:var(--color-fg)] font-medium">第一是 AI 的使用。</span>
-                  我們必須要刻意去練習，不只是與他聊天，而是要讓他操控你的電腦、碰觸你的資料，使用並理解他，直到你能駕馭它，才能達到 10 倍甚至百倍的效果。
+                  我們必須要刻意去練習，不只是與它聊天，而是要讓它操控你的電腦、碰觸你的資料，使用並理解它，直到你能駕馭它，才能達到 10 倍甚至百倍的效果。
                 </p>
                 <p>
                   <span className="text-[color:var(--color-fg)] font-medium">第二是閱讀。</span>
-                  在這個知識看似垂手可得的時代，我們必須了解真正的知識從來都不是速食，沒有沈澱的知識並不會留下來，只會不著痕跡的滑過大腦的間隙。而閱讀本身要求我們靜下來，去思索、去整理知識，跟自己的現狀碰撞出新的自己。
+                  在這個知識看似垂手可得的時代，我們必須了解真正的知識從來都不是速食，沒有沈澱的知識並不會留下來，只會不著痕跡地滑過大腦的間隙。而閱讀本身要求我們靜下來，去思索、去整理知識，跟自己的現狀碰撞出新的自己。
                 </p>
                 <p>
                   一個向外，利用 AI 鍛造工具，一個向內，利用閱讀鍛造自己。最終讓自己進入更好的狀態，更接近真實的自己，也更富足、自由的狀態。

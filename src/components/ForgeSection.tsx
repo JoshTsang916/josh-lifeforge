@@ -1,7 +1,7 @@
 import { ForgeConstellation } from "./ForgeConstellation";
 
-// 首頁 About(02) 與 Services(03) 之間的「鐵鎚敲擊火花」互動間奏。
-// 用跟 04(RecentWork) 同款的米白稍深底（--color-bg-muted #F8EDDF），
+// 首頁 Hero(01) 與 Services(02) 之間的「鐵鎚敲擊火花」互動間奏（2026-07-14 About 退位後）。
+// 用跟 RecentWork(05) 同款的米白稍深底（--color-bg-muted #F8EDDF），
 // 跟全站暖調一致、無暗帶突兀。火花改實心暖色+柔陰影（淺底上不靠發光）。
 // 不標題、不編號 —— 純互動動畫。
 export function ForgeSection() {
