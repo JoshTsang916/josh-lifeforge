@@ -1,7 +1,8 @@
 import { Reveal } from "./Reveal";
 import { HairlineLine } from "./HairlineLine";
+import { ServicesBranch } from "./ServicesBranch";
 
-type Service = {
+export type Service = {
   number: string;
   title: string;
   subtitle: string;
@@ -54,6 +55,9 @@ const services: Service[] = [
 ];
 
 export function Services() {
+  // 01 是入口、02/03 是分支——版面結構跟著這個語意走，不再是平排三兄弟
+  const [entryService, ...branchServices] = services;
+
   return (
     <section id="services" className="section">
       <div className="container-narrow">
@@ -84,53 +88,45 @@ export function Services() {
           </div>
         </Reveal>
 
-        {/* Service list — editorial table-like layout, staggered reveal */}
-        <div className="border-t border-[color:var(--color-line-strong)]">
-          {services.map((service, idx) => (
-            <Reveal key={service.number} delay={idx * 100}>
-              <article className="grid lg:grid-cols-12 gap-6 py-10 border-b border-[color:var(--color-line-strong)] group">
-                <div className="lg:col-span-2">
-                  <div className="font-mono text-sm tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
-                    {service.number}
-                  </div>
-                  <div className="eyebrow">{service.subtitle}</div>
+        {/* 分支結構（2026-07 動態化）：01 診斷保留全寬橫排、坐穩「唯一入口」，
+            底部不收 border——分支線就從這裡長出去，岔成 02 / 03 並排兩條路
+            （線的生長動畫與兩張卡都在 ServicesBranch，client component）。 */}
+        <Reveal>
+          <div className="border-t border-[color:var(--color-line-strong)]">
+            <article className="grid lg:grid-cols-12 gap-6 pt-10 pb-6 group">
+              <div className="lg:col-span-2">
+                <div className="font-mono text-sm tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
+                  {entryService.number}
                 </div>
+                <div className="eyebrow">{entryService.subtitle}</div>
+              </div>
 
-                <div className="lg:col-span-7">
-                  <h3 className="font-display text-3xl md:text-4xl leading-tight text-[color:var(--color-ink)] mb-3 group-hover:text-[color:var(--color-accent)] transition-colors duration-300">
-                    {service.title}
-                  </h3>
-                  <p className="font-sans text-base leading-[1.65] text-[color:var(--color-fg-muted)] mb-3">
-                    {service.description}
-                  </p>
-                  {service.proofLink && (
-                    <p className="mt-5 mb-5 pt-5 border-t border-[color:var(--color-line)]">
-                      <a
-                        href={service.proofLink.href}
-                        className="link-underline font-sans text-sm font-medium text-[color:var(--color-accent)]"
-                      >
-                        {service.proofLink.label} ↓
-                      </a>
-                    </p>
-                  )}
-                  <p className="font-sans text-sm text-[color:var(--color-fg-subtle)]">
-                    <span className="text-[color:var(--color-fg)]">適合 </span>
-                    {service.forWho}
-                  </p>
-                </div>
+              <div className="lg:col-span-7">
+                <h3 className="font-display text-3xl md:text-4xl leading-tight text-[color:var(--color-ink)] mb-3 group-hover:text-[color:var(--color-accent)] transition-colors duration-300">
+                  {entryService.title}
+                </h3>
+                <p className="font-sans text-base leading-[1.65] text-[color:var(--color-fg-muted)] mb-3">
+                  {entryService.description}
+                </p>
+                <p className="font-sans text-sm text-[color:var(--color-fg-subtle)]">
+                  <span className="text-[color:var(--color-fg)]">適合 </span>
+                  {entryService.forWho}
+                </p>
+              </div>
 
-                <div className="lg:col-span-3 flex lg:justify-end items-start">
-                  <a
-                    href="#contact"
-                    className="link-underline font-sans text-sm font-medium"
-                  >
-                    {service.cta} →
-                  </a>
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
+              <div className="lg:col-span-3 flex lg:justify-end items-start">
+                <a
+                  href="#contact"
+                  className="link-underline font-sans text-sm font-medium"
+                >
+                  {entryService.cta} →
+                </a>
+              </div>
+            </article>
+          </div>
+        </Reveal>
+
+        <ServicesBranch services={branchServices} />
 
         {/* 演講退位為尾註（REBUILD-PLAN 05：不再是招牌，是「想先讓團隊有共識」的入口）*/}
         <Reveal>

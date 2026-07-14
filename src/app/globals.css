@@ -361,3 +361,320 @@
   }
 }
 
+/* ============================================================
+   Services 分支圖（#services「如何開始鍛造」，ServicesBranch）——
+   01 診斷是唯一入口，滾動進場時一條線從 01 底部長出、
+   分岔成 02 教你建 / 03 幫你建 兩條路：線到站、節點彈亮、卡片浮現。
+   一次性敘事動畫，由 .branch-zone 的 data-revealed 單一 state 驅動，
+   線→節點→卡片的時序全用 transition-delay 編排（無 JS 排程）。
+   reduced-motion 由檔頭全域 @media 歸零 duration/delay → 直接落定，
+   最終可見性不依賴動畫。
+   ============================================================ */
+
+/* 分岔線（desktop SVG）：stroke 描邊從 0 畫到 100%，像手繪長出來。
+   pathLength=1 已把三段 path 的 dash 空間標準化，dasharray/offset 直接用 1。 */
+.branch-path {
+  stroke: var(--color-line-strong);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.branch-trunk {
+  transition: stroke-dashoffset 350ms cubic-bezier(0.23, 1, 0.32, 1),
+              stroke 200ms ease;
+}
+.branch-arm {
+  /* delay 280ms：主幹快長完時分支接力，交接輕微重疊避免「等待感」 */
+  transition: stroke-dashoffset 500ms cubic-bezier(0.23, 1, 0.32, 1) 280ms,
+              stroke 200ms ease;
+}
+.branch-zone[data-revealed="true"] .branch-path {
+  stroke-dashoffset: 0;
+}
+
+/* 端點節點：scale 0.2 彈入（不從 0——憑空出現不自然），
+   磚紅小圓呼應星圖 forge-twig 的火花語彙。delay 用 CSS 變數，
+   mobile 是「rail 長到哪、站亮到哪」的序列，desktop 兩站同時亮。 */
+.branch-node {
+  opacity: 0;
+  transform: scale(0.2);
+  transition: opacity 250ms cubic-bezier(0.23, 1, 0.32, 1) var(--branch-node-delay, 0ms),
+              transform 250ms cubic-bezier(0.23, 1, 0.32, 1) var(--branch-node-delay, 0ms),
+              background-color 200ms ease;
+}
+.branch-zone[data-revealed="true"] .branch-node {
+  opacity: 1;
+  transform: scale(1);
+}
+/* 起點小圓（01 底部，線的出發點）：revealed 立刻亮，不等 delay */
+.branch-origin {
+  --branch-node-delay: 0ms;
+}
+
+/* 卡片內容：節點亮起後從下方浮上來「掛」到節點上。
+   desktop 兩張同時進場是刻意的——序列會讀成流程，同時才讀成平行的兩條路。 */
+.branch-card-body {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--branch-body-delay, 0ms),
+              transform 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--branch-body-delay, 0ms);
+}
+.branch-zone[data-revealed="true"] .branch-card-body {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile rail：左側主幹縱線由上往下生長（捷運路線圖語意，
+   02/03 是同一條主幹上分出的兩站）。只動 transform，無 layout 抖動。 */
+.branch-rail {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 550ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.branch-zone[data-revealed="true"] .branch-rail {
+  transform: scaleY(1);
+}
+
+/* 時序編排（火花擊中的節奏）：
+   mobile —— 火花 160ms 起跑沿 rail 落下，02 站被擊中即亮、03 站在尾端；
+   desktop —— 火花跟分支線同步 300ms 起跑、500ms 飛抵（ease-out 前快後慢），
+   節點在擊中前一瞬（760ms）開始彈入，體感是「火花到、站亮起」。 */
+.branch-card {
+  --branch-node-delay: 250ms;
+  --branch-body-delay: 310ms;
+}
+.branch-card:last-child {
+  --branch-node-delay: 600ms;
+  --branch-body-delay: 660ms;
+}
+@media (min-width: 768px) {
+  .branch-card,
+  .branch-card:last-child {
+    --branch-node-delay: 760ms;
+    --branch-body-delay: 820ms;
+  }
+}
+
+/* hover 哪張卡，對應那條分支線變磚紅（這條路通到這張卡）。
+   純色變不做 hover gate：觸控 tap 後線亮著反而像 active 指示，無害。 */
+.branch-zone:has(.branch-card:first-child:hover) .branch-arm-l,
+.branch-zone:has(.branch-card:last-child:hover) .branch-arm-r {
+  stroke: var(--color-accent);
+}
+
+/* ============================================================
+   分支動畫第二層：火花與漣漪（A 光脈漣漪 + B 鍛造火花融合，
+   2026-07-14 Josh 拍板）——兩顆火花拖著光尾當「線頭」沿分岔線飛
+   （鍛造敘事），擊中卡片的瞬間：節點閃光、漣漪蕩開、
+   頂邊 hairline 燒紅再花 1.5s 冷卻。
+   效果層全部 fill forwards 不用 both：both 會在 delay 期套用 0% 幀，
+   讓 glow／漣漪在火花抵達前就先亮（2026-07-14 踩過）。
+   reduced-motion 由檔頭全域 @media 歸零 → 效果層瞬過、終態 opacity 0，
+   不影響任何內容可見性。
+   ============================================================ */
+
+/* 火花：小圓沿分岔線的 motion path 飛行（offset-path 座標=viewBox 座標），
+   跟基線生長同 delay 同 easing = 火花騎在線頭上開路 */
+.branch-spark {
+  fill: var(--color-accent);
+  opacity: 0;
+  offset-rotate: 0deg;
+}
+.branch-spark-l {
+  offset-path: path("M 500 44 C 500 84 240 88 240 128");
+}
+.branch-spark-r {
+  offset-path: path("M 500 44 C 500 84 760 88 760 128");
+}
+@keyframes branch-spark-fly {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+.branch-zone[data-revealed="true"] .branch-spark {
+  animation: branch-spark-fly 500ms cubic-bezier(0.23, 1, 0.32, 1) 300ms
+    forwards;
+}
+
+/* 光尾：火花身後拖 15% 線長的光（A 光脈的視覺 DNA）。
+   跟火花同 duration／easing／delay，dashoffset 1.15→0.15 的線性映射
+   讓光段前緣每一幀都貼著火花位置——兩個動畫數學上完全同步。 */
+.branch-tail {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: 0.15 1;
+  stroke-dashoffset: 1.15;
+  opacity: 0;
+}
+@keyframes branch-tail-run {
+  0% {
+    stroke-dashoffset: 1.15;
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.85;
+  }
+  100% {
+    stroke-dashoffset: 0.15;
+    opacity: 0;
+  }
+}
+.branch-zone[data-revealed="true"] .branch-tail {
+  animation: branch-tail-run 500ms cubic-bezier(0.23, 1, 0.32, 1) 300ms
+    forwards;
+}
+
+/* 擊中三連：閃光（::after 實心快暈 450ms）→ 漣漪（::before 圓環，
+   慢半拍 80ms 開始、700ms 蕩開）→ 頂邊熱感（下方 heat-cool）。
+   flash 是衝擊、漣漪是餘波、熱感是餘溫——同一次擊中的三層物理後果。 */
+.branch-node::after,
+.branch-node::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.branch-node::after {
+  background: var(--color-accent-soft);
+}
+.branch-node::before {
+  border: 1.5px solid var(--color-accent);
+}
+.branch-card,
+.branch-origin {
+  --branch-halo-delay: calc(var(--branch-node-delay, 0ms) + 60ms);
+  --branch-ripple-delay: calc(var(--branch-node-delay, 0ms) + 140ms);
+}
+@keyframes branch-node-flash {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@keyframes branch-ripple {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(3.4);
+    opacity: 0;
+  }
+}
+.branch-zone[data-revealed="true"] .branch-node::after {
+  animation: branch-node-flash 450ms ease-out var(--branch-halo-delay)
+    forwards;
+}
+.branch-zone[data-revealed="true"] .branch-node::before {
+  animation: branch-ripple 700ms cubic-bezier(0.16, 1, 0.3, 1)
+    var(--branch-ripple-delay) forwards;
+}
+
+/* 熱感冷卻：火花擊中的瞬間，卡片頂邊那條 hairline 燒紅、發光，
+   再花 1.5s 慢慢冷回米色。glow 做在 ::before 的 1px 光條上
+   （蓋在 border-t 位置），光從「線」發出——直接把 box-shadow 打在
+   透明的卡片 wrapper 會勾出整個矩形輪廓，像多了一張實體白卡。
+   只在 desktop（md 卡片才有 border-t 可以「發熱」）。 */
+.branch-card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--color-accent);
+}
+@keyframes branch-heat-cool {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 14px 1.5px var(--color-accent);
+  }
+  40% {
+    opacity: 1;
+    box-shadow: 0 0 10px 0.5px var(--color-accent);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+@media (min-width: 768px) {
+  .branch-zone[data-revealed="true"] .branch-card::before {
+    animation: branch-heat-cool 1500ms ease-out var(--branch-body-delay)
+      forwards;
+  }
+}
+
+/* Mobile rail 行者：火花點＋光尾合成一張 background（radial 點在頭、
+   linear 漸層當尾），用 background-position 從 rail 頂掃到底——
+   rail 高度不定，百分比 position 天然貼合，不動 layout。 */
+.branch-rail::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: 100% 44px;
+  background-position-y: -44px;
+}
+@keyframes branch-rail-travel {
+  0% {
+    background-position-y: -44px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    background-position-y: calc(100% + 44px);
+    opacity: 0;
+  }
+}
+.branch-zone[data-revealed="true"] .branch-rail::after {
+  background-image: radial-gradient(
+      circle at 50% calc(100% - 3px),
+      var(--color-accent) 0 2.5px,
+      transparent 4.5px
+    ),
+    linear-gradient(
+      to bottom,
+      transparent,
+      var(--color-accent-soft) 82%,
+      var(--color-accent)
+    );
+  animation: branch-rail-travel 480ms cubic-bezier(0.23, 1, 0.32, 1) 160ms
+    forwards;
+}
