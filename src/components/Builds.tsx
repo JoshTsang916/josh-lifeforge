@@ -36,7 +36,7 @@ type Build = {
 const builds: Build[] = [
   {
     number: "01",
-    industry: "某會計事務所",
+    industry: "寶晟稅務記帳士事務所",
     from: "紙本",
     to: "智能",
     before:
@@ -47,11 +47,13 @@ const builds: Build[] = [
     shots: [
       {
         frame: "phone",
-        alt: "會計事務所行程系統的 LINE 對話畫面，員工回報「下午外出收件」，AI 自動解析",
+        src: "/photos/builds/doris-line.jpg",
+        alt: "寶晟事務所 LINE 群組畫面，AI 待辦通知機器人自動發出提醒卡片",
         caption: "員工在 LINE 說一句",
       },
       {
         frame: "browser",
+        src: "/photos/builds/doris-calendar.png",
         alt: "會計事務所行程系統的主管週曆畫面，員工在 LINE 回報的行程自動排進週曆",
         caption: "行程自動排進主管週曆",
       },
@@ -59,18 +61,7 @@ const builds: Build[] = [
   },
   {
     number: "02",
-    industry: "某食品代理商",
-    from: "Excel",
-    to: "自動",
-    before:
-      "業務獎金綁著通路規則，應收、沖銷、退貨在 Excel 之間輾轉，每輪結算都是硬仗。",
-    built:
-      "收款當月即獎金月，勾選就建獎金單；應收、沖銷、退貨一條線；薪資條 Excel 自動產；儀表板一眼看見可發獎金。",
-    now: "結算從翻表對帳，變成點幾下。",
-  },
-  {
-    number: "03",
-    industry: "某匹克球館",
+    industry: "神綺匹克球館",
     from: "手抄名單",
     to: "智能",
     before:
@@ -81,15 +72,28 @@ const builds: Build[] = [
     shots: [
       {
         frame: "phone",
-        alt: "匹克球館 LINE 機器人對話畫面，報名訊息丟進去，機器人自動整理出場次名單",
+        src: "/photos/builds/pickleball-line.jpg",
+        alt: "神綺館匹克球報名系統 LINE 對話畫面，機器人自動回報包場登記狀態",
         caption: "報名訊息丟給 LINE 機器人",
       },
       {
         frame: "browser",
+        src: "/photos/builds/pickleball-schedule.png",
         alt: "匹克球館報名後台畫面，顯示場次名單與候補狀態",
         caption: "名單、候補、逾期一次看到",
       },
     ],
+  },
+  {
+    number: "03",
+    industry: "業務獎金系統",
+    from: "Excel",
+    to: "自動",
+    before:
+      "業務獎金綁著通路規則，應收、沖銷、退貨在 Excel 之間輾轉，每輪結算都是硬仗。",
+    built:
+      "收款當月即獎金月，勾選就建獎金單；應收、沖銷、退貨一條線；薪資條 Excel 自動產；儀表板一眼看見可發獎金。",
+    now: "結算從翻表對帳，變成點幾下。",
   },
   {
     number: "04",
@@ -102,6 +106,7 @@ const builds: Build[] = [
     shots: [
       {
         frame: "browser",
+        src: "/photos/builds/student-progress.png",
         alt: "學生進度系統畫面，列出每位學生的章節進度與數 A 數 B 分流標記",
         caption: "每週上課前打開的進度看板",
       },
@@ -118,6 +123,7 @@ const builds: Build[] = [
     shots: [
       {
         frame: "phone",
+        src: "/photos/builds/ytreply-comment.jpg",
         alt: "YouTube 短影片留言區在手機上的畫面，機器人自動回覆對應的長片連結",
         caption: "留言區現場，機器人自動回上連結",
       },
@@ -337,7 +343,7 @@ export function Builds() {
         {/* Footnote — 匿名說明本身就是信任線索，順手接一個低門檻 CTA */}
         <Reveal>
           <p className="mt-10 font-sans text-sm text-[color:var(--color-fg-subtle)]">
-            案例都已去識別化。想看系統實際跑起來的樣子，
+            部分案例已徵得客戶同意公開名稱，其餘維持去識別化。想看系統實際跑起來的樣子，
             <a
               href="#contact"
               className="link-underline text-[color:var(--color-accent)]"
