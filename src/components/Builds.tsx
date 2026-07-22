@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Reveal } from "./Reveal";
 import { HairlineLine } from "./HairlineLine";
 
@@ -6,6 +7,18 @@ import { HairlineLine } from "./HairlineLine";
 // 每案標「成熟度階梯 from → to」（紙本→數位→系統→自動→智能，佔位五階，
 // 正式框架 Win/M1 成熟後回填），呈現「之前的痛 → 做了什麼 → 現在」三段。
 // 客戶全數匿名（授權未拿），拿到授權後逐案露名＋補系統截圖。
+
+// 每案一張代表畫面：手機截圖配手機外框、桌面截圖配瀏覽器外框。
+// src 留空時 render 佔位框（preview 討論版面用）；正式截圖須先去識別化
+// 才能進 public/（repo 是公開的，原始截圖絕不入版控）。
+type BuildShot = {
+  frame: "phone" | "browser";
+  /** 去識別化後的截圖路徑（public/photos/builds/）；佔位階段留空 */
+  src?: string;
+  alt: string;
+  caption: string;
+};
+
 type Build = {
   number: string;
   industry: string;
@@ -16,6 +29,8 @@ type Build = {
   before: string;
   built: string;
   now: string;
+  /** 代表畫面；沒有的案例維持純文字卡 */
+  shot?: BuildShot;
 };
 
 const builds: Build[] = [
@@ -29,6 +44,11 @@ const builds: Build[] = [
     built:
       "員工在 LINE 說句「下午外出收件」，AI 解析寫進行事曆，主管週曆一覽全所；月薪結算自動帶入分潤；交辦變成 LINE 卡片，按一下回報完成。",
     now: "登記、結算、交辦都在系統裡跑，老闆看報表就好。",
+    shot: {
+      frame: "browser",
+      alt: "會計事務所行程系統的主管週曆畫面，員工在 LINE 回報的行程自動排進週曆",
+      caption: "主管視角的週曆，員工在 LINE 說一句，行程自己長出來",
+    },
   },
   {
     number: "02",
@@ -51,6 +71,11 @@ const builds: Build[] = [
     built:
       "報名截圖或文字丟給 LINE 機器人，AI 解析自動記名單；滿員自動候補；包場名冊配對帳單，誰逾期一眼看到；對外場次圖一鍵下載。",
     now: "六百多場真實場次在系統裡跑。",
+    shot: {
+      frame: "phone",
+      alt: "匹克球館 LINE 機器人對話畫面，報名訊息丟進去，機器人自動整理出場次名單",
+      caption: "報名訊息丟給 LINE 機器人，名單自動記好",
+    },
   },
   {
     number: "04",
@@ -60,6 +85,11 @@ const builds: Build[] = [
     before: "三十幾個學生的年級、進度、數 A 數 B 分流，靠腦袋跟筆記。",
     built: "學生進度系統：章節進度、分流標記、升年級一鍵處理。",
     now: "我自己每週上課都在用。自己賣的東西，自己先用。",
+    shot: {
+      frame: "browser",
+      alt: "學生進度系統畫面，列出每位學生的章節進度與數 A 數 B 分流標記",
+      caption: "每週上課前打開的進度看板",
+    },
   },
   {
     number: "05",
@@ -69,6 +99,11 @@ const builds: Build[] = [
     before: "每支短影片下面重複貼長片連結，漏回就是流量流失。",
     built: "定時掃留言、關鍵字比對、自動回覆對應連結，回過的記著不重複。",
     now: "核心流程已跑通，正在真實頻道上調校。",
+    shot: {
+      frame: "browser",
+      alt: "YouTube 短影片留言區畫面，機器人自動回覆對應的長片連結",
+      caption: "留言區現場，機器人自動回上對應的長片連結",
+    },
   },
 ];
 
@@ -94,6 +129,90 @@ function LadderPath({ from, to }: { from: string; to: string }) {
         {to}
       </span>
     </div>
+  );
+}
+
+// 佔位內裡 —— 斜線紋 + 標籤，明示「這裡等真素材」而不是假圖
+// （design rule：placeholder > 假貨；正式截圖去識別化後換上、才 merge）。
+function ShotPlaceholder() {
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-0 grid place-items-center"
+      style={{
+        backgroundImage:
+          "repeating-linear-gradient(45deg, transparent, transparent 9px, color-mix(in oklab, var(--color-line-strong) 40%, transparent) 9px, color-mix(in oklab, var(--color-line-strong) 40%, transparent) 10px)",
+      }}
+    >
+      <span className="rounded-[var(--radius-sm)] border border-[color:var(--color-line)] bg-[color:var(--color-bg)] px-2.5 py-1 font-sans text-xs text-[color:var(--color-fg-subtle)]">
+        [截圖 placeholder]
+      </span>
+    </div>
+  );
+}
+
+// 代表畫面 —— 桌面截圖配瀏覽器外框、手機截圖配手機外框。
+// 外框全用 hairline token（不上陰影），跟 section 的 editorial 線條語彙一致；
+// 圖不做 hover 動效：這是內容不是控制項，進場交給外層既有的 Reveal。
+function ShotFigure({ shot }: { shot: BuildShot }) {
+  const isPhone = shot.frame === "phone";
+
+  return (
+    <figure className={isPhone ? "mx-auto w-full max-w-[200px]" : "w-full"}>
+      {isPhone ? (
+        // 手機外框：外圈圓角走裝置剪影（比 UI 圓角大是刻意的，讓它讀成「一支手機」），
+        // 螢幕裁 9:16 —— LINE 對話擷取關鍵一來一回就夠，不需要整支手機的長截圖
+        <div className="rounded-[1.25rem] border border-[color:var(--color-line-strong)] bg-[color:var(--color-bg)] p-1.5">
+          <div
+            aria-hidden
+            className="mx-auto mb-1.5 mt-0.5 h-1 w-8 rounded-full bg-[color:var(--color-line-strong)]"
+          />
+          <div className="relative aspect-[9/16] overflow-hidden rounded-[0.85rem] bg-[color:var(--color-bg-deep)]">
+            {shot.src ? (
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                fill
+                sizes="(min-width: 1024px) 200px, 60vw"
+                className="object-cover"
+              />
+            ) : (
+              <ShotPlaceholder />
+            )}
+          </div>
+        </div>
+      ) : (
+        // 瀏覽器外框：頂欄三個小圓點用純 geometry（不用 emoji / 紅黃綠擬真色），
+        // 螢幕裁 16:10 —— 桌面系統畫面的通用比例
+        <div className="overflow-hidden rounded-[var(--radius-md)] border border-[color:var(--color-line-strong)] bg-[color:var(--color-bg)]">
+          <div className="flex items-center gap-1.5 border-b border-[color:var(--color-line)] px-3 py-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-line-strong)]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-line-strong)]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-line-strong)]" />
+          </div>
+          <div className="relative aspect-[16/10] bg-[color:var(--color-bg-deep)]">
+            {shot.src ? (
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                fill
+                sizes="(min-width: 1024px) 640px, 100vw"
+                className="object-cover"
+              />
+            ) : (
+              <ShotPlaceholder />
+            )}
+          </div>
+        </div>
+      )}
+      <figcaption
+        className={`mt-3 font-sans text-xs leading-relaxed text-[color:var(--color-fg-subtle)] ${
+          isPhone ? "text-center" : ""
+        }`}
+      >
+        {shot.caption}
+      </figcaption>
+    </figure>
   );
 }
 
@@ -135,42 +254,64 @@ export function Builds() {
 
         {/* Case list — editorial stack，同 Services 的 table-like 節奏 */}
         <div className="border-t border-[color:var(--color-line-strong)]">
-          {builds.map((build, idx) => (
-            <Reveal key={build.number} delay={idx * 100}>
-              <article className="grid lg:grid-cols-12 gap-6 py-10 border-b border-[color:var(--color-line-strong)]">
-                <div className="lg:col-span-4">
-                  <div className="font-mono text-sm tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
-                    {build.number}
-                  </div>
-                  <h3 className="font-display text-2xl md:text-3xl leading-tight text-[color:var(--color-ink)]">
-                    {build.industry}
-                  </h3>
-                  <LadderPath from={build.from} to={build.to} />
-                </div>
+          {builds.map((build, idx) => {
+            // 手機圖直式高、放右側欄跟文字並排；瀏覽器圖橫式寬、疊在文字下方。
+            // 沒圖的案例維持原本兩欄，混排下每案的文字節奏不變。
+            const phoneShot =
+              build.shot?.frame === "phone" ? build.shot : undefined;
+            const browserShot =
+              build.shot?.frame === "browser" ? build.shot : undefined;
 
-                <dl className="lg:col-span-8 space-y-4 lg:pt-1">
-                  <div className="flex gap-4">
-                    <dt className={stageLabel}>之前</dt>
-                    <dd className="font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)]">
-                      {build.before}
-                    </dd>
+            return (
+              <Reveal key={build.number} delay={idx * 100}>
+                <article className="grid lg:grid-cols-12 gap-6 py-10 border-b border-[color:var(--color-line-strong)]">
+                  <div className="lg:col-span-4">
+                    <div className="font-mono text-sm tabular-nums text-[color:var(--color-fg-subtle)] mb-2">
+                      {build.number}
+                    </div>
+                    <h3 className="font-display text-2xl md:text-3xl leading-tight text-[color:var(--color-ink)]">
+                      {build.industry}
+                    </h3>
+                    <LadderPath from={build.from} to={build.to} />
                   </div>
-                  <div className="flex gap-4">
-                    <dt className={stageLabel}>做了</dt>
-                    <dd className="font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)]">
-                      {build.built}
-                    </dd>
+
+                  <div className={phoneShot ? "lg:col-span-5" : "lg:col-span-8"}>
+                    <dl className="space-y-4 lg:pt-1">
+                      <div className="flex gap-4">
+                        <dt className={stageLabel}>之前</dt>
+                        <dd className="font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)]">
+                          {build.before}
+                        </dd>
+                      </div>
+                      <div className="flex gap-4">
+                        <dt className={stageLabel}>做了</dt>
+                        <dd className="font-sans text-sm leading-[1.7] text-[color:var(--color-fg-muted)]">
+                          {build.built}
+                        </dd>
+                      </div>
+                      <div className="flex gap-4">
+                        <dt className={stageLabel}>現在</dt>
+                        <dd className="font-sans text-base leading-[1.7] text-[color:var(--color-fg)]">
+                          {build.now}
+                        </dd>
+                      </div>
+                    </dl>
+                    {browserShot && (
+                      <div className="mt-8">
+                        <ShotFigure shot={browserShot} />
+                      </div>
+                    )}
                   </div>
-                  <div className="flex gap-4">
-                    <dt className={stageLabel}>現在</dt>
-                    <dd className="font-sans text-base leading-[1.7] text-[color:var(--color-fg)]">
-                      {build.now}
-                    </dd>
-                  </div>
-                </dl>
-              </article>
-            </Reveal>
-          ))}
+
+                  {phoneShot && (
+                    <div className="lg:col-span-3">
+                      <ShotFigure shot={phoneShot} />
+                    </div>
+                  )}
+                </article>
+              </Reveal>
+            );
+          })}
         </div>
 
         {/* Footnote — 匿名說明本身就是信任線索，順手接一個低門檻 CTA */}
