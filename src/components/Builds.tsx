@@ -29,8 +29,8 @@ type Build = {
   before: string;
   built: string;
   now: string;
-  /** 代表畫面；沒有的案例維持純文字卡 */
-  shot?: BuildShot;
+  /** 代表畫面，最多兩張（phone + browser 各一）；沒有的案例維持純文字卡 */
+  shots?: BuildShot[];
 };
 
 const builds: Build[] = [
@@ -44,11 +44,18 @@ const builds: Build[] = [
     built:
       "員工在 LINE 說句「下午外出收件」，AI 解析寫進行事曆，主管週曆一覽全所；月薪結算自動帶入分潤；交辦變成 LINE 卡片，按一下回報完成。",
     now: "登記、結算、交辦都在系統裡跑，老闆看報表就好。",
-    shot: {
-      frame: "browser",
-      alt: "會計事務所行程系統的主管週曆畫面，員工在 LINE 回報的行程自動排進週曆",
-      caption: "主管視角的週曆，員工在 LINE 說一句，行程自己長出來",
-    },
+    shots: [
+      {
+        frame: "phone",
+        alt: "會計事務所行程系統的 LINE 對話畫面，員工回報「下午外出收件」，AI 自動解析",
+        caption: "員工在 LINE 說一句",
+      },
+      {
+        frame: "browser",
+        alt: "會計事務所行程系統的主管週曆畫面，員工在 LINE 回報的行程自動排進週曆",
+        caption: "行程自動排進主管週曆",
+      },
+    ],
   },
   {
     number: "02",
@@ -71,11 +78,18 @@ const builds: Build[] = [
     built:
       "報名截圖或文字丟給 LINE 機器人，AI 解析自動記名單；滿員自動候補；包場名冊配對帳單，誰逾期一眼看到；對外場次圖一鍵下載。",
     now: "六百多場真實場次在系統裡跑。",
-    shot: {
-      frame: "phone",
-      alt: "匹克球館 LINE 機器人對話畫面，報名訊息丟進去，機器人自動整理出場次名單",
-      caption: "報名訊息丟給 LINE 機器人，名單自動記好",
-    },
+    shots: [
+      {
+        frame: "phone",
+        alt: "匹克球館 LINE 機器人對話畫面，報名訊息丟進去，機器人自動整理出場次名單",
+        caption: "報名訊息丟給 LINE 機器人",
+      },
+      {
+        frame: "browser",
+        alt: "匹克球館報名後台畫面，顯示場次名單與候補狀態",
+        caption: "名單、候補、逾期一次看到",
+      },
+    ],
   },
   {
     number: "04",
@@ -85,11 +99,13 @@ const builds: Build[] = [
     before: "三十幾個學生的年級、進度、數 A 數 B 分流，靠腦袋跟筆記。",
     built: "學生進度系統：章節進度、分流標記、升年級一鍵處理。",
     now: "我自己每週上課都在用。自己賣的東西，自己先用。",
-    shot: {
-      frame: "browser",
-      alt: "學生進度系統畫面，列出每位學生的章節進度與數 A 數 B 分流標記",
-      caption: "每週上課前打開的進度看板",
-    },
+    shots: [
+      {
+        frame: "browser",
+        alt: "學生進度系統畫面，列出每位學生的章節進度與數 A 數 B 分流標記",
+        caption: "每週上課前打開的進度看板",
+      },
+    ],
   },
   {
     number: "05",
@@ -99,11 +115,13 @@ const builds: Build[] = [
     before: "每支短影片下面重複貼長片連結，漏回就是流量流失。",
     built: "定時掃留言、關鍵字比對、自動回覆對應連結，回過的記著不重複。",
     now: "核心流程已跑通，正在真實頻道上調校。",
-    shot: {
-      frame: "browser",
-      alt: "YouTube 短影片留言區畫面，機器人自動回覆對應的長片連結",
-      caption: "留言區現場，機器人自動回上對應的長片連結",
-    },
+    shots: [
+      {
+        frame: "phone",
+        alt: "YouTube 短影片留言區在手機上的畫面，機器人自動回覆對應的長片連結",
+        caption: "留言區現場，機器人自動回上連結",
+      },
+    ],
   },
 ];
 
@@ -255,12 +273,14 @@ export function Builds() {
         {/* Case list — editorial stack，同 Services 的 table-like 節奏 */}
         <div className="border-t border-[color:var(--color-line-strong)]">
           {builds.map((build, idx) => {
-            // 手機圖直式高、放右側欄跟文字並排；瀏覽器圖橫式寬、疊在文字下方。
+            // 手機圖直式高、放右側欄跟文字並排；瀏覽器圖橫式寬、疊在文字下方
+            // （兩張都有時，瀏覽器圖疊在文字欄下方、手機圖仍在右側欄，
+            // 讀起來是「LINE 一句話 → 系統自動生成畫面」的因果對）。
             // 沒圖的案例維持原本兩欄，混排下每案的文字節奏不變。
-            const phoneShot =
-              build.shot?.frame === "phone" ? build.shot : undefined;
-            const browserShot =
-              build.shot?.frame === "browser" ? build.shot : undefined;
+            const phoneShot = build.shots?.find((s) => s.frame === "phone");
+            const browserShot = build.shots?.find(
+              (s) => s.frame === "browser",
+            );
 
             return (
               <Reveal key={build.number} delay={idx * 100}>
