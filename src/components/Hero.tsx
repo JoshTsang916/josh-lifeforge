@@ -1,7 +1,6 @@
 import { HeroTitle } from "./HeroTitle";
 import { HairlineLine } from "./HairlineLine";
 import { Reveal } from "./Reveal";
-import { TypingText } from "./TypingText";
 import { HeroSketchReveal } from "./HeroSketchReveal";
 
 export function Hero() {
@@ -23,20 +22,18 @@ export function Hero() {
           <div className="lg:col-span-7 order-2 lg:order-1">
             <HeroTitle />
 
-            {/* 小字逐字浮現；startDelay 約對齊標題第二行跑完前，讓節奏接續不留空白。
-                2026-07-14 副標從哲學句（在被加速的時代…）換成處境鉤子（REBUILD-PLAN 01）；
-                「不急」線由 About 與星圖子星承接，不孤兒。句變長故 perChar 95→70 補償節奏。 */}
-            <p className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl">
-              <TypingText
-                text="還在紙本登記、Excel 對帳？想要利用 AI 做點什麼卻沒有頭緒？AI 自動化、提升工作效率，其實比你想像的還要近。"
-                startDelay={1300}
-                perChar={55}
-                charDur={700}
-                riseY={8}
-              />
-            </p>
+            {/* 2026-07-23 從逐字打字機改一次浮現：句子長，逐字要 5 秒才顯示完太久。
+                逐字效果搬去標題第二行（見 HeroTitle），delay 接在第二行打完之後（~2000ms，
+                7/23 稍後 Josh 要求打字機再放慢，perChar/charDur 調過，這裡的 delay 跟著補）。
+                Reveal 輸出 div，不能包在 p 裡（p > div 不合法），故直接用 Reveal 取代 p。 */}
+            <Reveal
+              delay={2100}
+              className="font-sans text-lg md:text-xl leading-[1.6] text-[color:var(--color-fg-muted)] mb-10 max-w-xl"
+            >
+              還在紙本登記、Excel 對帳？想要利用 AI 做點什麼卻沒有頭緒？AI 自動化、提升工作效率，其實比你想像的還要近。
+            </Reveal>
 
-            <Reveal delay={2000}>
+            <Reveal delay={2900}>
               <div className="flex flex-wrap gap-4">
                 <a href="#contact" className="btn btn-primary">
                   聊聊你的工作流程
