@@ -60,7 +60,7 @@ export const FORGE_ROOT: ForgeNode[] = [
     blurb: "五套正在別人日常裡跑的系統，點開看每一套解了什麼。",
     children: [
       { id: "bd-account", label: "某會計事務所", tint: "var(--color-reading)", href: "/#builds", blurb: "LINE 一句話寫進行事曆，登記、結算、交辦都在系統裡跑。" },
-      { id: "bd-food", label: "某食品代理商", tint: "var(--color-reading)", href: "/#builds", blurb: "收款制獎金結算，從翻表對帳變成點幾下。" },
+      { id: "bd-tuition", label: "某文理補習班", tint: "var(--color-reading)", href: "/#builds", blurb: "兩百多位學生的繳費，從紙本登記變成篩一下就看到。" },
       { id: "bd-pickle", label: "某匹克球館", tint: "var(--color-reading)", href: "/#builds", blurb: "AI 解析報名訊息，六百多場真實場次在系統裡跑。" },
       { id: "bd-tutor", label: "家教教學現場", tint: "var(--color-reading)", href: "/#builds", blurb: "三十幾個學生的進度系統。自己賣的東西，自己先用。" },
       { id: "bd-creator", label: "某創作者頻道", tint: "var(--color-reading)", href: "/#builds", blurb: "留言關鍵字自動回覆，正在真實頻道上調校。" },
