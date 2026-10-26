@@ -63,9 +63,10 @@
 來源：2026-05-10 session 討論（Josh 提 Supabase 路徑反推 → Claude 修正 4 phase plan + 5 sub-decisions 拍板）
 
 ### 2. 客戶授權後逐案露名 + 補系統截圖
-~~視情況升級到獨立 Builds section~~ ✅ **2026-07-14 已完成**（PR #36：實戰 section 五案上線＝doris／tibonus／pickleball／student-progress／YT 留言回覆，全匿名，`src/components/Builds.tsx`）。剩餘等授權：
-- 逐案把「某會計事務所」等匿名標籤換成具體名稱（doris 客戶會計事務所 / 台灣愛玉 / 神綺館…哪家授權換哪家）
-- 補去識別化系統截圖（doris dashboard / tibonus Excel 薪資條 / pickleball LINE bot 對話與場次圖）
+~~視情況升級到獨立 Builds section~~ ✅ **2026-07-14 已完成**（PR #36：實戰 section 五案上線＝doris／tibonus／pickleball／student-progress／YT 留言回覆，全匿名，`src/components/Builds.tsx`）。
+~~剩餘等授權：逐案露名＋補去識別化系統截圖（doris／tibonus／pickleball）~~（deprecated 2026-10-26：寶晟、學橋已露名＋補圖；tibonus 7/23 換掉，神綺館、創作者頻道 10/26 下架。現況見下兩條）
+- **2026-10-26 換血後還沒做的**：某醬料食品工廠、某運動工作室兩案授權（要問誰記在 Josh 的私人 memory，公開 repo 不寫真名）：店名能不能放、去識別化的系統畫面能不能放；拿到再露名＋補截圖
+- 匹克球小助手補一張手機截圖：場卡會出現真實球友名字，請 Josh 在一對一聊天用假名字開一場再截場卡＋賽況卡
 - 「溝通成本很低」客戶原話：授權後掛名進 Testimonials 當第一條客戶見證（目前以間接匿名形式在 About 橋段）
 
 來源：2026-05-08 加 04 Build With Me 時的 trade-off；2026-07-14 升格完成後改寫本條
