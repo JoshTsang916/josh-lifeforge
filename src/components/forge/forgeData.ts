@@ -25,7 +25,7 @@ export const FORGE_ROOT: ForgeNode[] = [
     children: [
       { id: "diagnosis", label: "流程診斷", tint: "var(--color-accent)", href: "/#services", blurb: "入口。聊一小時，看你卡在哪、哪些能交給 AI。" },
       { id: "learn", label: "教你建", tint: "var(--color-accent)", href: "/#services", blurb: "工作坊帶團隊、一對一陪個人，把自建能力留在你手上。" },
-      { id: "build", label: "幫你建", tint: "var(--color-accent)", href: "/#builds", blurb: "我跟你一起從場景拆到上線。五套正在跑的系統在這。" },
+      { id: "build", label: "幫你建", tint: "var(--color-accent)", href: "/#builds", blurb: "我跟你一起從場景拆到上線。六套正在跑的系統在這。" },
     ],
   },
   {
@@ -52,18 +52,21 @@ export const FORGE_ROOT: ForgeNode[] = [
   },
   {
     // 第 4 顆主星沿革：學員見證 → 工具 /skills (2026-06-03) → 實戰 (2026-07-14，Josh 拍板)。
-    // B2B 新軸下 proof 比工具重要——五顆子星＝實戰五案例，全部同頁捲到 /#builds；
+    // B2B 新軸下 proof 比工具重要——子星＝實戰各案例，全部同頁捲到 /#builds；
     // /skills 工具頁入口由 Nav「工具」承接，星圖回歸首頁地圖。
+    // 2026-10-26 跟 Builds 換血同步成六顆、順序對齊 Builds 卡片；客戶案在星圖一律用匿名短稱
+    // （露名只在 Builds 卡片），blurb 跟卡片同一個宣稱，改其中一邊要兩邊一起改。
     id: "builds",
     label: "實戰",
     tint: "var(--color-reading)", // 抹茶綠（沿用第 4 顆位置的色，佈局色彩平衡不變）
-    blurb: "五套正在別人日常裡跑的系統，點開看每一套解了什麼。",
+    blurb: "六套正在日常裡跑的系統，點開看每一套解了什麼。",
     children: [
-      { id: "bd-account", label: "某會計事務所", tint: "var(--color-reading)", href: "/#builds", blurb: "LINE 一句話寫進行事曆，登記、結算、交辦都在系統裡跑。" },
+      { id: "bd-account", label: "某會計事務所", tint: "var(--color-reading)", href: "/#builds", blurb: "LINE 一句話排進週曆，行程、案件、交辦都在系統裡跑。" },
+      { id: "bd-factory", label: "某醬料工廠", tint: "var(--color-reading)", href: "/#builds", blurb: "外包舊系統換成自己的工廠系統，老闆直接在新系統開單。" },
+      { id: "bd-studio", label: "某運動工作室", tint: "var(--color-reading)", href: "/#builds", blurb: "學員在 LINE 簽到請假，教練排課自動通知，兩間館都在用。" },
       { id: "bd-tuition", label: "某文理補習班", tint: "var(--color-reading)", href: "/#builds", blurb: "兩百多位學生的繳費，從紙本登記變成篩一下就看到。" },
-      { id: "bd-pickle", label: "某匹克球館", tint: "var(--color-reading)", href: "/#builds", blurb: "AI 解析報名訊息自動記名單，系統即將投入使用。" },
       { id: "bd-tutor", label: "家教教學現場", tint: "var(--color-reading)", href: "/#builds", blurb: "三十幾個學生的進度系統。自己賣的東西，自己先用。" },
-      { id: "bd-creator", label: "某創作者頻道", tint: "var(--color-reading)", href: "/#builds", blurb: "留言關鍵字自動回覆，正在真實頻道上調校。" },
+      { id: "bd-pickle-bot", label: "匹克球小助手", tint: "var(--color-reading)", href: "/#builds", blurb: "在 LINE 裡一場一場排雙打、記比分，朋友已經拿它打過好幾場。" },
     ],
   },
 ];

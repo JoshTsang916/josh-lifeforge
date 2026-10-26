@@ -34,7 +34,9 @@ function arcPath(x1: number, y1: number, x2: number, y2: number, sagMul = 0.26) 
 // 小火花分支：從父火花往「離心方向」扇形長出，散更開、長度不一（不碰中心、不抽換主支線）
 function childPos(parent: { x: number; y: number }, i: number, n: number) {
   const outAng = (Math.atan2(parent.y - 50, parent.x - 50) * 180) / Math.PI;
-  const arc = n <= 1 ? 0 : 132;
+  // 扇形總角 132°；子星多到每顆間隔不足 33° 時（6 顆以上）改成照 33° 間隔放寬，
+  // 不然桌機的標籤會壓到隔壁的星（2026-10-26 實戰改六案時實測）。5 顆以下維持原本 132°
+  const arc = n <= 1 ? 0 : Math.max(132, 33 * (n - 1));
   const a = outAng + (i - (n - 1) / 2) * (arc / Math.max(1, n - 1));
   const rad = (a * Math.PI) / 180;
   const dist = 16 + (i % 3) * 5; // 長度不一

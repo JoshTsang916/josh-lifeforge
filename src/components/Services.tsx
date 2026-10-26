@@ -49,7 +49,7 @@ const services: Service[] = [
     cta: "聊聊你的場景",
     proofLink: {
       href: "#builds",
-      label: "看五個實戰案例",
+      label: "看六個實戰案例",
     },
   },
 ];
